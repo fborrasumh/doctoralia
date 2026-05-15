@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data: blob:; font-src * data:;">
 <title>Doctoralia — Review Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -64,6 +65,9 @@ button{font-family:var(--ff);cursor:pointer;border:none;transition:all .15s}
 .btn-amber:hover:not(:disabled){background:rgba(245,158,11,.25)}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--t2);padding:5px 10px;font-size:12px;border-radius:6px}
 .btn-ghost:hover{background:#f3f4f6;color:var(--text)}
+.btn-stop{background:transparent;border:1px solid rgba(220,38,38,.5);color:var(--red)}
+.btn-stop:hover:not(:disabled){background:rgba(220,38,38,.08);border-color:var(--red)}
+.btn-stop:disabled{opacity:.35;cursor:not-allowed}
 
 /* ── TABS ── */
 .tabs{display:flex;border-bottom:1px solid var(--border);padding:0 28px;background:#ffffff;overflow-x:auto;flex-shrink:0}
@@ -388,6 +392,7 @@ textarea{resize:vertical;min-height:68px}
     </div>
     <div class="topbar-actions">
       <button class="btn" onclick="showMain('history')" title="Historial">🕓 Historial</button>
+      <button class="btn btn-stop" id="btnStop" onclick="stopGeneration()" disabled title="Detener generación">⏹ Parar</button>
       <button class="btn btn-primary" id="btnGen" onclick="startGeneration()">▶ Generar</button>
     </div>
   </div>
@@ -609,7 +614,10 @@ textarea{resize:vertical;min-height:68px}
 
       <div class="wizard-nav" style="margin-top:16px">
         <button class="btn" onclick="goWizard(3)">← Editar opciones</button>
-        <button class="btn btn-primary" id="btnGenWizard" onclick="startGeneration()" style="padding:10px 28px;font-size:14px">▶ Generar revisión</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-stop" id="btnStopWizard" onclick="stopGeneration()" disabled title="Detener generación">⏹ Parar</button>
+          <button class="btn btn-primary" id="btnGenWizard" onclick="startGeneration()" style="padding:10px 28px;font-size:14px">▶ Generar revisión</button>
+        </div>
       </div>
     </div>
 
@@ -752,6 +760,12 @@ const AGENTS=[
 let generatedText='',allPapersStore=[],gapsStore='',sectionTextsStore={};
 let isRunning=false,tStart=0,qualityScore='N/A';
 let currentWizardStep=1;
+let shouldStop=false;
+
+function stopGeneration(){
+  shouldStop=true;
+  log('⏹ Parando tras el paso actual...','warn');
+}
 const HP_STEPS=[
   {id:'hp-search',   text:'Buscando artículos en las bases de datos...'},
   {id:'hp-analyze',  text:'Analizando y rankeando los papers más relevantes...'},
@@ -767,6 +781,14 @@ let currentHPStep=-1;
 //  INIT
 // ═══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
+  // ── Aviso si se abre como file:// ──────────────────
+  if(location.protocol==='file:'){
+    const warn=document.createElement('div');
+    warn.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#dc2626;color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-family:sans-serif;line-height:1.5';
+    warn.innerHTML='⚠️ <strong>Abierto como fichero local (file://)</strong> — las APIs externas no funcionan desde file://. '
+      +'Sube el fichero a GitHub Pages o usa un servidor local: <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:3px">python3 -m http.server 8080</code> y abre <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:3px">http://localhost:8080</code>';
+    document.body.prepend(warn);
+  }
   const saved=localStorage.getItem('doctoralia_apikey');
   if(saved){document.getElementById('apiKey').value=saved;document.getElementById('saveKey').checked=true;document.getElementById('btnForget').style.display='';updateAv(saved);}
   if(localStorage.getItem('doctoralia_onboard_done')){document.getElementById('onboardOverlay').style.display='none';}
@@ -959,11 +981,13 @@ async function callAI(apiKey,messages,maxTokens=1500,temp=0.7){
   const model=document.getElementById('model').value;
   const retries=parseInt(document.getElementById('maxRetries').value)||3;
   for(let attempt=0;attempt<retries;attempt++){
+    if(shouldStop)throw new Error('__STOPPED__');
     try{
       const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model,messages,max_tokens:maxTokens,temperature:temp})});
       if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||'HTTP '+r.status);}
       return(await r.json()).choices[0].message.content;
     }catch(e){
+      if(e.message==='__STOPPED__')throw e;
       if(attempt<retries-1){const w=Math.pow(2,attempt)*1000;log(`⚠ Reintento ${attempt+1}/${retries}: ${e.message} (${w/1000}s)...`,'warn');await new Promise(r=>setTimeout(r,w));}
       else throw e;
     }
@@ -977,7 +1001,7 @@ async function searchSS(q,max){const p=new URLSearchParams({query:q,limit:Math.m
 
 async function searchPM(q,max){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const sp=new URLSearchParams({db:'pubmed',term:`(${q}) AND (English[Language])`,retmax:max,retmode:'json',tool:'doctoralia',email});const pmids=((await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);if(!pmids.length)return[];const fp=new URLSearchParams({db:'pubmed',id:pmids.join(','),retmode:'json',tool:'doctoralia',email});const res=(await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?${fp}`)).json()).result||{};return pmids.map(id=>{const a=res[id]||{};return{title:a.title||'',authors:(a.authors||[]).slice(0,4).map(x=>x.name||''),year:(a.pubdate||'').slice(0,4),journal:a.fulljournalname||a.source||'',abstract:'',citations:0,url:`https://pubmed.ncbi.nlm.nih.gov/${id}/`,doi:(a.articleids||[]).find(x=>x.idtype==='doi')?.value||'',source:'PubMed',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ PubMed: '+e.message,'warn');return[];}}
 
-async function searchAX(q,max){try{const r=await fetch(`https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(q.replace(/\s+/g,'+'))}&start=0&max_results=${max}`);if(!r.ok)throw new Error('arXiv '+r.status);const xml=new DOMParser().parseFromString(await r.text(),'application/xml');return Array.from(xml.querySelectorAll('entry')).map(e=>({title:(e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(),authors:Array.from(e.querySelectorAll('author name')).slice(0,4).map(a=>a.textContent),year:(e.querySelector('published')?.textContent||'').slice(0,4),journal:'arXiv',abstract:(e.querySelector('summary')?.textContent||'').slice(0,500).replace(/\s+/g,' '),citations:0,url:e.querySelector('id')?.textContent||'',doi:e.querySelector("link[title='doi']")?.getAttribute('href')||'',source:'arXiv',oa_status:'gold'})).filter(p=>p.title);}catch(e){log('⚠ arXiv: '+e.message,'warn');return[];}}
+async function searchAX(q,max){try{const arxivUrl=`https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(q.replace(/\s+/g,'+'))}&start=0&max_results=${max}`;const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`);if(!r.ok)throw new Error('arXiv '+r.status);const xml=new DOMParser().parseFromString(await r.text(),'application/xml');return Array.from(xml.querySelectorAll('entry')).map(e=>({title:(e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(),authors:Array.from(e.querySelectorAll('author name')).slice(0,4).map(a=>a.textContent),year:(e.querySelector('published')?.textContent||'').slice(0,4),journal:'arXiv',abstract:(e.querySelector('summary')?.textContent||'').slice(0,500).replace(/\s+/g,' '),citations:0,url:e.querySelector('id')?.textContent||'',doi:e.querySelector("link[title='doi']")?.getAttribute('href')||'',source:'arXiv',oa_status:'gold'})).filter(p=>p.title);}catch(e){log('⚠ arXiv: '+e.message,'warn');return[];}}
 
 async function searchOA(q,max){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access',mailto:email});const r=await fetch(`https://api.openalex.org/works?${p}`);if(!r.ok)throw new Error('OA '+r.status);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,500);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:(w.doi||'').replace('https://doi.org/',''),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){log('⚠ OpenAlex: '+e.message,'warn');return[];}}
 
@@ -1160,9 +1184,12 @@ async function startGeneration(){
   if(document.getElementById('saveKey').checked)localStorage.setItem('doctoralia_apikey',apiKey);
 
   isRunning=true;tStart=Date.now();logCount=0;
+  shouldStop=false;
   document.getElementById('btnGen').disabled=true;
   document.getElementById('btnGen').innerHTML='<span class="pulsing">⏳</span> Generando...';
+  document.getElementById('btnStop').disabled=false;
   document.getElementById('btnGenWizard').disabled=true;
+  document.getElementById('btnStopWizard').disabled=false;
   document.getElementById('logPanel').innerHTML='';
   goWizard(4);showMain('wizard');
   showHP();buildHPSteps();setHPStep(0);
@@ -1214,13 +1241,19 @@ async function startGeneration(){
     setHPStep(0);
     let allPapers=[];
     for(let qi=0;qi<queries.length;qi++){
+      if(shouldStop)throw new Error('__STOPPED__');
       const q=queries[qi];
       log(`🔍 Query ${qi+1}/${queries.length}: "${q.slice(0,50)}"`,'info');
       if(useSS){const p=await searchSS(q,limSS);log(`  SS: ${p.length}`,'ok');allPapers.push(...p);}
+      if(shouldStop)throw new Error('__STOPPED__');
       if(usePM){const p=await searchPM(q,limPM);log(`  PubMed: ${p.length}`,'ok');allPapers.push(...p);}
+      if(shouldStop)throw new Error('__STOPPED__');
       if(useAX){const p=await searchAX(q,limAX);log(`  arXiv: ${p.length}`,'ok');allPapers.push(...p);}
+      if(shouldStop)throw new Error('__STOPPED__');
       if(useOA){const p=await searchOA(q,limOA);log(`  OpenAlex: ${p.length}`,'ok');allPapers.push(...p);}
+      if(shouldStop)throw new Error('__STOPPED__');
       if(useEP){const p=await searchEPMC(q,limEP);log(`  EuropePMC: ${p.length}`,'ok');allPapers.push(...p);}
+      if(shouldStop)throw new Error('__STOPPED__');
       if(useCR){const p=await searchCR(q,limCR);log(`  CrossRef: ${p.length}`,'ok');allPapers.push(...p);}
     }
     allPapers=sortPapers(dedup(allPapers));
@@ -1400,10 +1433,14 @@ async function startGeneration(){
     document.getElementById('outputBadge').style.display='';
 
   }catch(e){
-    log('❌ Error: '+e.message,'err');
-    if(e.message.includes('401'))log('💡 API key incorrecta. Verifica en platform.openai.com/api-keys','warn');
-    else if(e.message.includes('429'))log('💡 Rate limit. Espera unos segundos.','warn');
-    else if(e.message.includes('insufficient_quota'))log('💡 Cuota agotada. Añade créditos en platform.openai.com/billing','warn');
+    if(e.message==='__STOPPED__'){
+      log('⏹ Generación detenida por el usuario.','warn');
+    } else {
+      log('❌ Error: '+e.message,'err');
+      if(e.message.includes('401'))log('💡 API key incorrecta. Verifica en platform.openai.com/api-keys','warn');
+      else if(e.message.includes('429'))log('💡 Rate limit. Espera unos segundos.','warn');
+      else if(e.message.includes('insufficient_quota'))log('💡 Cuota agotada. Añade créditos en platform.openai.com/billing','warn');
+    }
     // Show partial draft if something was generated
     if(Object.keys(sectionTextsStore).length>0){
       log('💾 Guardando borrador parcial...','warn');
@@ -1414,8 +1451,11 @@ async function startGeneration(){
     }
   }finally{
     isRunning=false;
+    shouldStop=false;
     document.getElementById('btnGen').disabled=false;document.getElementById('btnGen').innerHTML='▶ Generar';
+    document.getElementById('btnStop').disabled=true;
     document.getElementById('btnGenWizard').disabled=false;document.getElementById('btnGenWizard').innerHTML='▶ Generar revisión';
+    document.getElementById('btnStopWizard').disabled=true;
   }
 }
 
