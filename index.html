@@ -226,6 +226,38 @@ textarea{resize:vertical;min-height:68px}
 .ll{padding:1px 0;border-bottom:1px solid rgba(255,255,255,.02)}
 .ll.ok{color:#059669}.ll.info{color:#2563eb}.ll.warn{color:#d97706}.ll.err{color:#dc2626}
 
+/* ── MARKDOWN RENDER in sections ── */
+.md-rendered{font-size:13px;line-height:1.8;color:var(--text)}
+.md-rendered h1,.md-rendered h2{font-family:var(--serif);font-weight:400;margin:1em 0 .4em}
+.md-rendered h2{font-size:16px;border-bottom:1px solid var(--border);padding-bottom:4px}
+.md-rendered h3{font-size:14px;font-weight:500;margin:.8em 0 .3em}
+.md-rendered p{margin-bottom:.7em}
+.md-rendered strong{font-weight:500}
+.md-rendered em{font-style:italic}
+.md-rendered ul,.md-rendered ol{padding-left:1.4em;margin-bottom:.7em}
+.md-rendered li{margin-bottom:.2em}
+.md-rendered a{color:var(--accent);text-decoration:none}
+.md-rendered a:hover{text-decoration:underline}
+.md-rendered code{background:#f3f4f6;padding:1px 4px;border-radius:3px;font-family:'Courier New',monospace;font-size:11px}
+.section-view-toggle{display:flex;gap:4px;margin-left:auto}
+.svt-btn{font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--t3);cursor:pointer}
+.svt-btn.active{background:#eff6ff;color:var(--accent);border-color:var(--accent)}
+
+/* ── PROMPT TEST SANDBOX ── */
+.sandbox-overlay{position:fixed;inset:0;background:rgba(17,24,39,.6);z-index:600;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.sandbox-box{background:#ffffff;border:1px solid var(--border);border-radius:var(--rl);box-shadow:var(--shadow-md);width:min(700px,95vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.sandbox-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sandbox-head h3{font-size:15px;font-weight:500}
+.sandbox-body{padding:16px 20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+.sandbox-result{background:#f7f8fa;border:1px solid var(--border);border-radius:var(--r);padding:12px;font-size:12px;color:var(--t2);line-height:1.7;white-space:pre-wrap;min-height:80px;max-height:260px;overflow-y:auto}
+.sandbox-foot{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+
+/* ── PROMPT EDITOR ── */
+.prompt-block{background:#ffffff;border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.prompt-block-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;transition:background .15s}
+.prompt-block-header:hover{background:#f7f8fa}
+.prompt-block-body{padding:10px 14px 14px;border-top:1px solid var(--border);background:#fafafa}
+
 /* ── OUTPUT AREA ── */
 .out-area{background:#ffffff;border:1px solid var(--border);border-radius:var(--rl);padding:24px 28px;font-size:14px;box-shadow:var(--shadow);line-height:1.8;color:var(--text);white-space:pre-wrap;min-height:200px}
 .placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;color:var(--t3);gap:9px;text-align:center}
@@ -280,6 +312,33 @@ textarea{resize:vertical;min-height:68px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}.pulsing{animation:pulse 1.5s infinite}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}.fi{animation:fi .3s ease}
 @keyframes spin{to{transform:rotate(360deg)}}.spinning{animation:spin 1s linear infinite}
+
+/* ── CHECKPOINT MODAL ── */
+.cp-overlay{position:fixed;inset:0;background:rgba(17,24,39,.6);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.cp-box{background:#ffffff;border:1px solid var(--border);border-radius:var(--rl);box-shadow:var(--shadow-md);width:min(780px,95vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.cp-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0}
+.cp-head h3{font-family:var(--serif);font-size:18px;font-weight:400}
+.cp-stats{display:flex;gap:16px;flex-wrap:wrap;padding:12px 22px;background:#f7f8fa;border-bottom:1px solid var(--border);flex-shrink:0}
+.cp-stat{font-size:12px;color:var(--t2)}.cp-stat strong{color:var(--text);font-size:15px;display:block}
+.cp-body{overflow-y:auto;padding:14px 22px;flex:1}
+.cp-table{width:100%;border-collapse:collapse;font-size:12px}
+.cp-table th{text-align:left;padding:6px 8px;color:var(--t3);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);white-space:nowrap}
+.cp-table td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;color:var(--t2)}
+.cp-table tr:last-child td{border-bottom:none}
+.cp-table tr:hover td{background:#f7f8fa}
+.cp-year{font-size:10px;background:#eff6ff;color:var(--accent);padding:1px 5px;border-radius:4px;white-space:nowrap}
+.cp-src{font-size:10px;background:#f3f4f6;color:var(--t3);padding:1px 5px;border-radius:4px;white-space:nowrap}
+.cp-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:10px;flex-wrap:wrap}
+.cp-warn{font-size:12px;color:var(--amber)}
+
+/* ── LIVE AGENT INDICATOR ── */
+.agent-live{display:none;align-items:center;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:13px}
+.agent-live.v{display:flex}
+.agent-pulse{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));animation:pulse 1s infinite;flex-shrink:0}
+.agent-name{font-weight:500;color:var(--accent)}
+.agent-phase{font-size:11px;color:var(--t3);margin-left:auto}
+/* Log always open during generation */
+.log.always-open{display:block}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;height:4px}
@@ -366,8 +425,8 @@ textarea{resize:vertical;min-height:68px}
   <div class="ni-item" onclick="showMain('output')"><span class="ni">📄</span> Artículo generado</div>
   <div class="ni-item" onclick="showMain('gaps')"><span class="ni">🔍</span> Gaps detectados</div>
   <div class="ni-item" onclick="showMain('history')"><span class="ni">🕓</span> Historial</div>
-  <div class="snav">Avanzado</div>
-  <div class="ni-item" onclick="showMain('agents')"><span class="ni">🤖</span> Agentes &amp; Tokens</div>
+  <div class="snav">Configuración</div>
+  <div class="ni-item" onclick="showMain('agents')"><span class="ni">🤖</span> Agentes &amp; Prompts</div>
   <div class="ni-item" onclick="showMain('sources')"><span class="ni">📚</span> Fuentes &amp; Límites</div>
   <div class="snav">Recursos</div>
   <div class="ni-item" onclick="window.open('https://platform.openai.com/api-keys','_blank')"><span class="ni">🔑</span> Obtener API Key</div>
@@ -393,7 +452,6 @@ textarea{resize:vertical;min-height:68px}
     <div class="topbar-actions">
       <button class="btn" onclick="showMain('history')" title="Historial">🕓 Historial</button>
       <button class="btn btn-stop" id="btnStop" onclick="stopGeneration()" disabled title="Detener generación">⏹ Parar</button>
-      <button class="btn btn-primary" id="btnGen" onclick="startGeneration()">▶ Generar</button>
     </div>
   </div>
 
@@ -403,7 +461,7 @@ textarea{resize:vertical;min-height:68px}
     <div class="tab"        id="tab-output"   onclick="showMain('output')">📄 Artículo <span id="outputBadge" class="tab-badge" style="display:none"></span></div>
     <div class="tab"        id="tab-gaps"     onclick="showMain('gaps')">🔍 Gaps</div>
     <div class="tab"        id="tab-history"  onclick="showMain('history')">🕓 Historial</div>
-    <div class="tab"        id="tab-agents"   onclick="showMain('agents')">🤖 Agentes</div>
+    <div class="tab"        id="tab-agents"   onclick="showMain('agents')">🤖 Agentes &amp; Prompts</div>
     <div class="tab"        id="tab-sources"  onclick="showMain('sources')">📚 Fuentes</div>
   </div>
 
@@ -427,7 +485,7 @@ textarea{resize:vertical;min-height:68px}
       </div>
       <div class="privacy-note">✅ Las llamadas van directamente de tu navegador a api.openai.com. Nunca pasan por ningún servidor nuestro.</div>
       <div style="margin-top:8px;display:flex;align-items:center;gap:7px">
-        <input type="checkbox" id="saveKey" style="width:13px;height:13px;accent-color:var(--accent);cursor:pointer" onchange="onSaveKey()">
+        <input type="checkbox" id="saveKey" checked style="width:13px;height:13px;accent-color:var(--accent);cursor:pointer" onchange="onSaveKey()">
         <label for="saveKey" style="font-size:12px;color:var(--t3);cursor:pointer;font-weight:400">Guardar en localStorage (persiste entre sesiones)</label>
       </div>
     </div>
@@ -533,12 +591,16 @@ textarea{resize:vertical;min-height:68px}
         </div>
         <div class="field">
           <label>Cobertura temporal
-            <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Rango de años que se menciona en las instrucciones al redactor. No filtra las APIs directamente, pero orienta el enfoque temporal del artículo.</div></div>
+            <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Rango de años para filtrar artículos. Solo se procesarán papers publicados entre el año de inicio y el año de fin. El filtro se aplica en las APIs y también en el post-procesado.</div></div>
           </label>
-          <div class="slider-row">
-            <input type="range" id="years" min="3" max="25" step="1" value="10" oninput="document.getElementById('yearsv').textContent='Últimos '+this.value+' años'">
-            <span class="slider-val" id="yearsv">Últimos 10 años</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" id="yearFrom" value="2015" min="1990" max="2025" style="width:90px;text-align:center" oninput="updateYearLabel();validateYears()">
+            <span style="color:var(--t3);font-size:13px">—</span>
+            <input type="number" id="yearTo" value="2025" min="1990" max="2026" style="width:90px;text-align:center" oninput="updateYearLabel();validateYears()">
+            <span class="slider-val" id="yearsv" style="font-size:12px;min-width:80px">10 años</span>
           </div>
+          <div class="hint">Filtra las APIs directamente y excluye papers fuera del rango</div>
+          <div id="yearError" style="display:none;font-size:11px;color:var(--red);margin-top:3px">⚠ El año de inicio debe ser menor que el de fin</div>
         </div>
         <div class="field">
           <label>Modelo OpenAI
@@ -560,7 +622,7 @@ textarea{resize:vertical;min-height:68px}
       </div>
 
       <!-- TOGGLES -->
-      <div class="sh">🤖 Agentes adicionales</div>
+      <div class="sh">🤖 Agentes adicionales <span id="extraCostLabel" style="font-weight:400;color:var(--teal);font-size:11px;margin-left:6px"></span></div>
       <div>
         <div class="toggle-row"><div><div class="tl">🔍 Detección de gaps (gap_detector)</div><div class="ts">Identifica brechas en la literatura según las preguntas del scout</div></div><div class="tsw on" id="tog-gaps" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
         <div class="toggle-row"><div><div class="tl">📈 Análisis bibliométrico (data_analyst)</div><div class="ts">Tendencias por año, venues top, temas emergentes</div></div><div class="tsw on" id="tog-biblio" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
@@ -587,6 +649,8 @@ textarea{resize:vertical;min-height:68px}
         <div class="cost-item"><div class="cost-val" id="estWords">8.000</div><div class="cost-lbl">Palabras objetivo</div></div>
         <div class="cost-sep"></div>
         <div class="cost-item"><div class="cost-val" id="estSources">6</div><div class="cost-lbl">Fuentes activas</div></div>
+        <div class="cost-sep"></div>
+        <div class="cost-item"><div class="cost-val" id="estYears" style="font-size:14px">2015–2025</div><div class="cost-lbl">Cobertura años</div></div>
         <div class="cost-warn">⚠️ El coste real depende de los papers encontrados y su longitud. El modelo <span id="estModel">gpt-4o-mini</span> es el más económico.</div>
       </div>
 
@@ -600,15 +664,22 @@ textarea{resize:vertical;min-height:68px}
         <div class="ph" id="ph5"><div class="pnum">5</div>Polish</div>
       </div>
 
+      <!-- LIVE AGENT INDICATOR -->
+      <div class="agent-live" id="agentLive">
+        <div class="agent-pulse"></div>
+        <span>Ejecutando agente: <span class="agent-name" id="agentLiveName">—</span></span>
+        <span class="agent-phase" id="agentLivePhase"></span>
+      </div>
+
       <!-- HUMAN PROGRESS -->
       <div class="human-progress" id="humanProgress">
         <div id="hpSteps"></div>
         <div class="prog-bar-wrap"><div class="prog-fill" id="progFill"></div></div>
       </div>
 
-      <!-- LOG (collapsible) -->
+      <!-- LOG (auto-opens during generation) -->
       <div class="log-wrap">
-        <div class="log-toggle" onclick="toggleLog()">▶ Ver log técnico <span id="logCount" style="color:var(--accent)"></span></div>
+        <div class="log-toggle" id="logToggleBtn" onclick="toggleLog()">▶ Ver log técnico <span id="logCount" style="color:var(--accent)"></span></div>
         <div class="log" id="logPanel"><div class="ll info">Doctoralia listo.</div></div>
       </div>
 
@@ -672,6 +743,10 @@ textarea{resize:vertical;min-height:68px}
     <div class="ibox"><span>ℹ️</span><span>Configura el máximo de tokens por agente. Más tokens = respuestas más largas, mayor coste. Valores del notebook original como referencia.</span></div>
     <div class="sh">🤖 Todos los agentes del pipeline <button onclick="resetAgentDefaults()">↺ Restaurar defaults</button></div>
     <div class="at-wrap"><table class="at"><thead><tr><th style="width:150px">Agente</th><th style="width:110px">Fase</th><th>Rol</th><th style="width:90px">Max tokens</th></tr></thead><tbody id="agentTbody"></tbody></table></div>
+    <div class="divider"></div>
+    <div class="sh">📝 Prompts de los agentes <button onclick="resetAgentPrompts()">↺ Restaurar todos</button></div>
+    <div class="ibox" style="margin-bottom:14px;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)"><span>⚡</span><span>Los cambios en los prompts se aplican <strong>inmediatamente</strong> a la próxima ejecución. No es necesario reiniciar. Usa las variables <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{topic}}</code>, <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{papers}}</code>, <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{text}}</code>, <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{instructions}}</code> y otras variables por agente.</span></div>
+    <div id="promptEditorBody"></div>
     <div class="divider"></div>
     <div class="sh">🌡️ Parámetros globales</div>
     <div class="form-grid" style="max-width:520px">
@@ -755,13 +830,290 @@ const AGENTS=[
 ];
 
 // ═══════════════════════════════════════════════════
-//  STATE
+//  AGENT PROMPTS (editables por el usuario)
 // ═══════════════════════════════════════════════════
+const DEFAULT_AGENT_PROMPTS={
+  scout:`Plan a state-of-the-art review on: "{{topic}}"
+Generate JSON:
+- research_questions: 4-5 questions
+- search_terms: {{maxQ}} specific queries
+- key_areas: 3-5 thematic areas
+JSON only.`,
+
+  signal:`Analyze {{count}} papers.
+
+PAPERS:
+{{papers}}
+
+1. TOP 15 most relevant papers
+2. Key venues
+3. Thematic clusters (3-5)
+4. Temporal trends`,
+
+  scribe:`Write a comprehensive state-of-the-art review on: "{{topic}}"
+
+Based on:
+{{papers}}
+
+Cover: 1) Historical evolution 2) Current state 3) Methods 4) Key findings 5) Gaps
+Cite as [Author et al., Year].{{instructions}}`,
+
+  data_analyst:`Analyze publication trends:
+{{papers}}
+
+1. Volume by year 2. Top venues 3. Topic evolution 4. Emerging areas.`,
+
+  gap_detector:`Analyze gaps for: "{{topic}}"
+
+RESEARCH QUESTIONS:
+{{questions}}
+
+ABSTRACTS:
+{{abstracts}}
+
+For each gap:
+GAP [N]: [title]
+Status: Unanswered / Partially answered
+Evidence: [what exists and why it falls short]
+Recommended study: [type needed]
+
+4-6 specific gaps.`,
+
+  architect:`Design sections for review on: "{{topic}}"
+~{{wc}} words. In {{lang}}.{{instructions}}
+Return JSON: keys=section titles, values=word counts. 6-8 sections. Sum≈{{wc}}.
+JSON only.`,
+
+  crafter:`Write the "{{section}}" section.
+Topic: {{topic}}
+Target: ~{{target}} words{{instructions}}
+Gaps:
+{{gaps}}
+
+Base on:
+{{review}}
+
+Context:
+{{signal}}
+
+Cite as [Author et al., Year].`,
+
+  narrator:`Refine academic voice:
+
+{{text}}
+
+Improve: 1) formal register 2) sentence variety 3) transitions 4) remove redundancies.
+Preserve citations. Return text only.`,
+
+  skeptic:`Flag unsupported claims:
+
+{{text}}
+
+1) Strong claims without citation 2) Overgeneralizations. Be brief.`,
+
+  verifier:`Validate citations:
+
+{{text}}
+
+Refs:
+{{refs}}
+
+Check: text-ref match, consistency.`,
+
+  referee:`Peer review:
+
+{{text}}
+
+Score 1-5: RIGOR, COVERAGE, CLARITY, ORIGINALITY, RELEVANCE.
+End with: OVERALL: X/5`,
+
+  polish:`Final edit:
+
+{{text}}
+
+Fix grammar, terminology, awkward phrasing. Return text only.`,
+
+  enhancer:`Generate:
+
+{{text}}
+
+ABSTRACT (250 words): Background/Methods/Results/Conclusions
+KEYWORDS: 6-8 separated by semicolons
+HIGHLIGHTS: 5 bullets max 85 chars each
+
+Use exact labels: ABSTRACT:, KEYWORDS:, HIGHLIGHTS:`,
+
+  methodology:`Write METHODOLOGY section (PRISMA).
+
+Sources: {{sources}}
+Search terms: {{queries}}
+Period: {{period}}
+Total papers: {{count}}
+
+Cover: search strategy, inclusion/exclusion, screening, quality assessment. ~400 words.`,
+
+  results_synthesizer:`Synthesize:
+
+{{text}}
+
+5-7 bullets: significant findings, consensus, gaps, implications. Max 2 sentences each.`,
+};
+
+// Working copy (editable at runtime)
+const agentPrompts={...DEFAULT_AGENT_PROMPTS};
+
+function getAgentPrompt(id){return agentPrompts[id]||DEFAULT_AGENT_PROMPTS[id]||'';}
+function saveAgentPrompt(id,val){agentPrompts[id]=val;localStorage.setItem('dprompt_'+id,val);}
+function loadSavedPrompts(){Object.keys(DEFAULT_AGENT_PROMPTS).forEach(id=>{const s=localStorage.getItem('dprompt_'+id);if(s)agentPrompts[id]=s;});}
+function resetAgentPrompts(){Object.keys(DEFAULT_AGENT_PROMPTS).forEach(id=>{agentPrompts[id]=DEFAULT_AGENT_PROMPTS[id];localStorage.removeItem('dprompt_'+id);});buildPromptEditor();log('↺ Prompts restaurados a valores por defecto.','warn');}
+
+function buildPromptEditor(){
+  const container=document.getElementById('promptEditorBody');
+  if(!container)return;
+  container.innerHTML=Object.entries(DEFAULT_AGENT_PROMPTS).map(([id,def])=>{
+    const agent=AGENTS.find(a=>a.id===id)||{phase:'—',role:id,badge:'b-r'};
+    const current=agentPrompts[id]||def;
+    const isModified=current!==def;
+    return `<div class="prompt-block" id="pb-${id}">
+      <div class="prompt-block-header" onclick="togglePromptBlock('${id}')">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge ${agent.badge}" style="font-size:10px">${agent.phase}</span>
+          <strong style="font-size:13px">${id}</strong>
+          <span style="font-size:11px;color:var(--t3)">${agent.role.split('—')[0].trim()}</span>
+          ${isModified?'<span style="font-size:10px;color:var(--amber);border:1px solid rgba(245,158,11,.4);border-radius:8px;padding:1px 6px">modificado</span>':''}
+        </div>
+        <span style="color:var(--t3);font-size:12px" id="pb-arrow-${id}">▶</span>
+      </div>
+      <div class="prompt-block-body" id="pb-body-${id}" style="display:none">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Variables disponibles: <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{topic}}</code> <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{papers}}</code> <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{text}}</code> <code style="background:#f3f4f6;padding:1px 4px;border-radius:3px">{{instructions}}</code> y otras específicas por agente</div>
+        <textarea id="prompt-ta-${id}" style="width:100%;min-height:160px;font-family:'Courier New',monospace;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:var(--r);background:#fafafa;resize:vertical" oninput="saveAgentPrompt('${id}',this.value);updatePromptModifiedBadge('${id}')">${current}</textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn-ghost" style="font-size:11px" onclick="resetSinglePrompt('${id}')">↺ Restaurar este prompt</button>
+          <button class="btn-ghost" style="font-size:11px;color:var(--teal);border-color:rgba(5,150,105,.3)" onclick="openPromptSandbox('${id}')">▶ Probar este agente</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePromptBlock(id){
+  const body=document.getElementById('pb-body-'+id);
+  const arrow=document.getElementById('pb-arrow-'+id);
+  if(!body)return;
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(arrow)arrow.textContent=open?'▶':'▼';
+}
+
+function updatePromptModifiedBadge(id){
+  const block=document.getElementById('pb-'+id);
+  if(!block)return;
+  const header=block.querySelector('.prompt-block-header div');
+  const badge=header?.querySelector('span[style*="amber"]');
+  const isModified=agentPrompts[id]!==DEFAULT_AGENT_PROMPTS[id];
+  if(isModified&&!badge){const b=document.createElement('span');b.style.cssText='font-size:10px;color:var(--amber);border:1px solid rgba(245,158,11,.4);border-radius:8px;padding:1px 6px';b.textContent='modificado';header.appendChild(b);}
+  else if(!isModified&&badge)badge.remove();
+}
+
+function openPromptSandbox(agentId){
+  const apiKey=document.getElementById('apiKey').value.trim();
+  if(!apiKey||!apiKey.startsWith('sk-')){alert('Introduce tu API key primero para probar el agente.');return;}
+  const agent=AGENTS.find(a=>a.id===agentId)||{id:agentId,phase:'—'};
+  const overlay=document.createElement('div');
+  overlay.className='sandbox-overlay';
+  overlay.innerHTML=`
+    <div class="sandbox-box">
+      <div class="sandbox-head">
+        <h3>▶ Sandbox — <strong>${agentId}</strong> <span style="font-size:11px;color:var(--t3);font-weight:400">${agent.phase}</span></h3>
+        <button class="btn-ghost" onclick="this.closest('.sandbox-overlay').remove()">✕ Cerrar</button>
+      </div>
+      <div class="sandbox-body">
+        <div>
+          <label style="font-size:11px;color:var(--t2);font-weight:500;display:block;margin-bottom:4px">Prompt (editable antes de probar)</label>
+          <textarea id="sb-prompt" style="width:100%;min-height:120px;font-family:'Courier New',monospace;font-size:11px;padding:8px;border:1px solid var(--border);border-radius:var(--r);resize:vertical;background:#fafafa">${agentPrompts[agentId]||''}</textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--t2);font-weight:500;display:block;margin-bottom:4px">Variables de sustitución (JSON, opcional)</label>
+          <textarea id="sb-vars" style="width:100%;height:52px;font-family:'Courier New',monospace;font-size:11px;padding:8px;border:1px solid var(--border);border-radius:var(--r);resize:none;background:#fafafa" placeholder='{"topic":"inteligencia artificial","papers":"[1] Paper ejemplo...","text":"Texto de prueba..."}'></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--t2);font-weight:500;display:block;margin-bottom:4px">Respuesta del agente</label>
+          <div class="sandbox-result" id="sb-result" style="color:var(--t3);font-style:italic">Pulsa "Ejecutar" para ver la respuesta...</div>
+        </div>
+      </div>
+      <div class="sandbox-foot">
+        <button class="btn btn-success" id="sb-run" onclick="runSandbox('${agentId}',this)">▶ Ejecutar</button>
+        <button class="btn" onclick="this.closest('.sandbox-overlay').remove()">Cerrar</button>
+        <span id="sb-status" style="font-size:11px;color:var(--t3);align-self:center;margin-left:4px"></span>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function runSandbox(agentId,btn){
+  const apiKey=document.getElementById('apiKey').value.trim();
+  const promptRaw=document.getElementById('sb-prompt').value;
+  const varsRaw=document.getElementById('sb-vars').value.trim();
+  const result=document.getElementById('sb-result');
+  const status=document.getElementById('sb-status');
+  let prompt=promptRaw;
+  if(varsRaw){
+    try{
+      const vars=JSON.parse(varsRaw);
+      Object.entries(vars).forEach(([k,v])=>{prompt=prompt.replaceAll('{{'+k+'}}',v);});
+    }catch(e){status.textContent='⚠ JSON de variables inválido';return;}
+  }
+  btn.disabled=true;btn.textContent='⏳ Ejecutando...';
+  status.textContent='';result.textContent='Generando...';result.style.fontStyle='italic';result.style.color='var(--t3)';
+  try{
+    const res=await callAI(apiKey,[{role:'user',content:prompt}],getTokens(agentId)||1000,0.7);
+    result.textContent=res;result.style.fontStyle='normal';result.style.color='var(--text)';
+    status.textContent=`✅ ${res.split(' ').length} palabras`;
+  }catch(e){
+    result.textContent='❌ Error: '+e.message;result.style.color='var(--red)';
+  }
+  btn.disabled=false;btn.textContent='▶ Ejecutar';
+}
+
+function resetSinglePrompt(id){
+  agentPrompts[id]=DEFAULT_AGENT_PROMPTS[id];
+  localStorage.removeItem('dprompt_'+id);
+  const ta=document.getElementById('prompt-ta-'+id);
+  if(ta)ta.value=DEFAULT_AGENT_PROMPTS[id];
+  updatePromptModifiedBadge(id);
+  log(`↺ Prompt "${id}" restaurado.`,'warn');
+}
+
+
 let generatedText='',allPapersStore=[],gapsStore='',sectionTextsStore={};
 let isRunning=false,tStart=0,qualityScore='N/A';
 let currentWizardStep=1;
 let shouldStop=false;
 
+function validateYears(){
+  const f=parseInt(document.getElementById('yearFrom').value);
+  const t=parseInt(document.getElementById('yearTo').value);
+  const err=document.getElementById('yearError');
+  const yf=document.getElementById('yearFrom');
+  const yt=document.getElementById('yearTo');
+  const invalid=!isNaN(f)&&!isNaN(t)&&f>=t;
+  if(err)err.style.display=invalid?'block':'none';
+  if(yf)yf.style.borderColor=invalid?'var(--red)':'';
+  if(yt)yt.style.borderColor=invalid?'var(--red)':'';
+  return !invalid;
+}
+function updateYearLabel(){
+  const f=parseInt(document.getElementById('yearFrom').value)||2015;
+  const t=parseInt(document.getElementById('yearTo').value)||2025;
+  const span=document.getElementById('yearsv');
+  if(span)span.textContent=(t>f?(t-f+1):0)+' años';
+  updateEstimate();
+}
+function getYearRange(){
+  const f=parseInt(document.getElementById('yearFrom')?.value)||2015;
+  const t=parseInt(document.getElementById('yearTo')?.value)||2025;
+  return{from:Math.min(f,t),to:Math.max(f,t)};
+}
 function stopGeneration(){
   shouldStop=true;
   log('⏹ Parando tras el paso actual...','warn');
@@ -791,8 +1143,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   const saved=localStorage.getItem('doctoralia_apikey');
   if(saved){document.getElementById('apiKey').value=saved;document.getElementById('saveKey').checked=true;document.getElementById('btnForget').style.display='';updateAv(saved);}
-  if(localStorage.getItem('doctoralia_onboard_done')){document.getElementById('onboardOverlay').style.display='none';}
+  if(localStorage.getItem('doctoralia_onboard_done')||location.search.includes('topic')||location.hash){document.getElementById('onboardOverlay').style.display='none';}
   buildAgentTable();
+  loadSavedPrompts();
+  buildPromptEditor();
+  updateYearLabel();
   updateEstimate();
   renderHistory();
   buildHPSteps();
@@ -817,7 +1172,7 @@ const PANEL_META={
   output:{title:'Artículo generado',sub:'Edita, descarga o copia tu revisión'},
   gaps:{title:'Gaps detectados',sub:'Brechas en la literatura identificadas automáticamente'},
   history:{title:'Historial',sub:'Revisiones guardadas localmente en tu navegador'},
-  agents:{title:'Agentes & Tokens',sub:'Configura cada agente del pipeline'},
+  agents:{title:'Agentes & Prompts',sub:'Configura tokens, prompts y parámetros de cada agente del pipeline'},
   sources:{title:'Fuentes & Límites',sub:'Bases de datos académicas open access'},
 };
 function showMain(name){
@@ -905,6 +1260,11 @@ function updateEstimate(){
   setEl('estWords',wc.toLocaleString());
   setEl('estSources',sources.length);
   setEl('estModel',model);
+  const yr=getYearRange();
+  setEl('estYears',`${yr.from}–${yr.to}`);
+  // Extra agents cost label
+  const extLabel=document.getElementById('extraCostLabel');
+  if(extLabel){const n=extras.length;extLabel.textContent=n>0?`+${n} agente${n>1?'s':''} activo${n>1?'s':''} · +~$${(n*2000/2*cost.in/1e6+n*2000/2*cost.out/1e6).toFixed(3)}`:'ningún agente extra activo';}
 }
 
 // ═══════════════════════════════════════════════════
@@ -930,7 +1290,24 @@ function showHP(){document.getElementById('humanProgress').classList.add('v');}
 function toggleLog(){
   const l=document.getElementById('logPanel');
   l.classList.toggle('open');
-  document.querySelector('.log-toggle').textContent=l.classList.contains('open')?'▼ Ocultar log técnico ':'▶ Ver log técnico ';
+  const btn=document.getElementById('logToggleBtn');
+  if(btn)btn.textContent=(l.classList.contains('open')?'▼ Ocultar log técnico ':'▶ Ver log técnico ')+(document.getElementById('logCount')?.textContent||'');
+}
+function setLiveAgent(name,phase){
+  const el=document.getElementById('agentLive');
+  const nm=document.getElementById('agentLiveName');
+  const ph=document.getElementById('agentLivePhase');
+  if(!el)return;
+  if(name){el.classList.add('v');if(nm)nm.textContent=name;if(ph)ph.textContent=phase||'';}
+  else{el.classList.remove('v');}
+}
+function openLogPanel(){
+  const l=document.getElementById('logPanel');
+  if(l&&!l.classList.contains('open')){l.classList.add('open');const btn=document.getElementById('logToggleBtn');if(btn)btn.textContent='▼ Ocultar log técnico ';}
+}
+function closeLogIfEmpty(){
+  const l=document.getElementById('logPanel');
+  if(l&&l.classList.contains('open')&&logCount===0){l.classList.remove('open');const btn=document.getElementById('logToggleBtn');if(btn)btn.textContent='▶ Ver log técnico ';}
 }
 
 // ═══════════════════════════════════════════════════
@@ -977,6 +1354,12 @@ function setPhase(n,s){const el=document.getElementById('ph'+n);if(!el)return;el
 // ═══════════════════════════════════════════════════
 //  OPENAI CALL
 // ═══════════════════════════════════════════════════
+async function callAgent(agentId,apiKey,messages,maxTokens,temp){
+  const agent=AGENTS.find(a=>a.id===agentId)||{id:agentId,phase:'—'};
+  setLiveAgent(agentId,agent.phase);
+  try{return await callAI(apiKey,messages,maxTokens,temp);}
+  finally{/* keep indicator until next agent sets it */}
+}
 async function callAI(apiKey,messages,maxTokens=1500,temp=0.7){
   const model=document.getElementById('model').value;
   const retries=parseInt(document.getElementById('maxRetries').value)||3;
@@ -997,17 +1380,19 @@ async function callAI(apiKey,messages,maxTokens=1500,temp=0.7){
 // ═══════════════════════════════════════════════════
 //  SEARCH ENGINES
 // ═══════════════════════════════════════════════════
-async function searchSS(q,max){const p=new URLSearchParams({query:q,limit:Math.min(max,100),offset:0,fields:'paperId,title,abstract,year,authors,venue,citationCount,url,externalIds'});try{const r=await fetch(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`,{headers:{'x-api-key':'uXw4IjvzYg7lLJSR7g3uJ3HQS6rhsgRO6lBbQTWB'}});if(!r.ok)throw new Error('SS '+r.status);return((await r.json()).data||[]).map(p=>({title:p.title||'',authors:(p.authors||[]).slice(0,4).map(a=>a.name),year:String(p.year||''),journal:p.venue||'',abstract:(p.abstract||'').slice(0,500),citations:p.citationCount||0,url:p.url||'',doi:(p.externalIds||{}).DOI||'',source:'Semantic Scholar',oa_status:''}));}catch(e){log('⚠ Semantic Scholar: '+e.message,'warn');return[];}}
+async function searchSS(q,max,yr){const p=new URLSearchParams({query:q,limit:Math.min(max,100),offset:0,fields:'paperId,title,abstract,year,authors,venue,citationCount,url,externalIds'});if(yr){p.set('year',`${yr.from}-${yr.to}`);}try{const r=await fetch(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`,{headers:{'x-api-key':'uXw4IjvzYg7lLJSR7g3uJ3HQS6rhsgRO6lBbQTWB'}});if(!r.ok)throw new Error('SS '+r.status);return((await r.json()).data||[]).map(p=>({title:p.title||'',authors:(p.authors||[]).slice(0,4).map(a=>a.name),year:String(p.year||''),journal:p.venue||'',abstract:(p.abstract||'').slice(0,500),citations:p.citationCount||0,url:p.url||'',doi:(p.externalIds||{}).DOI||'',source:'Semantic Scholar',oa_status:''}));}catch(e){log('⚠ Semantic Scholar: '+e.message,'warn');return[];}}
 
-async function searchPM(q,max){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const sp=new URLSearchParams({db:'pubmed',term:`(${q}) AND (English[Language])`,retmax:max,retmode:'json',tool:'doctoralia',email});const pmids=((await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);if(!pmids.length)return[];const fp=new URLSearchParams({db:'pubmed',id:pmids.join(','),retmode:'json',tool:'doctoralia',email});const res=(await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?${fp}`)).json()).result||{};return pmids.map(id=>{const a=res[id]||{};return{title:a.title||'',authors:(a.authors||[]).slice(0,4).map(x=>x.name||''),year:(a.pubdate||'').slice(0,4),journal:a.fulljournalname||a.source||'',abstract:'',citations:0,url:`https://pubmed.ncbi.nlm.nih.gov/${id}/`,doi:(a.articleids||[]).find(x=>x.idtype==='doi')?.value||'',source:'PubMed',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ PubMed: '+e.message,'warn');return[];}}
+async function searchPM(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{let term=`(${q}) AND (English[Language])`;if(yr)term+=` AND (${yr.from}[PDAT]:${yr.to}[PDAT])`;const sp=new URLSearchParams({db:'pubmed',term,retmax:max,retmode:'json',tool:'doctoralia',email});const pmids=((await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);if(!pmids.length)return[];const fp=new URLSearchParams({db:'pubmed',id:pmids.join(','),retmode:'json',tool:'doctoralia',email});const res=(await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?${fp}`)).json()).result||{};return pmids.map(id=>{const a=res[id]||{};return{title:a.title||'',authors:(a.authors||[]).slice(0,4).map(x=>x.name||''),year:(a.pubdate||'').slice(0,4),journal:a.fulljournalname||a.source||'',abstract:'',citations:0,url:`https://pubmed.ncbi.nlm.nih.gov/${id}/`,doi:(a.articleids||[]).find(x=>x.idtype==='doi')?.value||'',source:'PubMed',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ PubMed: '+e.message,'warn');return[];}}
 
-async function searchAX(q,max){try{const arxivUrl=`https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(q.replace(/\s+/g,'+'))}&start=0&max_results=${max}`;const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`);if(!r.ok)throw new Error('arXiv '+r.status);const xml=new DOMParser().parseFromString(await r.text(),'application/xml');return Array.from(xml.querySelectorAll('entry')).map(e=>({title:(e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(),authors:Array.from(e.querySelectorAll('author name')).slice(0,4).map(a=>a.textContent),year:(e.querySelector('published')?.textContent||'').slice(0,4),journal:'arXiv',abstract:(e.querySelector('summary')?.textContent||'').slice(0,500).replace(/\s+/g,' '),citations:0,url:e.querySelector('id')?.textContent||'',doi:e.querySelector("link[title='doi']")?.getAttribute('href')||'',source:'arXiv',oa_status:'gold'})).filter(p=>p.title);}catch(e){log('⚠ arXiv: '+e.message,'warn');return[];}}
+async function searchAX(q,max,yr){try{let qs=`all:${encodeURIComponent(q.replace(/\s+/g,'+'))}`;if(yr)qs+=`+AND+submittedDate:[${yr.from}01010000+TO+${yr.to}12312359]`;const arxivUrl=`https://export.arxiv.org/api/query?search_query=${qs}&start=0&max_results=${max}`;const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`);if(!r.ok)throw new Error('arXiv '+r.status);const xml=new DOMParser().parseFromString(await r.text(),'application/xml');return Array.from(xml.querySelectorAll('entry')).map(e=>({title:(e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(),authors:Array.from(e.querySelectorAll('author name')).slice(0,4).map(a=>a.textContent),year:(e.querySelector('published')?.textContent||'').slice(0,4),journal:'arXiv',abstract:(e.querySelector('summary')?.textContent||'').slice(0,500).replace(/\s+/g,' '),citations:0,url:e.querySelector('id')?.textContent||'',doi:e.querySelector("link[title='doi']")?.getAttribute('href')||'',source:'arXiv',oa_status:'gold'})).filter(p=>p.title);}catch(e){log('⚠ arXiv: '+e.message,'warn');return[];}}
 
-async function searchOA(q,max){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access',mailto:email});const r=await fetch(`https://api.openalex.org/works?${p}`);if(!r.ok)throw new Error('OA '+r.status);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,500);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:(w.doi||'').replace('https://doi.org/',''),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){log('⚠ OpenAlex: '+e.message,'warn');return[];}}
+async function searchOA(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access',mailto:email});if(yr){p.set('filter',`publication_year:${yr.from}-${yr.to}`);}const r=await fetch(`https://api.openalex.org/works?${p}`);if(!r.ok)throw new Error('OA '+r.status);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,500);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:(w.doi||'').replace('https://doi.org/',''),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){log('⚠ OpenAlex: '+e.message,'warn');return[];}}
 
-async function searchEPMC(q,max){try{const p=new URLSearchParams({query:q,format:'json',pageSize:Math.min(max,100),resultType:'core',sort:'CITED desc'});const r=await fetch(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?${p}`);if(!r.ok)throw new Error('EPMC '+r.status);return(((await r.json()).resultList||{}).result||[]).map(a=>({title:a.title||'',authors:(a.authorString||'').split(',').slice(0,4).map(s=>s.trim()),year:String(a.pubYear||''),journal:a.journalTitle||'',abstract:(a.abstractText||'').slice(0,500),citations:a.citedByCount||0,url:a.pmid?`https://europepmc.org/article/MED/${a.pmid}`:(a.doi?`https://doi.org/${a.doi}`:''),doi:a.doi||'',source:'Europe PMC',oa_status:a.inEPMC==='Y'?'open':''})).filter(p=>p.title);}catch(e){log('⚠ EuropePMC: '+e.message,'warn');return[];}}
+async function searchEPMC(q,max,yr){try{let query=q;if(yr)query+=` AND (PUB_YEAR:[${yr.from} TO ${yr.to}])`;const p=new URLSearchParams({query,format:'json',pageSize:Math.min(max,100),resultType:'core',sort:'CITED desc'});const r=await fetch(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?${p}`);if(!r.ok)throw new Error('EPMC '+r.status);return(((await r.json()).resultList||{}).result||[]).map(a=>({title:a.title||'',authors:(a.authorString||'').split(',').slice(0,4).map(s=>s.trim()),year:String(a.pubYear||''),journal:a.journalTitle||'',abstract:(a.abstractText||'').slice(0,500),citations:a.citedByCount||0,url:a.pmid?`https://europepmc.org/article/MED/${a.pmid}`:(a.doi?`https://doi.org/${a.doi}`:''),doi:a.doi||'',source:'Europe PMC',oa_status:a.inEPMC==='Y'?'open':''})).filter(p=>p.title);}catch(e){log('⚠ EuropePMC: '+e.message,'warn');return[];}}
 
-async function searchCR(q,max){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({query:q,rows:Math.min(max,100),select:'DOI,title,author,published,container-title,abstract,is-referenced-by-count,URL',mailto:email});const r=await fetch(`https://api.crossref.org/works?${p}`);if(!r.ok)throw new Error('CR '+r.status);return(((await r.json()).message||{}).items||[]).map(w=>{const year=w.published?.['date-parts']?.[0]?.[0]||'';const doi=w.DOI||'';return{title:(Array.isArray(w.title)?w.title[0]:w.title)||'',authors:(w.author||[]).slice(0,4).map(a=>`${a.family||''} ${(a.given||'')[0]||''}`.trim()),year:String(year),journal:(Array.isArray(w['container-title'])?w['container-title'][0]:w['container-title'])||'',abstract:(w.abstract||'').replace(/<[^>]+>/g,'').slice(0,500),citations:w['is-referenced-by-count']||0,url:doi?`https://doi.org/${doi}`:'',doi,source:'CrossRef',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ CrossRef: '+e.message,'warn');return[];}}
+async function searchCR(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({query:q,rows:Math.min(max,100),select:'DOI,title,author,published,container-title,abstract,is-referenced-by-count,URL',mailto:email});if(yr){p.set('filter',`from-pub-date:${yr.from},until-pub-date:${yr.to}`);}const r=await fetch(`https://api.crossref.org/works?${p}`);if(!r.ok)throw new Error('CR '+r.status);return(((await r.json()).message||{}).items||[]).map(w=>{const year=w.published?.['date-parts']?.[0]?.[0]||'';const doi=w.DOI||'';return{title:(Array.isArray(w.title)?w.title[0]:w.title)||'',authors:(w.author||[]).slice(0,4).map(a=>`${a.family||''} ${(a.given||'')[0]||''}`.trim()),year:String(year),journal:(Array.isArray(w['container-title'])?w['container-title'][0]:w['container-title'])||'',abstract:(w.abstract||'').replace(/<[^>]+>/g,'').slice(0,500),citations:w['is-referenced-by-count']||0,url:doi?`https://doi.org/${doi}`:'',doi,source:'CrossRef',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ CrossRef: '+e.message,'warn');return[];}}
+
+function filterByYear(papers,yr){if(!yr)return papers;return papers.filter(p=>{const y=parseInt(p.year);return!isNaN(y)&&y>=yr.from&&y<=yr.to;});}
 
 function dedup(papers){const seen=new Set();return papers.filter(p=>{const k=p.title.toLowerCase().slice(0,50).replace(/\s+/g,'');if(!k||seen.has(k))return false;seen.add(k);return true;});}
 function sortPapers(papers){const by=document.getElementById('sortPapers')?.value||'citations';if(by==='citations')return papers.sort((a,b)=>(b.citations||0)-(a.citations||0));if(by==='year')return papers.sort((a,b)=>parseInt(b.year||0)-parseInt(a.year||0));return papers.sort((a,b)=>a.source.localeCompare(b.source));}
@@ -1088,7 +1473,27 @@ function clearHistory(){localStorage.removeItem('doctoralia_history');renderHist
 // ═══════════════════════════════════════════════════
 //  RENDER OUTPUT WITH EDITABLE SECTIONS
 // ═══════════════════════════════════════════════════
-function renderOutputSections(sections,papers,gaps,meta){
+function renderMd(md){
+  if(!md)return '';
+  let h=md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\[(.+?)\]\((https?:\/\/.+?)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/^\s*[-*] (.+)$/gm,'<li>$1</li>')
+    .replace(/^\s*\d+\. (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>')
+    .replace(/<\/ul>\s*<ul>/g,'')
+    .replace(/^(?!<[hul]).+/gm,t=>t.trim()?`<p>${t}</p>`:'');
+  return '<div class="md-rendered">'+h+'</div>';
+}
+
+function renderOutputSections(sections,papers,gaps,meta,filteredOut){
+  filteredOut=filteredOut||[];
   const oa=document.getElementById('outputArea');oa.innerHTML='';
   const container=document.createElement('div');container.className='fi';
 
@@ -1102,18 +1507,24 @@ function renderOutputSections(sections,papers,gaps,meta){
   // Build editable sections
   Object.entries(sections).forEach(([title,content])=>{
     const block=document.createElement('div');block.className='section-block';
+    const safeId=title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
     block.innerHTML=`
       <div class="section-header" onclick="toggleSection(this)">
         <span class="section-title-text">📄 ${title}</span>
         <div class="section-actions" onclick="event.stopPropagation()">
+          <div class="section-view-toggle">
+            <button class="svt-btn active" id="vbtn-${safeId}" onclick="setSectionView('${safeId}','view',this)">Vista</button>
+            <button class="svt-btn" id="ebtn-${safeId}" onclick="setSectionView('${safeId}','edit',this)">Editar</button>
+          </div>
           <button class="btn-ghost" onclick="openRegenPanel(this)" title="Reescribir sección">🔄 Reescribir</button>
           <span style="font-size:12px;color:var(--t3)">${content.split(/\s+/).length} palabras</span>
           <span style="color:var(--t3);font-size:12px">▼</span>
         </div>
       </div>
       <div class="section-body">
-        <textarea oninput="updateSectionText('${title}',this.value)">${content}</textarea>
-        <div class="regen-panel" id="rp-${title.replace(/\s+/g,'_')}">
+        <div id="view-${safeId}" class="section-view">${renderMd(content)}</div>
+        <textarea id="edit-${safeId}" style="display:none;width:100%;background:transparent;border:none;color:var(--text);font-family:var(--ff);font-size:13px;line-height:1.7;resize:vertical;min-height:120px;outline:none;padding:0" oninput="updateSectionText('${title}',this.value)">${content}</textarea>
+        <div class="regen-panel" id="rp-${safeId}">
           <div style="font-size:12px;color:var(--amber);margin-bottom:6px">🔄 Reescribir "${title}"</div>
           <textarea placeholder="Feedback opcional: hazla más corta, añade ejemplos clínicos, enfoca en metodología..."></textarea>
           <div style="display:flex;gap:8px;margin-top:8px">
@@ -1128,7 +1539,7 @@ function renderOutputSections(sections,papers,gaps,meta){
   // References
   if(papers.length){
     const refBlock=document.createElement('div');refBlock.className='section-block';
-    refBlock.innerHTML=`<div class="section-header"><span class="section-title-text">📚 Referencias (${papers.length})</span><span style="font-size:12px;color:var(--t3)">▼</span></div><div class="section-body" style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8">${papers.slice(0,40).map((p,i)=>{const a=p.authors.slice(0,3).join(', ')+(p.authors.length>3?' et al.':'');return`[${i+1}] ${a||'Unknown'}. "${p.title}". ${p.journal||''}${p.year?', '+p.year:''}. ${p.doi?'<a href="https://doi.org/'+p.doi+'" target="_blank" style="color:var(--accent)">DOI</a>':''} ${p.oa_status?'<span style="color:var(--teal);font-size:10px">✅ '+p.oa_status+'</span>':''}<br>`;}).join('')}</div>`;
+    refBlock.innerHTML=`<div class="section-header"><span class="section-title-text">📚 Referencias (${papers.length})</span><span style="font-size:12px;color:var(--t3)">▼</span></div><div class="section-body" style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8">${papers.slice(0,40).map((p,i)=>{const a=p.authors.slice(0,3).join(', ')+(p.authors.length>3?' et al.':'');return`[${i+1}] ${a||'Unknown'}. "${p.title}". ${p.journal||''}${p.year?', '+p.year:''}. ${p.doi?'<a href="https://doi.org/'+p.doi+'" target="_blank" style="color:var(--accent)">DOI</a>':''} ${p.oa_status?'<span style="color:var(--teal);font-size:10px">✅ '+p.oa_status+'</span>':''}<br>`;}).join('')}${filteredOut.length>0?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);color:var(--t3)"><strong style="color:var(--amber)">⏱ ${filteredOut.length} papers excluidos por rango temporal:</strong><br>${filteredOut.slice(0,10).map(p=>`${p.title.slice(0,60)} (${p.year||'?'}) — ${p.source}`).join('<br>')}${filteredOut.length>10?`<br>… y ${filteredOut.length-10} más.`:''}</div>`:''}</div>`;
     container.appendChild(refBlock);
   }
 
@@ -1143,8 +1554,29 @@ function renderOutputSections(sections,papers,gaps,meta){
   document.getElementById('outputBadge').style.display='';
 }
 
+function setSectionView(id,mode,btn){
+  const viewEl=document.getElementById('view-'+id);
+  const editEl=document.getElementById('edit-'+id);
+  const vBtn=document.getElementById('vbtn-'+id);
+  const eBtn=document.getElementById('ebtn-'+id);
+  if(!viewEl||!editEl)return;
+  if(mode==='view'){
+    viewEl.style.display='';editEl.style.display='none';
+    if(vBtn)vBtn.classList.add('active');if(eBtn)eBtn.classList.remove('active');
+  }else{
+    viewEl.style.display='none';editEl.style.display='';editEl.focus();
+    if(eBtn)eBtn.classList.add('active');if(vBtn)vBtn.classList.remove('active');
+  }
+}
 function toggleSection(header){const body=header.nextElementSibling;body.style.display=body.style.display==='none'?'':'none';}
-function updateSectionText(title,val){sectionTextsStore[title]=val;rebuildFullText();}
+function updateSectionText(title,val){
+  sectionTextsStore[title]=val;
+  rebuildFullText();
+  // Update rendered view if visible
+  const safeId=title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+  const viewEl=document.getElementById('view-'+safeId);
+  if(viewEl&&viewEl.style.display!=='none')viewEl.innerHTML=renderMd(val);
+}
 function rebuildFullText(){generatedText=Object.entries(sectionTextsStore).map(([k,v])=>`## ${k}\n\n${v}`).join('\n\n');}
 function openRegenPanel(btn){const rp=btn.closest('.section-body')?.querySelector('.regen-panel');if(rp)rp.classList.toggle('open');}
 
@@ -1162,14 +1594,80 @@ async function regenSection(title,btn){
       {role:'user',content:`Rewrite the "${title}" section of a state-of-the-art review.\n${feedback?'User feedback: '+feedback+'\n':''}\nBase on this context:\n${fmt(allPapersStore,15)}\n\nWrite ~${Math.max(400,Math.floor(parseInt(document.getElementById('wc').value)/Object.keys(sectionTextsStore).length))} words. Academic tone. Cite as [Author et al., Year].`}
     ],getTokens('crafter'),0.7);
     sectionTextsStore[title]=newContent;
-    // Update textarea
-    const textareas=document.querySelectorAll('.section-header');
-    textareas.forEach(h=>{if(h.querySelector('.section-title-text')?.textContent.includes(title)){const ta=h.nextElementSibling?.querySelector('textarea');if(ta)ta.value=newContent;}});
+    // Update textarea and rendered view
+    const safeId=title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    const ta=document.getElementById('edit-'+safeId);
+    const vw=document.getElementById('view-'+safeId);
+    if(ta)ta.value=newContent;
+    if(vw)vw.innerHTML=renderMd(newContent);
     rebuildFullText();
     rpanel.classList.remove('open');
     log(`✅ Sección "${title}" regenerada.`,'ok');
   }catch(e){log('❌ Regenerar: '+e.message,'err');}
   finally{btn.textContent=orig;btn.disabled=false;}
+}
+
+// ═══════════════════════════════════════════════════
+//  CHECKPOINT — papers preview before agents run
+// ═══════════════════════════════════════════════════
+function checkpointPapers(papers,topic,yr){
+  return new Promise(resolve=>{
+    // Build sources breakdown
+    const srcCount={};papers.forEach(p=>{srcCount[p.source]=(srcCount[p.source]||0)+1;});
+    const srcBreakdown=Object.entries(srcCount).map(([s,n])=>`${s}: ${n}`).join(' · ');
+    const yearRange=papers.filter(p=>p.year).map(p=>parseInt(p.year));
+    const minY=yearRange.length?Math.min(...yearRange):'—';
+    const maxY=yearRange.length?Math.max(...yearRange):'—';
+    const withAbstract=papers.filter(p=>p.abstract&&p.abstract.length>20).length;
+
+    const overlay=document.createElement('div');
+    overlay.className='cp-overlay';
+    overlay.innerHTML=`
+      <div class="cp-box">
+        <div class="cp-head">
+          <div>
+            <h3>📋 Papers recuperados — ¿continuar?</h3>
+            <div style="font-size:12px;color:var(--t2);margin-top:3px">Revisa los resultados antes de lanzar los agentes de escritura</div>
+          </div>
+        </div>
+        <div class="cp-stats">
+          <div class="cp-stat"><strong>${papers.length}</strong>papers totales</div>
+          <div class="cp-stat"><strong>${withAbstract}</strong>con abstract</div>
+          <div class="cp-stat"><strong>${minY}–${maxY}</strong>rango real de años</div>
+          <div class="cp-stat" style="flex:1;min-width:200px"><strong style="font-size:12px;font-weight:400">${srcBreakdown}</strong>por fuente</div>
+        </div>
+        <div class="cp-body">
+          ${papers.length===0?`<div class="placeholder"><div class="bi">⚠️</div><p>No se encontraron papers. Considera ampliar el rango de años o cambiar las palabras clave.</p></div>`:`
+          <table class="cp-table">
+            <thead><tr><th style="width:40%">Título</th><th>Autores</th><th>Año</th><th>Citas</th><th>Fuente</th></tr></thead>
+            <tbody>${papers.slice(0,30).map(p=>{
+              const a=(p.authors||[]).slice(0,2).join(', ')+(p.authors&&p.authors.length>2?' et al.':'');
+              return `<tr>
+                <td style="color:var(--text)">${p.title.slice(0,70)}${p.title.length>70?'…':''}</td>
+                <td>${a||'—'}</td>
+                <td><span class="cp-year">${p.year||'?'}</span></td>
+                <td style="text-align:right">${p.citations||0}</td>
+                <td><span class="cp-src">${p.source.replace('Semantic Scholar','SS').replace('Europe PMC','EPMC').replace('OpenAlex','OA')}</span></td>
+              </tr>`;}).join('')}
+            </tbody>
+          </table>
+          ${papers.length>30?`<div style="font-size:11px;color:var(--t3);padding:8px 0">… y ${papers.length-30} más. Se muestran los 30 más citados.</div>`:''}`}
+        </div>
+        <div class="cp-foot">
+          <div>
+            ${papers.length<10?`<span class="cp-warn">⚠ Pocos papers recuperados. El artículo puede ser superficial.</span>`:''}
+            ${papers.length>200?`<span class="cp-warn">⚠ Muchos papers. Considera reducir los límites por fuente.</span>`:''}
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-danger" id="cpAbort">✕ Cancelar y ajustar</button>
+            <button class="btn btn-primary" id="cpContinue">▶ Continuar con ${papers.length} papers</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById('cpContinue').onclick=()=>{overlay.remove();resolve(true);};
+    document.getElementById('cpAbort').onclick=()=>{overlay.remove();resolve(false);};
+  });
 }
 
 // ═══════════════════════════════════════════════════
@@ -1181,16 +1679,19 @@ async function startGeneration(){
   const topic=document.getElementById('topic').value.trim();
   if(!apiKey||!apiKey.startsWith('sk-')){alert('Introduce una API key de OpenAI válida (sk-...)');return;}
   if(!topic){alert('Introduce el tema de la revisión');showMain('wizard');goWizard(1);document.getElementById('topic').focus();return;}
+  if(!validateYears()){alert('El año de inicio debe ser menor que el de fin. Corrígelo antes de continuar.');showMain('wizard');goWizard(3);return;}
   if(document.getElementById('saveKey').checked)localStorage.setItem('doctoralia_apikey',apiKey);
 
   isRunning=true;tStart=Date.now();logCount=0;
   shouldStop=false;
-  document.getElementById('btnGen').disabled=true;
-  document.getElementById('btnGen').innerHTML='<span class="pulsing">⏳</span> Generando...';
+  
+  
   document.getElementById('btnStop').disabled=false;
   document.getElementById('btnGenWizard').disabled=true;
   document.getElementById('btnStopWizard').disabled=false;
   document.getElementById('logPanel').innerHTML='';
+  logCount=0;
+  openLogPanel();
   goWizard(4);showMain('wizard');
   showHP();buildHPSteps();setHPStep(0);
   [1,2,3,4,5].forEach(n=>setPhase(n,''));
@@ -1228,10 +1729,13 @@ async function startGeneration(){
     setPhase(1,'active');setHPStep(0);
     log('📚 ── FASE 1: RESEARCH ──────────────────────','info');
 
+    const yr=getYearRange();
+    log(`📅 Rango temporal: ${yr.from}–${yr.to}`,'info');
+
     log('🤖 Scout: planificando búsqueda...','info');
     let plan={research_questions:[],search_terms:[topic+(kw?' '+kw:'')],key_areas:[]};
     try{
-      const raw=await callAI(apiKey,[{role:'user',content:`Plan a state-of-the-art review on: "${topic}"\nGenerate JSON:\n- research_questions: 4-5 questions\n- search_terms: ${maxQ} specific queries\n- key_areas: 3-5 thematic areas\nJSON only.`}],getTokens('scout'),0.5);
+      const raw=await callAgent('scout',apiKey,[{role:'user',content:getAgentPrompt('scout').replace('{{topic}}',topic).replace('{{maxQ}}',maxQ)}],getTokens('scout'),0.5);
       plan=JSON.parse(raw.replace(/```json|```/g,'').trim());
       log(`✅ Scout: ${(plan.key_areas||[]).join(' · ')}`,'ok');
     }catch(e){log('⚠ Scout JSON fallido, usando query directa.','warn');}
@@ -1244,36 +1748,45 @@ async function startGeneration(){
       if(shouldStop)throw new Error('__STOPPED__');
       const q=queries[qi];
       log(`🔍 Query ${qi+1}/${queries.length}: "${q.slice(0,50)}"`,'info');
-      if(useSS){const p=await searchSS(q,limSS);log(`  SS: ${p.length}`,'ok');allPapers.push(...p);}
+      if(useSS){const p=await searchSS(q,limSS,yr);log(`  SS: ${p.length}`,'ok');allPapers.push(...p);}
       if(shouldStop)throw new Error('__STOPPED__');
-      if(usePM){const p=await searchPM(q,limPM);log(`  PubMed: ${p.length}`,'ok');allPapers.push(...p);}
+      if(usePM){const p=await searchPM(q,limPM,yr);log(`  PubMed: ${p.length}`,'ok');allPapers.push(...p);}
       if(shouldStop)throw new Error('__STOPPED__');
-      if(useAX){const p=await searchAX(q,limAX);log(`  arXiv: ${p.length}`,'ok');allPapers.push(...p);}
+      if(useAX){const p=await searchAX(q,limAX,yr);log(`  arXiv: ${p.length}`,'ok');allPapers.push(...p);}
       if(shouldStop)throw new Error('__STOPPED__');
-      if(useOA){const p=await searchOA(q,limOA);log(`  OpenAlex: ${p.length}`,'ok');allPapers.push(...p);}
+      if(useOA){const p=await searchOA(q,limOA,yr);log(`  OpenAlex: ${p.length}`,'ok');allPapers.push(...p);}
       if(shouldStop)throw new Error('__STOPPED__');
-      if(useEP){const p=await searchEPMC(q,limEP);log(`  EuropePMC: ${p.length}`,'ok');allPapers.push(...p);}
+      if(useEP){const p=await searchEPMC(q,limEP,yr);log(`  EuropePMC: ${p.length}`,'ok');allPapers.push(...p);}
       if(shouldStop)throw new Error('__STOPPED__');
-      if(useCR){const p=await searchCR(q,limCR);log(`  CrossRef: ${p.length}`,'ok');allPapers.push(...p);}
+      if(useCR){const p=await searchCR(q,limCR,yr);log(`  CrossRef: ${p.length}`,'ok');allPapers.push(...p);}
     }
     allPapers=sortPapers(dedup(allPapers));
+    const beforeFilter=allPapers.length;
+    const allPapersBeforeFilter=[...allPapers];
+    allPapers=filterByYear(allPapers,yr);
+    const filteredOutPapers=allPapersBeforeFilter.filter(p=>!allPapers.includes(p));
+    if(beforeFilter!==allPapers.length)log(`🗓 Filtro temporal: ${beforeFilter} → ${allPapers.length} papers (${yr.from}–${yr.to})`,'ok');
     allPapersStore=allPapers;
     log(`📊 Total deduplicado: ${allPapers.length} papers`,'ok');
+
+    // ── CHECKPOINT #3: mostrar papers antes de continuar ──
+    const continuar=await checkpointPapers(allPapers,topic,yr);
+    if(!continuar)throw new Error('__STOPPED__');
 
     const papersFormatted=fmt(allPapers,topP);
 
     setHPStep(1);
     log('🤖 Signal: análisis de relevancia...','info');
-    const signalAnalysis=await callAI(apiKey,[
+    const signalAnalysis=await callAgent('signal',apiKey,[
       {role:'system',content:'You are a Citation Finder and academic signal analyst.'},
-      {role:'user',content:`Analyze ${allPapers.length} papers.\n\nPAPERS:\n${papersFormatted}\n\n1. TOP 15 most relevant papers\n2. Key venues\n3. Thematic clusters (3-5)\n4. Temporal trends`}
+      {role:'user',content:getAgentPrompt('signal').replace('{{count}}',allPapers.length).replace('{{papers}}',papersFormatted)}
     ],getTokens('signal'),temp);
     log('✅ Signal completado.','ok');
 
     log('🤖 Scribe: revisión base comprehensiva...','info');
-    const mainReview=await callAI(apiKey,[
+    const mainReview=await callAgent('scribe',apiKey,[
       {role:'system',content:`You are a State of the Art Reviewer. Write in ${lang}.`},
-      {role:'user',content:`Write a comprehensive state-of-the-art review on: "${topic}"\n\nBased on:\n${papersFormatted}\n\nCover: 1) Historical evolution 2) Current state 3) Methods 4) Key findings 5) Gaps\nCite as [Author et al., Year].${instruct?'\n\nInstructions: '+instruct:''}`}
+      {role:'user',content:getAgentPrompt('scribe').replace('{{topic}}',topic).replace('{{papers}}',papersFormatted).replace('{{instructions}}',instruct?'\n\nInstructions: '+instruct:'')}
     ],getTokens('scribe'),temp);
     log(`✅ Scribe: ${mainReview.split(' ').length} palabras.`,'ok');
 
@@ -1281,7 +1794,7 @@ async function startGeneration(){
     if(doBiblio){
       log('🤖 DataAnalyst: tendencias bibliométricas...','info');
       const pd=allPapers.slice(0,50).map(p=>`- ${p.title} (${p.year||'?'}) | ${p.journal||'?'} | Cites: ${p.citations} | ${p.source}`).join('\n');
-      trendAnalysis=await callAI(apiKey,[{role:'system',content:`You are an Academic Trend Analyzer. Write in ${lang}.`},{role:'user',content:`Analyze publication trends:\n${pd}\n\n1. Volume by year 2. Top venues 3. Topic evolution 4. Emerging areas.`}],getTokens('data_analyst'),temp);
+      trendAnalysis=await callAgent('data_analyst',apiKey,[{role:'system',content:`You are an Academic Trend Analyzer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('data_analyst').replace('{{papers}}',pd)}],getTokens('data_analyst'),temp);
       log('✅ DataAnalyst completado.','ok');
     }
 
@@ -1290,7 +1803,7 @@ async function startGeneration(){
       log('🤖 GapDetector: identificando brechas...','info');
       const abstracts=allPapers.slice(0,30).map((p,i)=>`[${i+1}] ${p.title} (${p.year||'?'}): ${p.abstract||'(no abstract)'}`).join('\n\n');
       const rqs=(plan.research_questions||[]).map(q=>`- ${q}`).join('\n')||`- What is the current state of ${topic}?`;
-      gapsText=await callAI(apiKey,[{role:'system',content:`You are a Research Gap Identifier. Write in ${lang}.`},{role:'user',content:`Analyze gaps for: "${topic}"\n\nRESEARCH QUESTIONS:\n${rqs}\n\nABSTRACTS:\n${abstracts}\n\nFor each gap:\nGAP [N]: [title]\nStatus: Unanswered / Partially answered\nEvidence: [what exists and why it falls short]\nRecommended study: [type needed]\n\n4-6 specific gaps.`}],getTokens('gap_detector'),temp);
+      gapsText=await callAgent('gap_detector',apiKey,[{role:'system',content:`You are a Research Gap Identifier. Write in ${lang}.`},{role:'user',content:getAgentPrompt('gap_detector').replace('{{topic}}',topic).replace('{{questions}}',rqs).replace('{{abstracts}}',abstracts)}],getTokens('gap_detector'),temp);
       gapsStore=gapsText;
       log('✅ GapDetector completado.','ok');
     }
@@ -1302,7 +1815,7 @@ async function startGeneration(){
     log('🏗️ ── FASE 2: STRUCTURE ──────────────────────','info');
     let structure={"Introduction":800,"Background":1200,"Current State of the Art":2000,"Methodological Approaches":1500,"Key Findings":1200,"Research Gaps and Future Directions":700,"Discussion":600,"Conclusion":500};
     try{
-      const sr=await callAI(apiKey,[{role:'user',content:`Design sections for review on: "${topic}"\n~${wc} words. In ${lang}.\n${instruct?'Instructions: '+instruct+'\n':''}\nReturn JSON: keys=section titles, values=word counts. 6-8 sections. Sum≈${wc}.\nJSON only.`}],getTokens('architect'),0.5);
+      const sr=await callAgent('architect',apiKey,[{role:'user',content:getAgentPrompt('architect').replace(/{{topic}}/g,topic).replace(/{{wc}}/g,wc).replace(/{{lang}}/g,lang).replace(/{{instructions}}/g,instruct?'\nInstructions: '+instruct+'\n':'')}],getTokens('architect'),0.5);
       const parsed=JSON.parse(sr.replace(/```json|```/g,'').trim());
       if(typeof parsed==='object'&&Object.keys(parsed).length>3)structure=parsed;
       log(`✅ Architect: ${Object.keys(structure).join(' → ')}`,'ok');
@@ -1319,19 +1832,18 @@ async function startGeneration(){
     for(let i=0;i<sections.length;i++){
       const sec=sections[i];const tgt=structure[sec];
       log(`✍️ Crafter: "${sec}" (~${tgt} palabras)...`,'info');
-      const text=await callAI(apiKey,[
+      const text=await callAgent('crafter',apiKey,[
         {role:'system',content:`You are an Academic Section Writer. Write in ${lang}. Style: ${cite}.`},
-        {role:'user',content:`Write the "${sec}" section.\nTopic: ${topic}\nTarget: ~${tgt} words\n${instruct?'Instructions: '+instruct+'\n':''}\nGaps:\n${gapsText?gapsText.slice(0,600):'N/A'}\n\nBase on:\n${mainReview}\n\nContext:\n${signalAnalysis}\n\nCite as [Author et al., Year].`}
+        {role:'user',content:getAgentPrompt('crafter').replace('{{section}}',sec).replace('{{topic}}',topic).replace('{{target}}',tgt).replace('{{instructions}}',instruct?'\nInstructions: '+instruct:'').replace('{{gaps}}',gapsText?gapsText.slice(0,600):'N/A').replace('{{review}}',mainReview).replace('{{signal}}',signalAnalysis)}
       ],getTokens('crafter'),temp);
 
-      if(doThread&&prevContent&&i>0){await callAI(apiKey,[{role:'user',content:`Check coherence:\nPREV (last 400):\n${prevContent.slice(-400)}\nCURR (first 400):\n${text.slice(0,400)}\nNote issues briefly.`}],getTokens('thread'),0.3);}
+      if(doThread&&prevContent&&i>0){await callAgent('thread',apiKey,[{role:'user',content:`Check coherence:\nPREV (last 400):\n${prevContent.slice(-400)}\nCURR (first 400):\n${text.slice(0,400)}\nNote issues briefly.`}],getTokens('thread'),0.3);}
 
       let finalText=text;
-      try{finalText=await callAI(apiKey,[{role:'system',content:`You are a Voice Refiner. Write in ${lang}.`},{role:'user',content:`Refine academic voice:\n\n${text}\n\nImprove: 1) formal register 2) sentence variety 3) transitions 4) remove redundancies.\nPreserve citations. Return text only.`}],getTokens('narrator'),temp);}catch(e){}
+      try{finalText=await callAgent('narrator',apiKey,[{role:'system',content:`You are a Voice Refiner. Write in ${lang}.`},{role:'user',content:getAgentPrompt('narrator').replace('{{text}}',text)}],getTokens('narrator'),temp);}catch(e){}
 
       sectionTexts[sec]=finalText;prevContent=finalText;
       log(`✅ "${sec}": ${finalText.split(' ').length} palabras`,'ok');
-      // Autosave after each section
       saveDraft(sectionTexts,allPapers,gapsText,{topic,time:Math.round((Date.now()-tStart)/1000)+'s'});
     }
     sectionTextsStore={...sectionTexts};
@@ -1346,12 +1858,12 @@ async function startGeneration(){
       const fullText=Object.values(sectionTexts).join('\n\n');
       const chunks=[];for(let i=0;i<fullText.length;i+=5000)chunks.push(fullText.slice(i,i+5000));
       for(let i=0;i<Math.min(chunks.length,3);i++){
-        await callAI(apiKey,[{role:'user',content:`Flag unsupported claims:\n\n${chunks[i]}\n\n1) Strong claims without citation 2) Overgeneralizations. Be brief.`}],getTokens('skeptic'),0.3);
-        await callAI(apiKey,[{role:'user',content:`Validate citations:\n\n${chunks[i]}\n\nRefs:\n${refs}\n\nCheck: text-ref match, consistency.`}],getTokens('verifier'),0.3);
+        await callAgent('skeptic',apiKey,[{role:'user',content:getAgentPrompt('skeptic').replace('{{text}}',chunks[i])}],getTokens('skeptic'),0.3);
+        await callAgent('verifier',apiKey,[{role:'user',content:getAgentPrompt('verifier').replace('{{text}}',chunks[i]).replace('{{refs}}',refs)}],getTokens('verifier'),0.3);
       }
       const scores=[];
       for(const[sec,txt]of Object.entries(sectionTexts)){
-        const rev=await callAI(apiKey,[{role:'user',content:`Peer review:\n\n${txt.slice(0,2000)}\n\nScore 1-5: RIGOR, COVERAGE, CLARITY, ORIGINALITY, RELEVANCE.\nEnd with: OVERALL: X/5`}],getTokens('referee'),0.3);
+        const rev=await callAgent('referee',apiKey,[{role:'user',content:getAgentPrompt('referee').replace('{{text}}',txt.slice(0,2000))}],getTokens('referee'),0.3);
         const m=rev.match(/OVERALL[:\s]+(\d+(?:\.\d+)?)\s*\/\s*5/i);if(m)scores.push(parseFloat(m[1]));
       }
       if(scores.length){const avg=scores.reduce((a,b)=>a+b,0)/scores.length;qs=`${Math.round(avg/5*100)}/100 (avg ${avg.toFixed(1)}/5)`;log(`📊 Quality Score: ${qs}`,'ok');}
@@ -1365,11 +1877,11 @@ async function startGeneration(){
       setPhase(5,'active');setHPStep(5);
       log('✨ ── FASE 5: POLISH ──────────────────────────','info');
       for(const sec of Object.keys(sectionTexts)){
-        try{sectionTexts[sec]=await callAI(apiKey,[{role:'system',content:`You are a Final Editor. Write in ${lang}.`},{role:'user',content:`Final edit:\n\n${sectionTexts[sec]}\n\nFix grammar, terminology, awkward phrasing. Return text only.`}],getTokens('polish'),temp);}catch(e){}
+        try{sectionTexts[sec]=await callAgent('polish',apiKey,[{role:'system',content:`You are a Final Editor. Write in ${lang}.`},{role:'user',content:getAgentPrompt('polish').replace('{{text}}',sectionTexts[sec])}],getTokens('polish'),temp);}catch(e){}
       }
       if(doEnh){
         log('🤖 Enhancer: abstract + keywords + highlights...','info');
-        const enhRaw=await callAI(apiKey,[{role:'system',content:`You are a Publication Enhancer. Write in ${lang}.`},{role:'user',content:`Generate:\n\n${Object.values(sectionTexts).join('\n\n').slice(0,6000)}\n\nABSTRACT (250 words): Background/Methods/Results/Conclusions\nKEYWORDS: 6-8 separated by semicolons\nHIGHLIGHTS: 5 bullets max 85 chars each\n\nUse exact labels: ABSTRACT:, KEYWORDS:, HIGHLIGHTS:`}],getTokens('enhancer'),temp);
+        const enhRaw=await callAgent('enhancer',apiKey,[{role:'system',content:`You are a Publication Enhancer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('enhancer').replace('{{text}}',Object.values(sectionTexts).join('\n\n').slice(0,6000))}],getTokens('enhancer'),temp);
         const absM=enhRaw.match(/ABSTRACT:([\s\S]*?)(?=KEYWORDS:|$)/i);
         const kwM=enhRaw.match(/KEYWORDS:([\s\S]*?)(?=HIGHLIGHTS:|$)/i);
         const hlM=enhRaw.match(/HIGHLIGHTS:([\s\S]*?)$/i);
@@ -1382,10 +1894,12 @@ async function startGeneration(){
     let prismaText='';
     if(doPrisma){
       const srcList=[useSS?'Semantic Scholar':'',usePM?'PubMed':'',useAX?'arXiv':'',useOA?'OpenAlex':'',useEP?'Europe PMC':'',useCR?'CrossRef':''].filter(Boolean).join(', ');
-      prismaText=await callAI(apiKey,[{role:'system',content:`You are a Methodology Designer. Write in ${lang}.`},{role:'user',content:`Write METHODOLOGY section (PRISMA).\n\nSources: ${srcList}\nSearch terms: ${queries.join('; ')}\nPeriod: last ${document.getElementById('years').value} years\nTotal papers: ${allPapers.length}\n\nCover: search strategy, inclusion/exclusion, screening, quality assessment. ~400 words.`}],getTokens('methodology'),temp);
+      prismaText=await callAgent('methodology',apiKey,[{role:'system',content:`You are a Methodology Designer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('methodology').replace('{{sources}}',srcList).replace('{{queries}}',queries.join('; ')).replace('{{period}}',`${yr.from}–${yr.to}`).replace('{{count}}',allPapers.length)}],getTokens('methodology'),temp);
     }
     let synthText='';
-    if(doSynth){synthText=await callAI(apiKey,[{role:'system',content:`You are a Findings Synthesizer. Write in ${lang}.`},{role:'user',content:`Synthesize:\n\n${Object.values(sectionTexts).join('\n\n').slice(0,5000)}\n\n5-7 bullets: significant findings, consensus, gaps, implications. Max 2 sentences each.`}],getTokens('results_synthesizer'),temp);}
+    if(doSynth){synthText=await callAgent('results_synthesizer',apiKey,[{role:'system',content:`You are a Findings Synthesizer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('results_synthesizer').replace('{{text}}',Object.values(sectionTexts).join('\n\n').slice(0,5000))}],getTokens('results_synthesizer'),temp);}
+
+    setLiveAgent(null);
 
     // Build display sections (add aux sections)
     const displaySections={...sectionTexts};
@@ -1406,6 +1920,11 @@ async function startGeneration(){
     full+=`\n---\n\n## Appendix: Paper Database (${allPapers.length} papers)\n\n`;
     full+=`| # | Title | Authors | Year | Source | Cites | OA | URL |\n|---|-------|---------|------|--------|-------|----|-----|\n`;
     allPapers.forEach((p,i)=>{const a=p.authors.slice(0,2).join(', ')+(p.authors.length>2?'...':'');const u=p.url?`[link](${p.url})`:'—';full+=`| ${i+1} | ${p.title.slice(0,50).replace(/\|/g,'/')} | ${a||'—'} | ${p.year||'—'} | ${p.source} | ${p.citations} | ${p.oa_status||'—'} | ${u} |\n`;});
+    if(filteredOutPapers.length>0){
+      full+=`\n### Papers excluidos por rango temporal (${filteredOutPapers.length})\n\n`;
+      full+=`| # | Title | Year | Source |\n|---|-------|------|--------|\n`;
+      filteredOutPapers.forEach((p,i)=>{full+=`| ${i+1} | ${p.title.slice(0,60).replace(/\|/g,'/')} | ${p.year||'?'} | ${p.source} |\n`;});
+    }
     generatedText=full;
     sectionTextsStore={...displaySections};
 
@@ -1414,7 +1933,7 @@ async function startGeneration(){
     const words=Object.values(displaySections).join(' ').split(/\s+/).length;
     log(`🎉 ¡Completado en ${elapsed}s! ${allPapers.length} papers · ${sections.length} secciones · Score: ${qs}`,'ok');
 
-    renderOutputSections(displaySections,allPapers,gapsText,{time:elapsed+'s',score:qs});
+    renderOutputSections(displaySections,allPapers,gapsText,{time:elapsed+'s',score:qs},filteredOutPapers);
     document.getElementById('exportRow').style.display='flex';
 
     // Gaps tab
@@ -1452,7 +1971,8 @@ async function startGeneration(){
   }finally{
     isRunning=false;
     shouldStop=false;
-    document.getElementById('btnGen').disabled=false;document.getElementById('btnGen').innerHTML='▶ Generar';
+    setLiveAgent(null);
+    
     document.getElementById('btnStop').disabled=true;
     document.getElementById('btnGenWizard').disabled=false;document.getElementById('btnGenWizard').innerHTML='▶ Generar revisión';
     document.getElementById('btnStopWizard').disabled=true;
