@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data: blob:; font-src * data:;">
-<title>Doctoralia — Review Generator</title>
+<title>Doctoralia v2 — Generador de revisiones con citas verificadas</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -364,11 +364,11 @@ textarea{resize:vertical;min-height:68px}
     <div id="ob1">
       <div class="onboard-icon">🔬</div>
       <h2>Bienvenido a Doctoralia</h2>
-      <p>Genera artículos de revisión científica (state-of-the-art) de forma automática. Introduce tu tema, elige las fuentes y obtén un artículo académico completo en minutos.</p>
+      <p>Genera revisiones del estado del arte con <strong>citas ancladas a papers reales</strong>: el redactor cita contra un corpus numerado y la app verifica cada marcador en el navegador, sin preguntárselo al modelo.</p>
       <div class="onboard-steps">
-        <div class="ostep"><div class="ostep-icon">🔍</div><div class="ostep-title">Busca automáticamente</div><div class="ostep-desc">Consulta PubMed, arXiv, Semantic Scholar, OpenAlex y más bases de datos simultáneamente</div></div>
-        <div class="ostep"><div class="ostep-icon">🤖</div><div class="ostep-title">20 agentes de IA</div><div class="ostep-desc">Pipeline de 5 fases: investigación, estructura, redacción, validación y pulido final</div></div>
-        <div class="ostep"><div class="ostep-icon">📄</div><div class="ostep-title">Exporta en 4 formatos</div><div class="ostep-desc">Descarga en Word, LaTeX, Markdown o texto plano con referencias incluidas</div></div>
+        <div class="ostep"><div class="ostep-icon">🔍</div><div class="ostep-title">Busca automáticamente</div><div class="ostep-desc">Consulta PubMed, arXiv, Semantic Scholar, OpenAlex, Europe PMC y CrossRef en paralelo, deduplica por DOI y descarta papers retractados</div></div>
+        <div class="ostep"><div class="ostep-icon">🤖</div><div class="ostep-title">20 agentes de IA</div><div class="ostep-desc">Pipeline de 5 fases con validación determinista de citas y auditoría de lo que escribe</div></div>
+        <div class="ostep"><div class="ostep-icon">📄</div><div class="ostep-title">Exporta en 4 formatos</div><div class="ostep-desc">Descarga en Word (.docx real), LaTeX, Markdown, BibTeX y la traza completa de la ejecución en JSON para que la revisión sea reproducible</div></div>
       </div>
       <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="nextOnboard(2)">Continuar →</button>
     </div>
@@ -392,7 +392,7 @@ textarea{resize:vertical;min-height:68px}
       <h2>Listo para empezar</h2>
       <p>Necesitarás una API key de OpenAI. Si no tienes una, puedes obtenerla gratis en <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent)">platform.openai.com/api-keys</a>.</p>
       <div style="background:#f7f8fa;border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:left;margin-bottom:20px;font-size:13px;color:var(--t2);line-height:1.7">
-        💡 <strong style="color:var(--text)">Coste estimado:</strong> Una revisión estándar (8000 palabras) con gpt-4o-mini cuesta aproximadamente <strong style="color:var(--amber)">$0.05 – $0.15</strong> dependiendo de las fuentes activadas.
+        💡 <strong style="color:var(--text)">Coste estimado:</strong> Una revisión estándar (8.000 palabras) con gpt-4o-mini cuesta aproximadamente <strong style="color:var(--amber)">$0,05 – $0,15</strong>. Durante la ejecución verás el coste <strong>real</strong> calculado con los tokens que devuelve la API, desglosado por agente en la pestaña Auditoría.
       </div>
       <div style="display:flex;gap:10px">
         <button class="btn" style="flex:1" onclick="nextOnboard(2)">← Atrás</button>
@@ -417,13 +417,14 @@ textarea{resize:vertical;min-height:68px}
   <div class="logo">
     <div class="logo-row">
       <div class="logo-icon">🔬</div>
-      <div><h1>Doctoralia</h1><span>Review Generator</span></div>
+      <div><h1>Doctoralia</h1><span>Revisiones con citas verificadas · v2.0</span></div>
     </div>
   </div>
   <div class="snav">Pipeline</div>
   <div class="ni-item active" onclick="showMain('wizard')"><span class="ni">✨</span> Nueva revisión</div>
   <div class="ni-item" onclick="showMain('output')"><span class="ni">📄</span> Artículo generado</div>
   <div class="ni-item" onclick="showMain('gaps')"><span class="ni">🔍</span> Gaps detectados</div>
+  <div class="ni-item" onclick="showMain('audit')"><span class="ni">🧪</span> Auditoría y métricas</div>
   <div class="ni-item" onclick="showMain('history')"><span class="ni">🕓</span> Historial</div>
   <div class="snav">Configuración</div>
   <div class="ni-item" onclick="showMain('agents')"><span class="ni">🤖</span> Agentes &amp; Prompts</div>
@@ -459,6 +460,7 @@ textarea{resize:vertical;min-height:68px}
   <div class="tabs" id="mainTabs">
     <div class="tab active" id="tab-wizard"   onclick="showMain('wizard')">✨ Nueva revisión</div>
     <div class="tab"        id="tab-output"   onclick="showMain('output')">📄 Artículo <span id="outputBadge" class="tab-badge" style="display:none"></span></div>
+    <div class="tab"        id="tab-audit"    onclick="showMain('audit')">🧪 Auditoría <span id="auditBadge" class="tab-badge" style="display:none"></span></div>
     <div class="tab"        id="tab-gaps"     onclick="showMain('gaps')">🔍 Gaps</div>
     <div class="tab"        id="tab-history"  onclick="showMain('history')">🕓 Historial</div>
     <div class="tab"        id="tab-agents"   onclick="showMain('agents')">🤖 Agentes &amp; Prompts</div>
@@ -564,7 +566,7 @@ textarea{resize:vertical;min-height:68px}
       <div class="sh">📡 Fuentes académicas</div>
       <div class="source-grid" style="margin-bottom:16px">
         <div class="sc on" id="sc-ss"><div class="sc-head" onclick="toggleSrc('ss')"><input type="checkbox" id="chk-ss" checked><span class="sc-ico">🔭</span><div><div class="sc-name">Semantic Scholar</div><div class="sc-sub">220M papers · citaciones · abstracts</div></div></div><div class="sc-field"><label>Artículos máx.</label><input type="number" id="lim-ss" value="30" min="5" max="200" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px"></div></div>
-        <div class="sc on" id="sc-pm"><div class="sc-head" onclick="toggleSrc('pm')"><input type="checkbox" id="chk-pm" checked><span class="sc-ico">🧬</span><div><div class="sc-name">PubMed / MEDLINE</div><div class="sc-sub">37M biomédicos · abstracts XML</div></div></div><div class="sc-field"><label>Artículos máx.</label><input type="number" id="lim-pm" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px"></div></div>
+        <div class="sc on" id="sc-pm"><div class="sc-head" onclick="toggleSrc('pm')"><input type="checkbox" id="chk-pm" checked><span class="sc-ico">🧬</span><div><div class="sc-name">PubMed / MEDLINE</div><div class="sc-sub">37M biomédicos · abstracts completos (efetch)</div></div></div><div class="sc-field"><label>Artículos máx.</label><input type="number" id="lim-pm" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px"></div></div>
         <div class="sc on" id="sc-ax"><div class="sc-head" onclick="toggleSrc('ax')"><input type="checkbox" id="chk-ax" checked><span class="sc-ico">📐</span><div><div class="sc-name">arXiv</div><div class="sc-sub">Preprints cs, physics, math, bio</div></div></div><div class="sc-field"><label>Artículos máx.</label><input type="number" id="lim-ax" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px"></div></div>
         <div class="sc on" id="sc-oa"><div class="sc-head" onclick="toggleSrc('oa')"><input type="checkbox" id="chk-oa" checked><span class="sc-ico">🌐</span><div><div class="sc-name">OpenAlex</div><div class="sc-sub">250M papers · sin API key · OA info</div></div></div><div class="sc-field"><label>Artículos máx.</label><input type="number" id="lim-oa" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px"></div></div>
         <div class="sc on" id="sc-ep"><div class="sc-head" onclick="toggleSrc('ep')"><input type="checkbox" id="chk-ep" checked><span class="sc-ico">🇪🇺</span><div><div class="sc-name">Europe PMC</div><div class="sc-sub">40M+ biomédicos · full-text OA</div></div></div><div class="sc-field"><label>Artículos máx.</label><input type="number" id="lim-ep" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px"></div></div>
@@ -608,6 +610,8 @@ textarea{resize:vertical;min-height:68px}
           </label>
           <select id="model" onchange="updateEstimate()">
             <option value="gpt-4o-mini">gpt-4o-mini — rápido y económico ✅</option>
+            <option value="gpt-4.1-mini">gpt-4.1-mini — mejor seguimiento de instrucciones</option>
+            <option value="gpt-4.1">gpt-4.1 — contexto largo, alta calidad</option>
             <option value="gpt-4o">gpt-4o — alta calidad</option>
             <option value="gpt-4-turbo">gpt-4-turbo</option>
             <option value="gpt-3.5-turbo">gpt-3.5-turbo — muy económico</option>
@@ -630,6 +634,10 @@ textarea{resize:vertical;min-height:68px}
         <div class="toggle-row"><div><div class="tl">🎯 Abstract + keywords + highlights (enhancer)</div><div class="ts">Genera abstract 250w, keywords y 5 highlights en fase 5</div></div><div class="tsw on" id="tog-enhancer" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
         <div class="toggle-row"><div><div class="tl">📝 Sección PRISMA (methodology)</div><div class="ts">Metodología de revisión sistemática</div></div><div class="tsw on" id="tog-prisma" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
         <div class="toggle-row"><div><div class="tl">📊 Síntesis ejecutiva (results_synthesizer)</div><div class="ts">Resumen de 5-7 bullets para no especialistas</div></div><div class="tsw on" id="tog-synth" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
+        <div class="toggle-row"><div><div class="tl">🧪 Auditoría de contenido (skeptic + verifier)</div><div class="ts">Afirmaciones sin respaldo y encaje cita↔referencia. Los hallazgos se muestran en la pestaña Auditoría</div></div><div class="tsw on" id="tog-audit" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
+        <div class="toggle-row"><div><div class="tl">🚩 Excluir papers retractados</div><div class="ts">Comprueba cada DOI en OpenAlex antes de escribir. Gratuito y sin coste de tokens</div></div><div class="tsw on" id="tog-retract" onclick="this.classList.toggle('on')"></div></div>
+        <div class="toggle-row"><div><div class="tl">🎨 Pulido de estilo por sección (narrator)</div><div class="ts">Tercera reescritura del texto. Encarece y aleja el texto de las fuentes: desactivado por defecto</div></div><div class="tsw" id="tog-narrator" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
+        <div class="toggle-row"><div><div class="tl">📡 Vista previa en streaming</div><div class="ts">Muestra el texto según se genera, en lugar de esperar a cada sección completa</div></div><div class="tsw on" id="tog-stream" onclick="this.classList.toggle('on')"></div></div>
         <div class="toggle-row"><div><div class="tl">⚡ Modo rápido (salta fases 4-5)</div><div class="ts">Sin validación ni polish — más rápido, menor calidad</div></div><div class="tsw" id="tog-fast" onclick="this.classList.toggle('on');updateEstimate()"></div></div>
       </div>
       <div class="wizard-nav">
@@ -651,7 +659,7 @@ textarea{resize:vertical;min-height:68px}
         <div class="cost-item"><div class="cost-val" id="estSources">6</div><div class="cost-lbl">Fuentes activas</div></div>
         <div class="cost-sep"></div>
         <div class="cost-item"><div class="cost-val" id="estYears" style="font-size:14px">2015–2025</div><div class="cost-lbl">Cobertura años</div></div>
-        <div class="cost-warn">⚠️ El coste real depende de los papers encontrados y su longitud. El modelo <span id="estModel">gpt-4o-mini</span> es el más económico.</div>
+        <div class="cost-warn">⚠️ Estimación a priori. El coste <strong>real</strong>, contabilizado con los tokens que devuelve la API, aparece durante la ejecución y desglosado por agente en la pestaña Auditoría. El coste depende de los papers encontrados y su longitud. El modelo <span id="estModel">gpt-4o-mini</span> es el más económico.</div>
       </div>
 
       <!-- PIPELINE STATUS -->
@@ -669,6 +677,17 @@ textarea{resize:vertical;min-height:68px}
         <div class="agent-pulse"></div>
         <span>Ejecutando agente: <span class="agent-name" id="agentLiveName">—</span></span>
         <span class="agent-phase" id="agentLivePhase"></span>
+      </div>
+
+      <!-- COSTE REAL ACUMULADO -->
+      <div id="liveCostWrap" style="display:none;margin:10px 0;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#f9fafb;font-size:12px;color:var(--t2);display:flex;gap:8px;align-items:center">
+        <span>💰</span><span>Consumo real de esta ejecución:</span><strong id="liveCost" style="color:var(--accent)">$0.0000</strong>
+      </div>
+
+      <!-- VISTA PREVIA EN STREAMING -->
+      <div id="streamBox" style="display:none;margin:10px 0;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+        <div style="padding:7px 12px;background:#f3f4f6;font-size:12px;font-weight:500;color:var(--text)" id="streamTitle">✍️</div>
+        <div id="streamBody" style="padding:12px;max-height:220px;overflow-y:auto;font-size:12.5px;line-height:1.7;color:var(--t2);white-space:pre-wrap"></div>
       </div>
 
       <!-- HUMAN PROGRESS -->
@@ -697,15 +716,15 @@ textarea{resize:vertical;min-height:68px}
   <!-- ══════ PANEL: OUTPUT ══════ -->
   <div class="tc content" id="tc-output">
     <div class="stats-row" id="statsRow" style="display:none">
-      <div class="stat"><div class="sv" id="sPapers">—</div><div class="sl">Papers</div></div>
+      <div class="stat"><div class="sv" id="sPapers">—</div><div class="sl">Referencias citadas</div></div>
       <div class="stat"><div class="sv" id="sWords">—</div><div class="sl">Palabras</div></div>
       <div class="stat"><div class="sv" id="sSecs">—</div><div class="sl">Secciones</div></div>
       <div class="stat"><div class="sv" id="sTime">—</div><div class="sl">Tiempo</div></div>
-      <div class="stat"><div class="sv" id="sScore">—</div><div class="sl">Quality</div></div>
+      <div class="stat"><div class="sv" id="sScore">—</div><div class="sl" id="sScoreLabel">Citas resueltas</div></div>
     </div>
     <div class="qbar fi" id="qualityBar" style="display:none">
-      <div class="qb-item">✅ Score: <strong id="qbScore">—</strong></div>
-      <div class="qb-item">📚 <strong id="qbPapers">—</strong> papers</div>
+      <div class="qb-item">✅ Citas resueltas: <strong id="qbScore">—</strong></div>
+      <div class="qb-item">📚 <strong id="qbPapers">—</strong> referencias</div>
       <div class="qb-item">📝 <strong id="qbSecs">—</strong> secciones</div>
       <div class="qb-item">⏱ <strong id="qbTime">—</strong></div>
       <div class="qb-item" id="partialBadge" style="display:none">⚠️ <strong style="color:var(--amber)">Borrador parcial guardado</strong></div>
@@ -715,10 +734,12 @@ textarea{resize:vertical;min-height:68px}
     </div>
     <div class="export-row" id="exportRow" style="display:none">
       <button class="btn btn-success" onclick="exportMarkdown()">⬇ Markdown (.md)</button>
-      <button class="btn btn-primary" onclick="exportWord()">⬇ Word (.doc)</button>
+      <button class="btn btn-primary" onclick="exportDocx()">⬇ Word (.docx)</button>
       <button class="btn btn-amber"   onclick="exportLatex()">⬇ LaTeX (.tex)</button>
+      <button class="btn"             onclick="exportBibtex()">⬇ BibTeX (.bib)</button>
+      <button class="btn"             onclick="exportRunJson()" title="Traza completa: prompts, consultas, corpus, métricas y consumo">⬇ Ejecución (.json)</button>
       <button class="btn"             onclick="exportTxt()">⬇ Texto (.txt)</button>
-      <button class="btn"             onclick="copyClipboard()">📋 Copiar todo</button>
+      <button class="btn"             onclick="copyClipboard()">📋 Copiar</button>
     </div>
   </div>
 
@@ -729,10 +750,16 @@ textarea{resize:vertical;min-height:68px}
     </div>
   </div>
 
+  <!-- ══════ PANEL: AUDIT ══════ -->
+  <div class="tc content" id="tc-audit">
+    <div class="ibox" style="margin-bottom:14px"><span>🧪</span><span>Aquí se comprueba lo que el artículo afirma de sí mismo: qué proporción de citas resuelve contra papers reales, qué señalaron los agentes validadores y cuánto ha costado en tokens. La verificación de citas se hace <strong>en JavaScript</strong>, no se le pregunta al modelo.</span></div>
+    <div id="auditArea"><div class="placeholder"><div class="bi">🧪</div><p>Las métricas de integridad aparecerán aquí tras generar una revisión.</p></div></div>
+  </div>
+
   <!-- ══════ PANEL: HISTORY ══════ -->
   <div class="tc content" id="tc-history">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div><div style="font-size:15px;font-weight:500">Historial de revisiones</div><div style="font-size:12px;color:var(--t3);margin-top:2px">Guardadas localmente en tu navegador · máx. 5</div></div>
+      <div><div style="font-size:15px;font-weight:500">Historial de revisiones</div><div style="font-size:12px;color:var(--t3);margin-top:2px">Guardadas en IndexedDB, en tu navegador · máx. 20 · incluyen la traza de ejecución</div></div>
       <button class="btn btn-danger" onclick="clearHistory()" style="font-size:12px">🗑 Borrar historial</button>
     </div>
     <div id="historyList"><div class="placeholder"><div class="bi">🕓</div><p>Aún no hay revisiones guardadas.</p></div></div>
@@ -785,8 +812,8 @@ textarea{resize:vertical;min-height:68px}
     <div class="ibox"><span>ℹ️</span><span>Configura límites detallados de cada fuente y opciones de deduplicación. Los cambios se sincronizan con el wizard.</span></div>
     <div class="sh">📡 Fuentes académicas — configuración avanzada</div>
     <div class="source-grid" style="margin-bottom:16px">
-      <div class="sc on" id="sc2-ss"><div class="sc-head" onclick="syncSrc('ss')"><input type="checkbox" id="chk2-ss" checked><span class="sc-ico">🔭</span><div><div class="sc-name">Semantic Scholar</div><div class="sc-sub">220M · citaciones reales · abstracts</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ss" value="30" min="5" max="200" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ss',this.value)"></div><div class="hint" style="margin-top:5px">API pública · key interna · incluye IEEE, ACM</div></div>
-      <div class="sc on" id="sc2-pm"><div class="sc-head" onclick="syncSrc('pm')"><input type="checkbox" id="chk2-pm" checked><span class="sc-ico">🧬</span><div><div class="sc-name">PubMed / MEDLINE</div><div class="sc-sub">37M biomédicos · filtro English</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-pm" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('pm',this.value)"></div><div class="hint" style="margin-top:5px">NCBI eUtils · XML con abstracts completos</div></div>
+      <div class="sc on" id="sc2-ss"><div class="sc-head" onclick="syncSrc('ss')"><input type="checkbox" id="chk2-ss" checked><span class="sc-ico">🔭</span><div><div class="sc-name">Semantic Scholar</div><div class="sc-sub">220M · citas reales · abstracts</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ss" value="30" min="5" max="200" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ss',this.value)"></div><div class="hint" style="margin-top:5px">API pública · sin clave compartida · clave propia opcional abajo</div></div>
+      <div class="sc on" id="sc2-pm"><div class="sc-head" onclick="syncSrc('pm')"><input type="checkbox" id="chk2-pm" checked><span class="sc-ico">🧬</span><div><div class="sc-name">PubMed / MEDLINE</div><div class="sc-sub">37M biomédicos · filtro English</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-pm" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('pm',this.value)"></div><div class="hint" style="margin-top:5px">NCBI eUtils efetch · abstracts estructurados completos</div></div>
       <div class="sc on" id="sc2-ax"><div class="sc-head" onclick="syncSrc('ax')"><input type="checkbox" id="chk2-ax" checked><span class="sc-ico">📐</span><div><div class="sc-name">arXiv</div><div class="sc-sub">Preprints cs, physics, math, bio</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ax" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ax',this.value)"></div><div class="hint" style="margin-top:5px">Atom API pública · preprints más recientes</div></div>
       <div class="sc on" id="sc2-oa"><div class="sc-head" onclick="syncSrc('oa')"><input type="checkbox" id="chk2-oa" checked><span class="sc-ico">🌐</span><div><div class="sc-name">OpenAlex</div><div class="sc-sub">250M papers · sin key · 100K/día</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-oa" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('oa',this.value)"></div><div class="hint" style="margin-top:5px">Sucesor Microsoft Academic Graph · OA status · DOAJ</div></div>
       <div class="sc on" id="sc2-ep"><div class="sc-head" onclick="syncSrc('ep')"><input type="checkbox" id="chk2-ep" checked><span class="sc-ico">🇪🇺</span><div><div class="sc-name">Europe PMC</div><div class="sc-sub">40M+ biomédicos · full-text OA</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ep" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ep',this.value)"></div><div class="hint" style="margin-top:5px">EBI · ensayos clínicos · patentes · literatura gris</div></div>
@@ -795,7 +822,23 @@ textarea{resize:vertical;min-height:68px}
     <div class="sh">⚙️ Opciones avanzadas de búsqueda</div>
     <div class="form-grid">
       <div class="field"><label>Email cortesía NCBI / OpenAlex<div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Requerido por cortesía en NCBI eUtils y OpenAlex. Accede al "polite pool" con mejores límites. No se almacena en ningún servidor.</div></div></label><input type="email" id="pubmedEmail" value="doctoralia@app.io" placeholder="tu@email.com"></div>
-      <div class="field"><label>Ordenar papers por</label><select id="sortPapers"><option value="citations">Citas (descendente)</option><option value="year">Año (descendente)</option><option value="source">Fuente</option></select></div>
+      <div class="field"><label>Ordenar papers por
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">"Relevancia" combina el percentil de citas por año (normalizado dentro del corpus, no el recuento bruto), la recencia, la disponibilidad de abstract y la confirmación en varias fuentes. Ordenar solo por citas sesga sistemáticamente hacia lo antiguo.</div></div>
+      </label><select id="sortPapers"><option value="relevance">Relevancia normalizada (recomendado)</option><option value="citations">Citas brutas (descendente)</option><option value="year">Año (descendente)</option><option value="source">Fuente</option></select></div>
+      <div class="field"><label>Búsquedas simultáneas
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Consultas lanzadas en paralelo. 4 es seguro para todas las APIs. Súbelo si tu conexión es lenta; bájalo a 2 si ves errores 429.</div></div>
+      </label><input type="number" id="concurrency" value="4" min="1" max="8"></div>
+      <div class="field"><label>Clave propia de Semantic Scholar (opcional)
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Sin clave, S2 funciona con la cuota pública compartida. Con clave propia (gratuita, se solicita en semanticscholar.org/product/api) subes el límite de peticiones. Se guarda solo en tu navegador.</div></div>
+      </label><input type="password" id="ssKey" placeholder="opcional — sube tu cuota en S2" oninput="localStorage.setItem('doctoralia_sskey',this.value)"></div>
+      <div class="field" style="display:flex;align-items:center;gap:8px;padding-top:22px"><input type="checkbox" id="pmEnglish" checked style="width:auto"><label style="margin:0">Restringir PubMed a inglés</label></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sh">📥 Corpus propio (BibTeX · RIS · lista de DOI)</div>
+    <div class="ibox" style="margin-bottom:10px"><span>ℹ️</span><span>Siembra la revisión con la bibliografía que ya tienes. Los DOI sueltos se resuelven contra OpenAlex para recuperar abstract, año, venue y citas. Las referencias importadas se fusionan con las encontradas y tienen prioridad al deduplicar.</span></div>
+    <div class="form-grid">
+      <div class="field"><label>Importar fichero</label><input type="file" accept=".bib,.ris,.txt,.csv,.json" onchange="handleCorpusImport(this)"></div>
+      <div class="field"><label>Estado</label><div id="importInfo" style="font-size:12px;color:var(--t3);padding-top:8px">Ninguna referencia propia cargada.</div></div>
     </div>
   </div>
 
@@ -813,12 +856,12 @@ const AGENTS=[
   {id:'data_analyst',phase:'1 – Research',badge:'b-r',role:'Academic Trend Analyzer — bibliometría y tendencias temporales',def:2000},
   {id:'gap_detector',phase:'1 – Research',badge:'b-r',role:'Research Gap Identifier — brechas en literatura (PRISMA)',def:2000},
   {id:'architect',phase:'2 – Structure',badge:'b-w',role:'Document Architect — estructura y distribución de palabras',def:2000},
-  {id:'crafter',phase:'3 – Writing',badge:'b-w',role:'Academic Section Writer — redacta cada sección individualmente',def:4000},
-  {id:'thread',phase:'3 – Writing',badge:'b-w',role:'Coherence Checker — revisa transiciones entre secciones',def:800},
+  {id:'crafter',phase:'3 – Writing',badge:'b-w',role:'Redactor de secciones — escribe citando por índice contra el corpus',def:4000},
+  {id:'thread',phase:'3 – Writing',badge:'b-w',role:'Coherence Checker — transiciones (resultado en el panel Auditoría)',def:800},
   {id:'narrator',phase:'3 – Writing',badge:'b-w',role:'Voice Refiner — mejora estilo académico y fluidez',def:3000},
-  {id:'skeptic',phase:'4 – Validation',badge:'b-v',role:'Fact Checker — detecta afirmaciones sin cita',def:800},
-  {id:'verifier',phase:'4 – Validation',badge:'b-v',role:'Citation Validator — verifica coherencia citas/referencias',def:800},
-  {id:'referee',phase:'4 – Validation',badge:'b-v',role:'Peer Reviewer — puntúa rigor, cobertura, claridad (1-5)',def:800},
+  {id:'skeptic',phase:'4 – Validation',badge:'b-v',role:'Fact Checker — afirmaciones sin cita (resultado en el panel Auditoría)',def:1200},
+  {id:'verifier',phase:'4 – Validation',badge:'b-v',role:'Citation Validator — encaje cita↔referencia (resultado en el panel Auditoría)',def:1200},
+  {id:'referee',phase:'4 – Validation',badge:'b-v',role:'Peer Reviewer — juicio no calibrado (1-5), informativo',def:1000},
   {id:'polish',phase:'5 – Polish',badge:'b-p',role:'Final Editor — gramática, terminología, voz pasiva',def:3000},
   {id:'enhancer',phase:'5 – Polish',badge:'b-p',role:'Publication Enhancer — abstract 250w + keywords + highlights',def:2000},
   {id:'entropy',phase:'5 – Polish',badge:'b-p',role:'Originality Checker — puntúa originalidad del texto (1-10)',def:500},
@@ -840,23 +883,31 @@ Generate JSON:
 - key_areas: 3-5 thematic areas
 JSON only.`,
 
-  signal:`Analyze {{count}} papers.
+  signal:`Analiza los {{count}} papers del corpus numerado.
 
-PAPERS:
+CORPUS:
 {{papers}}
 
-1. TOP 15 most relevant papers
-2. Key venues
-3. Thematic clusters (3-5)
-4. Temporal trends`,
+Devuelve:
+1. Los 15 papers más relevantes, citándolos SIEMPRE por su índice [n]
+2. Venues principales
+3. Clústeres temáticos (3-5), indicando qué índices [n] pertenecen a cada uno
+4. Tendencias temporales
 
-  scribe:`Write a comprehensive state-of-the-art review on: "{{topic}}"
+Regla: refiérete a los trabajos únicamente por [n]. No inventes títulos ni autores.`,
 
-Based on:
+  scribe:`Redacta una revisión del estado del arte sobre: "{{topic}}"
+
+CORPUS NUMERADO (única fuente admisible de citas, índices 1–{{n}}):
 {{papers}}
 
-Cover: 1) Historical evolution 2) Current state 3) Methods 4) Key findings 5) Gaps
-Cite as [Author et al., Year].{{instructions}}`,
+Cubre: 1) evolución histórica 2) estado actual 3) métodos 4) hallazgos principales 5) brechas.
+
+REGLA DE CITACIÓN INVIOLABLE:
+- Cita exclusivamente con marcadores numéricos [n], donde n es el índice del corpus (1–{{n}}).
+- Puedes agrupar: [3, 7, 12].
+- NUNCA escribas nombres de autores entre corchetes ni cites nada que no esté en el corpus.
+- Toda afirmación empírica debe llevar su [n]. Si el corpus no la respalda, no la escribas.{{instructions}}`,
 
   data_analyst:`Analyze publication trends:
 {{papers}}
@@ -879,46 +930,61 @@ Recommended study: [type needed]
 
 4-6 specific gaps.`,
 
-  architect:`Design sections for review on: "{{topic}}"
-~{{wc}} words. In {{lang}}.{{instructions}}
-Return JSON: keys=section titles, values=word counts. 6-8 sections. Sum≈{{wc}}.
-JSON only.`,
+  architect:`Diseña las secciones de una revisión sobre: "{{topic}}"
+Extensión total ~{{wc}} palabras. Los TÍTULOS DE SECCIÓN deben estar escritos en el idioma de salida: {{lang}}.{{instructions}}
+Devuelve solo JSON: claves = títulos de sección, valores = número de palabras. Entre 6 y 8 secciones. La suma ≈ {{wc}}.
+Sin texto adicional, solo el JSON.`,
 
-  crafter:`Write the "{{section}}" section.
-Topic: {{topic}}
-Target: ~{{target}} words{{instructions}}
-Gaps:
-{{gaps}}
+  crafter:`Redacta la sección "{{section}}".
+Tema: {{topic}}
+Extensión objetivo: ~{{target}} palabras{{instructions}}
 
-Base on:
+CORPUS NUMERADO (única fuente admisible de citas, índices 1–{{n}}):
+{{papers}}
+
+Revisión base de apoyo:
 {{review}}
 
-Context:
+Análisis de relevancia:
 {{signal}}
 
-Cite as [Author et al., Year].`,
+Brechas detectadas:
+{{gaps}}
 
-  narrator:`Refine academic voice:
+REGLA DE CITACIÓN INVIOLABLE:
+- Cita exclusivamente con [n], 1 ≤ n ≤ {{n}}, tomados del corpus de arriba.
+- Agrupa cuando proceda: [4, 11, 19].
+- Prohibido escribir [Autor et al., Año] o cualquier referencia que no sea un índice del corpus.
+- Cada párrafo debe contener al menos una cita. Las afirmaciones sin respaldo en el corpus se omiten.
+- No inventes cifras, tamaños muestrales ni resultados que no consten en los abstracts proporcionados.`,
 
-{{text}}
-
-Improve: 1) formal register 2) sentence variety 3) transitions 4) remove redundancies.
-Preserve citations. Return text only.`,
-
-  skeptic:`Flag unsupported claims:
-
-{{text}}
-
-1) Strong claims without citation 2) Overgeneralizations. Be brief.`,
-
-  verifier:`Validate citations:
+  narrator:`Refina el registro académico del texto:
 
 {{text}}
 
-Refs:
+Mejora: 1) registro formal 2) variedad sintáctica 3) transiciones 4) redundancias.
+CONSERVA ÍNTEGROS todos los marcadores [n]: mismo número, misma frase. No añadas citas nuevas.
+Devuelve solo el texto.`,
+
+  skeptic:`Señala afirmaciones sin respaldo en este texto:
+
+{{text}}
+
+Lista 1) afirmaciones fuertes sin cita [n] 2) generalizaciones excesivas.
+Formato: una línea por incidencia, citando el fragmento entre comillas.
+Si no hay ninguna, responde exactamente: NINGUNA`,
+
+  verifier:`Comprueba que cada cita [n] del texto encaja con el contenido de la referencia n.
+
+TEXTO:
+{{text}}
+
+CORPUS:
 {{refs}}
 
-Check: text-ref match, consistency.`,
+Señala únicamente los casos en que la afirmación citada NO se corresponde con el trabajo referenciado
+(por tema, población, método o año). Una línea por incidencia.
+Si todas encajan, responde exactamente: OK`,
 
   referee:`Peer review:
 
@@ -927,11 +993,13 @@ Check: text-ref match, consistency.`,
 Score 1-5: RIGOR, COVERAGE, CLARITY, ORIGINALITY, RELEVANCE.
 End with: OVERALL: X/5`,
 
-  polish:`Final edit:
+  polish:`Edición final del texto:
 
 {{text}}
 
-Fix grammar, terminology, awkward phrasing. Return text only.`,
+Corrige gramática, terminología y expresiones forzadas. No reescribas el contenido.
+Los marcadores [n] son inviolables: mismo número, misma posición, ninguno añadido ni eliminado.
+Devuelve solo el texto.`,
 
   enhancer:`Generate:
 
@@ -950,7 +1018,11 @@ Search terms: {{queries}}
 Period: {{period}}
 Total papers: {{count}}
 
-Cover: search strategy, inclusion/exclusion, screening, quality assessment. ~400 words.`,
+Recuentos reales de la ejecución (JSON, úsalos literalmente, no inventes cifras):
+{{flow}}
+
+Redacta los criterios de inclusión y exclusión, el procedimiento de cribado y la evaluación de calidad,
+en ~250 palabras, coherentes con los recuentos anteriores. No repitas el diagrama de flujo.`,
 
   results_synthesizer:`Synthesize:
 
@@ -1144,16 +1216,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('doctoralia_apikey');
   if(saved){document.getElementById('apiKey').value=saved;document.getElementById('saveKey').checked=true;document.getElementById('btnForget').style.display='';updateAv(saved);}
   if(localStorage.getItem('doctoralia_onboard_done')||location.search.includes('topic')||location.hash){document.getElementById('onboardOverlay').style.display='none';}
+  const ss=localStorage.getItem('doctoralia_sskey');
+  if(ss&&document.getElementById('ssKey'))document.getElementById('ssKey').value=ss;
   buildAgentTable();
   loadSavedPrompts();
   buildPromptEditor();
   updateYearLabel();
   updateEstimate();
-  renderHistory();
   buildHPSteps();
-  // Check for autosaved draft
-  const draft=localStorage.getItem('doctoralia_draft');
-  if(draft){try{const d=JSON.parse(draft);if(d.text){showDraftBanner(d);}}catch(e){}}
+  (async()=>{
+    await migrateStorage();
+    await renderHistory();
+    const d=await idbGet('draft');
+    if(d&&d.text)showDraftBanner(d);
+  })();
 });
 
 // ═══════════════════════════════════════════════════
@@ -1171,7 +1247,8 @@ const PANEL_META={
   wizard:{title:'Nueva revisión',sub:'Configura tu tema y genera un artículo científico completo'},
   output:{title:'Artículo generado',sub:'Edita, descarga o copia tu revisión'},
   gaps:{title:'Gaps detectados',sub:'Brechas en la literatura identificadas automáticamente'},
-  history:{title:'Historial',sub:'Revisiones guardadas localmente en tu navegador'},
+  audit:{title:'Auditoría y métricas',sub:'Integridad de las citas, hallazgos de los validadores y consumo real'},
+  history:{title:'Historial',sub:'Revisiones guardadas en tu navegador (IndexedDB), con su traza de ejecución'},
   agents:{title:'Agentes & Prompts',sub:'Configura tokens, prompts y parámetros de cada agente del pipeline'},
   sources:{title:'Fuentes & Límites',sub:'Bases de datos académicas open access'},
 };
@@ -1207,9 +1284,9 @@ function goWizard(step){
 //  PRESETS
 // ═══════════════════════════════════════════════════
 const PRESETS={
-  fast:{wc:4000,fast:true,gaps:false,biblio:false,thread:false,enhancer:false,prisma:false,synth:false,ss:true,pm:true,ax:true,oa:false,ep:false,cr:false},
-  std:{wc:8000,fast:false,gaps:true,biblio:true,thread:true,enhancer:true,prisma:true,synth:true,ss:true,pm:true,ax:true,oa:true,ep:true,cr:false},
-  deep:{wc:12000,fast:false,gaps:true,biblio:true,thread:true,enhancer:true,prisma:true,synth:true,ss:true,pm:true,ax:true,oa:true,ep:true,cr:true},
+  fast:{wc:4000,fast:true,gaps:false,biblio:false,thread:false,enhancer:false,prisma:false,synth:false,audit:false,retract:true,narrator:false,stream:true,ss:true,pm:true,ax:true,oa:true,ep:false,cr:false},
+  std:{wc:8000,fast:false,gaps:true,biblio:true,thread:true,enhancer:true,prisma:true,synth:true,audit:true,retract:true,narrator:false,stream:true,ss:true,pm:true,ax:true,oa:true,ep:true,cr:false},
+  deep:{wc:12000,fast:false,gaps:true,biblio:true,thread:true,enhancer:true,prisma:true,synth:true,audit:true,retract:true,narrator:true,stream:true,ss:true,pm:true,ax:true,oa:true,ep:true,cr:true},
 };
 function applyPreset(key){
   const p=PRESETS[key];
@@ -1217,7 +1294,7 @@ function applyPreset(key){
   document.getElementById('preset-'+key).classList.add('selected');
   document.getElementById('wc').value=p.wc;
   document.getElementById('wcv').textContent=p.wc.toLocaleString()+' palabras';
-  ['fast','gaps','biblio','thread','enhancer','prisma','synth'].forEach(t=>{
+  ['fast','gaps','biblio','thread','enhancer','prisma','synth','audit','retract','narrator','stream'].forEach(t=>{
     const el=document.getElementById('tog-'+t);
     if(el){if(p[t])el.classList.add('on');else el.classList.remove('on');}
   });
@@ -1235,6 +1312,8 @@ function applyPreset(key){
 const MODEL_COSTS={
   'gpt-4o-mini':{in:0.15,out:0.6},
   'gpt-4o':{in:2.5,out:10},
+  'gpt-4.1-mini':{in:0.4,out:1.6},
+  'gpt-4.1':{in:2,out:8},
   'gpt-4-turbo':{in:10,out:30},
   'gpt-3.5-turbo':{in:0.5,out:1.5},
 };
@@ -1243,12 +1322,14 @@ function updateEstimate(){
   const model=document.getElementById('model')?.value||'gpt-4o-mini';
   const fastMode=document.getElementById('tog-fast')?.classList.contains('on');
   const sources=['ss','pm','ax','oa','ep','cr'].filter(s=>document.getElementById('chk-'+s)?.checked);
-  const extras=['gaps','biblio','thread','enhancer','prisma','synth'].filter(t=>document.getElementById('tog-'+t)?.classList.contains('on'));
+  const extras=['gaps','biblio','thread','enhancer','prisma','synth','audit','narrator'].filter(t=>document.getElementById('tog-'+t)?.classList.contains('on'));
+  const narrator=document.getElementById('tog-narrator')?.classList.contains('on');
+  const audit=document.getElementById('tog-audit')?.classList.contains('on');
 
   // Rough token estimate
   const baseTokens=35000; // scribe+signal+architect
   const writingTokens=Math.floor(wc*1.8);
-  const extraTokens=extras.length*2000+(fastMode?0:15000);
+  const extraTokens=extras.length*2000+(fastMode?0:15000)+(narrator?Math.floor(wc*1.6):0)+(audit&&!fastMode?Math.floor(wc*0.9):0);
   const totalTokens=baseTokens+writingTokens+extraTokens;
   const cost=MODEL_COSTS[model]||MODEL_COSTS['gpt-4o-mini'];
   const estCost=((totalTokens/2*cost.in/1e6)+(totalTokens/2*cost.out/1e6));
@@ -1256,7 +1337,7 @@ function updateEstimate(){
 
   const setEl=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
   setEl('estTime',`~${estMinutes} min`);
-  setEl('estCost',`~$${estCost.toFixed(2)}`);
+  setEl('estCost',`~$${estCost.toFixed(estCost<0.1?3:2)}`);
   setEl('estWords',wc.toLocaleString());
   setEl('estSources',sources.length);
   setEl('estModel',model);
@@ -1354,21 +1435,51 @@ function setPhase(n,s){const el=document.getElementById('ph'+n);if(!el)return;el
 // ═══════════════════════════════════════════════════
 //  OPENAI CALL
 // ═══════════════════════════════════════════════════
-async function callAgent(agentId,apiKey,messages,maxTokens,temp){
+async function callAgent(agentId,apiKey,messages,maxTokens,temp,stream){
   const agent=AGENTS.find(a=>a.id===agentId)||{id:agentId,phase:'—'};
   setLiveAgent(agentId,agent.phase);
-  try{return await callAI(apiKey,messages,maxTokens,temp);}
-  finally{/* keep indicator until next agent sets it */}
+  return await callAI(apiKey,messages,maxTokens,temp,stream?streamAppend:null,agentId);
 }
-async function callAI(apiKey,messages,maxTokens=1500,temp=0.7){
+async function callAI(apiKey,messages,maxTokens=1500,temp=0.7,onDelta=null,agentId='ad-hoc'){
   const model=document.getElementById('model').value;
   const retries=parseInt(document.getElementById('maxRetries').value)||3;
+  const wantStream=!!onDelta&&document.getElementById('tog-stream')?.classList.contains('on');
   for(let attempt=0;attempt<retries;attempt++){
     if(shouldStop)throw new Error('__STOPPED__');
     try{
-      const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model,messages,max_tokens:maxTokens,temperature:temp})});
+      const body={model,messages,max_tokens:maxTokens,temperature:temp};
+      if(wantStream){body.stream=true;body.stream_options={include_usage:true};}
+      const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify(body)});
       if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||'HTTP '+r.status);}
-      return(await r.json()).choices[0].message.content;
+      if(!wantStream){
+        const j=await r.json();
+        addUsage(agentId,j.usage);
+        return j.choices[0].message.content;
+      }
+      // ── lectura incremental (SSE) ──
+      const reader=r.body.getReader();const dec=new TextDecoder();
+      let buf='',out='';
+      while(true){
+        if(shouldStop){try{reader.cancel();}catch(e){}throw new Error('__STOPPED__');}
+        const {done,value}=await reader.read();
+        if(done)break;
+        buf+=dec.decode(value,{stream:true});
+        const lines=buf.split('\n');buf=lines.pop();
+        for(const line of lines){
+          const t=line.trim();
+          if(!t.startsWith('data:'))continue;
+          const payload=t.slice(5).trim();
+          if(payload==='[DONE]')continue;
+          try{
+            const j=JSON.parse(payload);
+            if(j.usage)addUsage(agentId,j.usage);
+            const d=j.choices?.[0]?.delta?.content;
+            if(d){out+=d;onDelta(d);}
+          }catch(e){}
+        }
+      }
+      return out;
     }catch(e){
       if(e.message==='__STOPPED__')throw e;
       if(attempt<retries-1){const w=Math.pow(2,attempt)*1000;log(`⚠ Reintento ${attempt+1}/${retries}: ${e.message} (${w/1000}s)...`,'warn');await new Promise(r=>setTimeout(r,w));}
@@ -1378,97 +1489,776 @@ async function callAI(apiKey,messages,maxTokens=1500,temp=0.7){
 }
 
 // ═══════════════════════════════════════════════════
-//  SEARCH ENGINES
+//  v2.0 CORE — seguridad, citas ancladas, métricas
 // ═══════════════════════════════════════════════════
-async function searchSS(q,max,yr){const p=new URLSearchParams({query:q,limit:Math.min(max,100),offset:0,fields:'paperId,title,abstract,year,authors,venue,citationCount,url,externalIds'});if(yr){p.set('year',`${yr.from}-${yr.to}`);}try{const r=await fetch(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`,{headers:{'x-api-key':'uXw4IjvzYg7lLJSR7g3uJ3HQS6rhsgRO6lBbQTWB'}});if(!r.ok)throw new Error('SS '+r.status);return((await r.json()).data||[]).map(p=>({title:p.title||'',authors:(p.authors||[]).slice(0,4).map(a=>a.name),year:String(p.year||''),journal:p.venue||'',abstract:(p.abstract||'').slice(0,500),citations:p.citationCount||0,url:p.url||'',doi:(p.externalIds||{}).DOI||'',source:'Semantic Scholar',oa_status:''}));}catch(e){log('⚠ Semantic Scholar: '+e.message,'warn');return[];}}
 
-async function searchPM(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{let term=`(${q}) AND (English[Language])`;if(yr)term+=` AND (${yr.from}[PDAT]:${yr.to}[PDAT])`;const sp=new URLSearchParams({db:'pubmed',term,retmax:max,retmode:'json',tool:'doctoralia',email});const pmids=((await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);if(!pmids.length)return[];const fp=new URLSearchParams({db:'pubmed',id:pmids.join(','),retmode:'json',tool:'doctoralia',email});const res=(await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?${fp}`)).json()).result||{};return pmids.map(id=>{const a=res[id]||{};return{title:a.title||'',authors:(a.authors||[]).slice(0,4).map(x=>x.name||''),year:(a.pubdate||'').slice(0,4),journal:a.fulljournalname||a.source||'',abstract:'',citations:0,url:`https://pubmed.ncbi.nlm.nih.gov/${id}/`,doi:(a.articleids||[]).find(x=>x.idtype==='doi')?.value||'',source:'PubMed',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ PubMed: '+e.message,'warn');return[];}}
+/* ── 1. Escapado HTML (contenido de APIs y del usuario) ── */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-async function searchAX(q,max,yr){try{let qs=`all:${encodeURIComponent(q.replace(/\s+/g,'+'))}`;if(yr)qs+=`+AND+submittedDate:[${yr.from}01010000+TO+${yr.to}12312359]`;const arxivUrl=`https://export.arxiv.org/api/query?search_query=${qs}&start=0&max_results=${max}`;const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`);if(!r.ok)throw new Error('arXiv '+r.status);const xml=new DOMParser().parseFromString(await r.text(),'application/xml');return Array.from(xml.querySelectorAll('entry')).map(e=>({title:(e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(),authors:Array.from(e.querySelectorAll('author name')).slice(0,4).map(a=>a.textContent),year:(e.querySelector('published')?.textContent||'').slice(0,4),journal:'arXiv',abstract:(e.querySelector('summary')?.textContent||'').slice(0,500).replace(/\s+/g,' '),citations:0,url:e.querySelector('id')?.textContent||'',doi:e.querySelector("link[title='doi']")?.getAttribute('href')||'',source:'arXiv',oa_status:'gold'})).filter(p=>p.title);}catch(e){log('⚠ arXiv: '+e.message,'warn');return[];}}
+/* ── 2. Concurrencia limitada ── */
+async function pMap(items,fn,limit=4){
+  const out=new Array(items.length);let i=0;
+  const workers=Array.from({length:Math.min(limit,items.length||1)},async()=>{
+    while(i<items.length){const idx=i++;try{out[idx]=await fn(items[idx],idx);}catch(e){out[idx]=null;}}
+  });
+  await Promise.all(workers);
+  return out;
+}
 
-async function searchOA(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access',mailto:email});if(yr){p.set('filter',`publication_year:${yr.from}-${yr.to}`);}const r=await fetch(`https://api.openalex.org/works?${p}`);if(!r.ok)throw new Error('OA '+r.status);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,500);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:(w.doi||'').replace('https://doi.org/',''),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){log('⚠ OpenAlex: '+e.message,'warn');return[];}}
+/* ── 3. Contabilidad real de tokens y coste ── */
+const RUN={usage:{},inTok:0,outTok:0,calls:0,t0:0};
+function resetUsage(){RUN.usage={};RUN.inTok=0;RUN.outTok=0;RUN.calls=0;RUN.t0=Date.now();updateLiveCost();}
+function addUsage(agentId,u){
+  if(!u)return;
+  const a=RUN.usage[agentId]||(RUN.usage[agentId]={in:0,out:0,calls:0});
+  a.in+=u.prompt_tokens||0;a.out+=u.completion_tokens||0;a.calls++;
+  RUN.inTok+=u.prompt_tokens||0;RUN.outTok+=u.completion_tokens||0;RUN.calls++;
+  updateLiveCost();
+}
+function runCost(){
+  const model=document.getElementById('model')?.value||'gpt-4o-mini';
+  const c=MODEL_COSTS[model]||MODEL_COSTS['gpt-4o-mini'];
+  return RUN.inTok*c.in/1e6+RUN.outTok*c.out/1e6;
+}
+function updateLiveCost(){
+  const el=document.getElementById('liveCost');if(!el)return;
+  el.textContent=`$${runCost().toFixed(4)} · ${(RUN.inTok+RUN.outTok).toLocaleString()} tok · ${RUN.calls} llamadas`;
+  const w=document.getElementById('liveCostWrap');if(w)w.style.display=RUN.calls?'':'none';
+}
+function usageTable(){
+  const model=document.getElementById('model')?.value||'gpt-4o-mini';
+  const c=MODEL_COSTS[model]||MODEL_COSTS['gpt-4o-mini'];
+  const rows=Object.entries(RUN.usage).sort((a,b)=>(b[1].in+b[1].out)-(a[1].in+a[1].out));
+  return rows.map(([id,u])=>({agent:id,calls:u.calls,in:u.in,out:u.out,cost:u.in*c.in/1e6+u.out*c.out/1e6}));
+}
 
-async function searchEPMC(q,max,yr){try{let query=q;if(yr)query+=` AND (PUB_YEAR:[${yr.from} TO ${yr.to}])`;const p=new URLSearchParams({query,format:'json',pageSize:Math.min(max,100),resultType:'core',sort:'CITED desc'});const r=await fetch(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?${p}`);if(!r.ok)throw new Error('EPMC '+r.status);return(((await r.json()).resultList||{}).result||[]).map(a=>({title:a.title||'',authors:(a.authorString||'').split(',').slice(0,4).map(s=>s.trim()),year:String(a.pubYear||''),journal:a.journalTitle||'',abstract:(a.abstractText||'').slice(0,500),citations:a.citedByCount||0,url:a.pmid?`https://europepmc.org/article/MED/${a.pmid}`:(a.doi?`https://doi.org/${a.doi}`:''),doi:a.doi||'',source:'Europe PMC',oa_status:a.inEPMC==='Y'?'open':''})).filter(p=>p.title);}catch(e){log('⚠ EuropePMC: '+e.message,'warn');return[];}}
+/* ── 4. Normalización y deduplicación por DOI con fusión ── */
+function normDOI(d){
+  if(!d)return '';
+  return String(d).toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//,'').replace(/^doi:/,'').trim();
+}
+function normTitle(t){
+  return String(t||'').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+}
+const SRC_RANK={'Semantic Scholar':5,'OpenAlex':5,'Europe PMC':4,'PubMed':4,'CrossRef':3,'arXiv':3,'Importado':6};
+function mergeRecords(a,b){
+  // conserva el registro más rico campo a campo
+  const pick=(x,y,better)=>better(x,y)?x:y;
+  const m={...a};
+  m.title=(a.title||'').length>=(b.title||'').length?a.title:b.title;
+  m.abstract=(a.abstract||'').length>=(b.abstract||'').length?a.abstract:b.abstract;
+  m.authors=(a.authors||[]).length>=(b.authors||[]).length?a.authors:b.authors;
+  m.year=a.year||b.year;
+  m.journal=(a.journal||'').length>=(b.journal||'').length?a.journal:b.journal;
+  m.citations=Math.max(a.citations||0,b.citations||0);
+  m.doi=normDOI(a.doi)||normDOI(b.doi);
+  m.url=a.url||b.url;
+  m.oa_status=a.oa_status||b.oa_status;
+  m.pmid=a.pmid||b.pmid;
+  m.retracted=a.retracted||b.retracted;
+  m.source=(SRC_RANK[a.source]||0)>=(SRC_RANK[b.source]||0)?a.source:b.source;
+  m.sources=Array.from(new Set([...(a.sources||[a.source]),...(b.sources||[b.source])].filter(Boolean)));
+  return m;
+}
+function dedup(papers){
+  const byDoi=new Map(),byTitle=new Map(),out=[];
+  const push=p=>{const q={...p,doi:normDOI(p.doi),sources:p.sources||[p.source]};
+    const d=q.doi;
+    if(d&&byDoi.has(d)){const i=byDoi.get(d);out[i]=mergeRecords(out[i],q);return;}
+    const t=normTitle(q.title);
+    const tk=t.split(' ').slice(0,12).join(' ');
+    if(tk&&byTitle.has(tk)){
+      const i=byTitle.get(tk);
+      // confirma con similitud sobre el título completo
+      if(jaccard(t,normTitle(out[i].title))>=0.85){out[i]=mergeRecords(out[i],q);if(q.doi&&!byDoi.has(q.doi))byDoi.set(q.doi,i);return;}
+    }
+    out.push(q);const idx=out.length-1;
+    if(d)byDoi.set(d,idx);
+    if(tk)byTitle.set(tk,idx);
+  };
+  papers.forEach(push);
+  return out;
+}
+function jaccard(a,b){
+  const A=new Set(a.split(' ')),B=new Set(b.split(' '));
+  if(!A.size||!B.size)return 0;
+  let inter=0;A.forEach(x=>{if(B.has(x))inter++;});
+  return inter/(A.size+B.size-inter);
+}
 
-async function searchCR(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({query:q,rows:Math.min(max,100),select:'DOI,title,author,published,container-title,abstract,is-referenced-by-count,URL',mailto:email});if(yr){p.set('filter',`from-pub-date:${yr.from},until-pub-date:${yr.to}`);}const r=await fetch(`https://api.crossref.org/works?${p}`);if(!r.ok)throw new Error('CR '+r.status);return(((await r.json()).message||{}).items||[]).map(w=>{const year=w.published?.['date-parts']?.[0]?.[0]||'';const doi=w.DOI||'';return{title:(Array.isArray(w.title)?w.title[0]:w.title)||'',authors:(w.author||[]).slice(0,4).map(a=>`${a.family||''} ${(a.given||'')[0]||''}`.trim()),year:String(year),journal:(Array.isArray(w['container-title'])?w['container-title'][0]:w['container-title'])||'',abstract:(w.abstract||'').replace(/<[^>]+>/g,'').slice(0,500),citations:w['is-referenced-by-count']||0,url:doi?`https://doi.org/${doi}`:'',doi,source:'CrossRef',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ CrossRef: '+e.message,'warn');return[];}}
+/* ── 5. Ranking normalizado (corrige el sesgo hacia lo antiguo) ── */
+function rankPapers(papers){
+  const by=document.getElementById('sortPapers')?.value||'relevance';
+  const now=new Date().getFullYear();
+  papers.forEach(p=>{
+    const y=parseInt(p.year)||now;
+    const age=Math.max(1,now-y+1);
+    p.cpy=(p.citations||0)/age;                 // citas por año
+  });
+  // percentil de cpy dentro del corpus (normalización tipo FWCI simplificada)
+  const sorted=[...papers].sort((a,b)=>a.cpy-b.cpy);
+  const n=sorted.length||1;
+  sorted.forEach((p,i)=>{p.cpct=Math.round(100*i/n);});
+  papers.forEach(p=>{
+    const rec=Math.max(0,1-(now-(parseInt(p.year)||now))/25);   // 0..1
+    const hasAbs=p.abstract&&p.abstract.length>80?1:0;
+    const nsrc=Math.min(3,(p.sources||[p.source]).length)/3;    // confirmado por varias fuentes
+    p.score=0.45*(p.cpct/100)+0.25*rec+0.20*hasAbs+0.10*nsrc;
+    if(p.retracted)p.score-=1;
+  });
+  if(by==='citations')return papers.sort((a,b)=>(b.citations||0)-(a.citations||0));
+  if(by==='year')return papers.sort((a,b)=>(parseInt(b.year)||0)-(parseInt(a.year)||0));
+  if(by==='source')return papers.sort((a,b)=>String(a.source).localeCompare(String(b.source)));
+  return papers.sort((a,b)=>b.score-a.score);   // relevance (por defecto)
+}
 
-function filterByYear(papers,yr){if(!yr)return papers;return papers.filter(p=>{const y=parseInt(p.year);return!isNaN(y)&&y>=yr.from&&y<=yr.to;});}
+/* ── 6. Retractaciones (OpenAlex, 1 petición por lote de 50 DOI) ── */
+async function checkRetractions(papers){
+  const withDoi=papers.filter(p=>p.doi);
+  if(!withDoi.length)return 0;
+  const email=document.getElementById('pubmedEmail')?.value||'';
+  let flagged=0;
+  for(let i=0;i<withDoi.length;i+=50){
+    const batch=withDoi.slice(i,i+50);
+    try{
+      const f=`doi:${batch.map(p=>'https://doi.org/'+p.doi).join('|')}`;
+      const u=new URLSearchParams({filter:f,select:'doi,is_retracted',per_page:50});
+      if(email)u.set('mailto',email);
+      const r=await fetch(`https://api.openalex.org/works?${u}`);
+      if(!r.ok)continue;
+      const res=(await r.json()).results||[];
+      const map=new Map(res.map(w=>[normDOI(w.doi),!!w.is_retracted]));
+      batch.forEach(p=>{if(map.get(p.doi)){p.retracted=true;flagged++;}});
+    }catch(e){/* no bloquea el pipeline */}
+  }
+  return flagged;
+}
 
-function dedup(papers){const seen=new Set();return papers.filter(p=>{const k=p.title.toLowerCase().slice(0,50).replace(/\s+/g,'');if(!k||seen.has(k))return false;seen.add(k);return true;});}
-function sortPapers(papers){const by=document.getElementById('sortPapers')?.value||'citations';if(by==='citations')return papers.sort((a,b)=>(b.citations||0)-(a.citations||0));if(by==='year')return papers.sort((a,b)=>parseInt(b.year||0)-parseInt(a.year||0));return papers.sort((a,b)=>a.source.localeCompare(b.source));}
-function fmt(papers,top=25){return papers.slice(0,top).map((p,i)=>{const a=p.authors.slice(0,3).join(', ')+(p.authors.length>3?' et al.':'');return`[${i+1}] ${p.title}\n    Authors: ${a||'Unknown'} | Year: ${p.year||'?'} | Venue: ${p.journal||'?'} | Citations: ${p.citations}\n    Source: ${p.source} | DOI: ${p.doi||'N/A'}\n    Abstract: ${p.abstract||'(not available)'}\n    URL: ${p.url}`;}).join('\n\n');}
+/* ── 7. CITAS ANCLADAS AL CORPUS ─────────────────────
+   El redactor cita [n] contra la lista numerada real.
+   Aquí se valida en JS (no se delega al modelo), se
+   eliminan las citas fuera de rango, se renumeran por
+   orden de aparición y se generan las referencias en
+   el estilo pedido.                                    */
+function citationList(papers){
+  return papers.map((p,i)=>{
+    const a=(p.authors||[]).slice(0,3).join(', ')+((p.authors||[]).length>3?' et al.':'');
+    return `[${i+1}] ${p.title}\n    Autores: ${a||'Desconocidos'} | Año: ${p.year||'?'} | Venue: ${p.journal||'?'} | Citas: ${p.citations||0}${p.retracted?' | ⚠ RETRACTADO':''}\n    DOI: ${p.doi||'N/D'} | Fuente: ${(p.sources||[p.source]).join('/')}\n    Abstract: ${(p.abstract||'(no disponible)').slice(0,600)}`;
+  }).join('\n\n');
+}
+const CITE_RE=/\[(\d+(?:\s*[,;–-]\s*\d+)*)\]/g;
+function extractCites(text){
+  const ids=[];let m;
+  CITE_RE.lastIndex=0;
+  while((m=CITE_RE.exec(text))!==null){
+    m[1].split(/[,;]/).forEach(part=>{
+      const rng=part.split(/[–-]/).map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));
+      if(rng.length===2&&rng[1]>rng[0]&&rng[1]-rng[0]<60){for(let k=rng[0];k<=rng[1];k++)ids.push(k);}
+      else if(rng.length)ids.push(rng[0]);
+    });
+  }
+  return ids;
+}
+function auditSection(text,corpusSize){
+  const ids=extractCites(text);
+  const valid=ids.filter(i=>i>=1&&i<=corpusSize);
+  const invalid=ids.filter(i=>i<1||i>corpusSize);
+  const authorYear=(text.match(/\[[A-ZÁÉÍÓÚÑ][^\]\d]{2,40},?\s*(19|20)\d{2}[a-z]?\]/g)||[]);
+  const words=text.split(/\s+/).filter(Boolean).length;
+  return {ids,valid,invalid,authorYear,words,density:words?valid.length/words*1000:0};
+}
+function stripInvalidCites(text,corpusSize){
+  return text.replace(CITE_RE,(full,inner)=>{
+    const keep=[];
+    inner.split(/[,;]/).forEach(part=>{
+      const rng=part.split(/[–-]/).map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));
+      if(rng.length===2&&rng[1]>rng[0]){for(let k=rng[0];k<=rng[1];k++)if(k>=1&&k<=corpusSize)keep.push(k);}
+      else if(rng.length&&rng[0]>=1&&rng[0]<=corpusSize)keep.push(rng[0]);
+    });
+    return keep.length?'['+Array.from(new Set(keep)).sort((a,b)=>a-b).join(', ')+']':'';
+  }).replace(/ +([.,;:])/g,'$1').replace(/ {2,}/g,' ');
+}
+function authorYearLabel(p){
+  const au=(p.authors||[]);
+  const fam=s=>String(s||'').trim().split(/\s+/).pop();
+  if(!au.length)return `Anónimo, ${p.year||'s.f.'}`;
+  if(au.length===1)return `${fam(au[0])}, ${p.year||'s.f.'}`;
+  if(au.length===2)return `${fam(au[0])} y ${fam(au[1])}, ${p.year||'s.f.'}`;
+  return `${fam(au[0])} et al., ${p.year||'s.f.'}`;
+}
+function formatRef(p,i,style){
+  const au=p.authors||[];
+  const fam=s=>String(s||'').trim().split(/\s+/).pop();
+  const ini=s=>{const t=String(s||'').trim().split(/\s+/);return t.length>1?t[0][0]+'.':'';};
+  const doi=p.doi?`https://doi.org/${p.doi}`:(p.url||'');
+  const oa=p.oa_status?` [OA: ${p.oa_status}]`:'';
+  const ret=p.retracted?' ⚠ RETRACTADO':'';
+  const J=p.journal||'';const Y=p.year||'s.f.';
+  switch(style){
+    case 'APA 7':{
+      const list=au.slice(0,20).map(a=>`${fam(a)}, ${ini(a)}`).join(', ');
+      return `${list||'Anónimo'} (${Y}). ${p.title}. ${J}${J?'. ':''}${doi}${oa}${ret}`;}
+    case 'Vancouver':{
+      const list=au.slice(0,6).map(a=>`${fam(a)} ${ini(a).replace('.','')}`).join(', ')+(au.length>6?', et al':'');
+      return `${i}. ${list||'Anónimo'}. ${p.title}. ${J}. ${Y}. ${doi}${oa}${ret}`;}
+    case 'ACM':{
+      const list=au.slice(0,10).map(a=>`${ini(a)} ${fam(a)}`).join(', ');
+      return `[${i}] ${list||'Anónimo'}. ${Y}. ${p.title}. ${J}. ${doi}${oa}${ret}`;}
+    case 'Chicago':{
+      const list=au.slice(0,10).map(a=>`${fam(a)}, ${ini(a)}`).join(', ');
+      return `${i}. ${list||'Anónimo'}. "${p.title}." ${J} (${Y}). ${doi}${oa}${ret}`;}
+    default:{ // IEEE
+      const list=au.slice(0,6).map(a=>`${ini(a)} ${fam(a)}`).join(', ')+(au.length>6?', et al.':'');
+      return `[${i}] ${list||'Anónimo'}, "${p.title}," ${J}${J?', ':''}${Y}. ${doi}${oa}${ret}`;}
+  }
+}
+/* Renumera por orden de aparición y sustituye por el estilo elegido.
+   Devuelve secciones reescritas + referencias realmente citadas.     */
+function finalizeCitations(sections,corpus,style){
+  const order=[];const map=new Map();
+  const scan=t=>extractCites(t).forEach(id=>{if(id>=1&&id<=corpus.length&&!map.has(id)){map.set(id,order.length+1);order.push(id);}});
+  Object.values(sections).forEach(scan);
+  const authorYear=(style==='APA 7'||style==='Chicago');
+  const out={};
+  Object.entries(sections).forEach(([k,t])=>{
+    out[k]=t.replace(CITE_RE,(full,inner)=>{
+      const keep=[];
+      inner.split(/[,;]/).forEach(part=>{
+        const rng=part.split(/[–-]/).map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));
+        if(rng.length===2&&rng[1]>rng[0]){for(let k2=rng[0];k2<=rng[1];k2++)if(map.has(k2))keep.push(k2);}
+        else if(rng.length&&map.has(rng[0]))keep.push(rng[0]);
+      });
+      if(!keep.length)return '';
+      const uniq=Array.from(new Set(keep));
+      if(authorYear)return '('+uniq.map(id=>authorYearLabel(corpus[id-1])).join('; ')+')';
+      return '['+uniq.map(id=>map.get(id)).sort((a,b)=>a-b).join(', ')+']';
+    }).replace(/ +([.,;:])/g,'$1').replace(/ {2,}/g,' ');
+  });
+  const refs=order.map((origId,i)=>({paper:corpus[origId-1],n:i+1,line:formatRef(corpus[origId-1],i+1,style)}));
+  return {sections:out,refs,citedIdx:order};
+}
 
-// ═══════════════════════════════════════════════════
-//  AUTOSAVE DRAFT
-// ═══════════════════════════════════════════════════
-function saveDraft(sections,papers,gaps,meta){
-  try{localStorage.setItem('doctoralia_draft',JSON.stringify({sections,papers:papers.slice(0,20),gaps,meta,ts:Date.now(),text:Object.entries(sections).map(([k,v])=>`## ${k}\n\n${v}`).join('\n\n')}));}catch(e){}
+/* ── 8. Métricas duras y verificables ── */
+function computeMetrics(sections,corpus,refs,audits){
+  const text=Object.values(sections).join('\n');
+  const words=text.split(/\s+/).filter(Boolean).length;
+  const totalIds=audits.reduce((a,x)=>a+x.ids.length,0);
+  const invalid=audits.reduce((a,x)=>a+x.invalid.length,0);
+  const legacy=audits.reduce((a,x)=>a+x.authorYear.length,0);
+  const noCite=audits.filter(x=>x.valid.length===0).length;
+  const years=refs.map(r=>parseInt(r.paper.year)).filter(y=>!isNaN(y));
+  const now=new Date().getFullYear();
+  const recent=years.filter(y=>y>=now-5).length;
+  const venues={};refs.forEach(r=>{const v=r.paper.journal||'—';venues[v]=(venues[v]||0)+1;});
+  const tot=refs.length||1;
+  const hhi=Object.values(venues).reduce((a,n)=>a+Math.pow(n/tot,2),0);
+  const oa=refs.filter(r=>r.paper.oa_status&&r.paper.oa_status!=='closed').length;
+  const withDoi=refs.filter(r=>r.paper.doi).length;
+  return {
+    words,
+    citations:totalIds,
+    resolved:totalIds?(totalIds-invalid)/totalIds:1,
+    invalid,legacy,
+    density:words?(totalIds-invalid)/words*1000:0,
+    coverage:corpus.length?refs.length/corpus.length:0,
+    sectionsNoCite:noCite,
+    refCount:refs.length,
+    yearMin:years.length?Math.min(...years):null,
+    yearMax:years.length?Math.max(...years):null,
+    recency:refs.length?recent/refs.length:0,
+    venueHHI:hhi,
+    oaRatio:refs.length?oa/refs.length:0,
+    doiRatio:refs.length?withDoi/refs.length:0,
+    retracted:refs.filter(r=>r.paper.retracted).length
+  };
+}
+function metricsHtml(m,refScore){
+  const pct=x=>(x*100).toFixed(0)+'%';
+  const rows=[
+    ['Citas resueltas contra el corpus',pct(m.resolved),m.resolved>=0.99?'ok':'bad',`${m.citations-m.invalid} de ${m.citations} marcadores`],
+    ['Densidad de citas',m.density.toFixed(1)+' /1.000 palabras',m.density>=8?'ok':(m.density>=4?'warn':'bad'),'referencia habitual en revisiones: 8–20'],
+    ['Cobertura del corpus',pct(m.coverage),m.coverage>=0.5?'ok':'warn',`${m.refCount} papers citados`],
+    ['Secciones sin ninguna cita',String(m.sectionsNoCite),m.sectionsNoCite===0?'ok':'bad','deberían ser 0'],
+    ['Citas no ancladas (autor-año inventado)',String(m.legacy),m.legacy===0?'ok':'bad','eliminadas del texto final'],
+    ['Referencias con DOI',pct(m.doiRatio),m.doiRatio>=0.8?'ok':'warn','verificables automáticamente'],
+    ['Cobertura temporal',m.yearMin?`${m.yearMin}–${m.yearMax}`:'—','ok',`${pct(m.recency)} de los últimos 5 años`],
+    ['Concentración de venues (HHI)',m.venueHHI.toFixed(3),m.venueHHI<0.15?'ok':'warn','<0,15 = bibliografía diversificada'],
+    ['Acceso abierto',pct(m.oaRatio),'ok','proporción de referencias OA'],
+    ['Referencias retractadas',String(m.retracted),m.retracted===0?'ok':'bad','comprobado en OpenAlex'],
+  ];
+  const col={ok:'var(--teal)',warn:'var(--amber)',bad:'var(--red)'};
+  return `<table class="at" style="width:100%"><thead><tr><th>Métrica</th><th style="width:130px">Valor</th><th>Interpretación</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td>${esc(r[0])}</td><td style="color:${col[r[2]]};font-weight:600">${esc(r[1])}</td><td style="color:var(--t3)">${esc(r[3])}</td></tr>`).join('')}
+  <tr><td>Juicio del agente <em>referee</em></td><td style="color:var(--t2)">${esc(refScore||'—')}</td><td style="color:var(--t3)">autoevaluación del modelo, <strong>no calibrada</strong>: no es una medida de calidad</td></tr>
+  </tbody></table>`;
+}
+
+/* ── 9. Diagrama PRISMA con recuentos reales ── */
+function prismaSvg(f){
+  const box=(x,y,w,h,title,lines)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+    <text x="${x+12}" y="${y+22}" font-size="12" font-weight="600" fill="#111827">${esc(title)}</text>
+    ${lines.map((l,i)=>`<text x="${x+12}" y="${y+42+i*16}" font-size="11" fill="#4b5563">${esc(l)}</text>`).join('')}`;
+  const arr=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ah)"/>`;
+  return `<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;background:#fff;border:1px solid var(--border);border-radius:8px">
+  <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9ca3af"/></marker></defs>
+  <text x="16" y="22" font-size="13" font-weight="600" fill="#111827">Flujo de selección de estudios (PRISMA)</text>
+  ${box(40,40,320,80,'Identificación',[`Registros identificados en ${f.nSources} bases: ${f.identified}`,...f.perSource.slice(0,3).map(s=>`  · ${s}`)])}
+  ${box(40,150,320,58,'Cribado',[`Duplicados eliminados: ${f.duplicates}`,`Registros únicos: ${f.unique}`])}
+  ${box(40,238,320,74,'Elegibilidad',[`Excluidos por rango temporal: ${f.excludedYear}`,`Excluidos por retractación: ${f.excludedRetracted}`,`Elegibles: ${f.eligible}`])}
+  ${box(40,342,320,74,'Inclusión',[`Papers en el contexto de redacción: ${f.inContext}`,`Papers efectivamente citados: ${f.cited}`,`Marcadores de cita en el texto: ${f.markers}`])}
+  ${arr(200,120,200,148)}${arr(200,208,200,236)}${arr(200,312,200,340)}
+  ${box(410,150,270,162,'Estrategia de búsqueda',[`Consultas: ${f.queries.length}`,...f.queries.slice(0,5).map(q=>`  · ${String(q).slice(0,34)}`),`Periodo: ${f.period}`,`Idioma de salida: ${f.lang}`])}
+  ${box(410,342,270,74,'Trazabilidad',[`Modelo: ${f.model}`,`Ejecutado: ${f.date}`,`Exportable en doctoralia_run.json`])}
+  </svg>`;
+}
+function prismaText(f){
+  return `Se interrogaron ${f.nSources} bases de datos bibliográficas (${f.sources}) con ${f.queries.length} consultas generadas automáticamente a partir del tema, restringidas al periodo ${f.period}. `
+  +`La búsqueda recuperó ${f.identified} registros (${f.perSource.join('; ')}). Tras la deduplicación por DOI normalizado y, subsidiariamente, por similitud de título (índice de Jaccard ≥ 0,85), quedaron ${f.unique} registros únicos. `
+  +`Se excluyeron ${f.excludedYear} registros por quedar fuera del rango temporal declarado y ${f.excludedRetracted} por figurar como retractados en OpenAlex, resultando ${f.eligible} registros elegibles. `
+  +`Los ${f.inContext} registros mejor posicionados según un índice compuesto (percentil de citas por año, recencia, disponibilidad de resumen y confirmación en varias fuentes) se incorporaron al contexto de redacción como lista numerada. `
+  +`El texto final contiene ${f.markers} marcadores de cita que resuelven contra ${f.cited} referencias distintas; los marcadores fuera de rango se eliminaron automáticamente mediante validación determinista, sin intervención del modelo.`;
+}
+
+/* ── 10. Persistencia en IndexedDB (sustituye a localStorage) ── */
+const IDB_NAME='doctoralia_db',IDB_STORE='kv';
+function idbOpen(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(IDB_NAME,1);
+    r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(IDB_STORE))r.result.createObjectStore(IDB_STORE);};
+    r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);
+  });
+}
+async function idbSet(k,v){try{const db=await idbOpen();return await new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).put(v,k);t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);});}catch(e){log('⚠ No se pudo guardar en IndexedDB: '+e.message,'warn');return false;}}
+async function idbGet(k){try{const db=await idbOpen();return await new Promise((res,rej)=>{const t=db.transaction(IDB_STORE,'readonly');const q=t.objectStore(IDB_STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}catch(e){return undefined;}}
+async function idbDel(k){try{const db=await idbOpen();return await new Promise(res=>{const t=db.transaction(IDB_STORE,'readwrite');t.objectStore(IDB_STORE).delete(k);t.oncomplete=()=>res(true);});}catch(e){return false;}}
+
+/* ── 11. ZIP mínimo (STORE) para generar .docx real sin dependencias ── */
+const CRC_TABLE=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(bytes){let c=0xFFFFFFFF;for(let i=0;i<bytes.length;i++)c=CRC_TABLE[(c^bytes[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function makeZip(files){ // files: [{name, str}]
+  const enc=new TextEncoder();const chunks=[];const central=[];let offset=0;
+  const u16=n=>[n&0xFF,(n>>8)&0xFF];
+  const u32=n=>[n&0xFF,(n>>8)&0xFF,(n>>16)&0xFF,(n>>>24)&0xFF];
+  files.forEach(f=>{
+    const nameB=enc.encode(f.name),dataB=enc.encode(f.str),crc=crc32(dataB);
+    const local=[...u32(0x04034b50),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),
+      ...u32(crc),...u32(dataB.length),...u32(dataB.length),...u16(nameB.length),...u16(0)];
+    chunks.push(new Uint8Array(local),nameB,dataB);
+    central.push([...u32(0x02014b50),...u16(20),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),
+      ...u32(crc),...u32(dataB.length),...u32(dataB.length),...u16(nameB.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(offset)]);
+    central.push(nameB);
+    offset+=local.length+nameB.length+dataB.length;
+  });
+  const cdStart=offset;let cdSize=0;const cdChunks=[];
+  for(let i=0;i<central.length;i+=2){
+    const head=new Uint8Array(central[i]),nm=central[i+1];
+    cdChunks.push(head,nm);cdSize+=head.length+nm.length;
+  }
+  const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cdSize),...u32(cdStart),...u16(0)]);
+  return new Blob([...chunks,...cdChunks,end],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+function xmlEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function docxParagraph(text,style){
+  const runs=[];
+  // negrita/cursiva markdown básica
+  const parts=String(text).split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).filter(x=>x!=='');
+  parts.forEach(p=>{
+    let props='',t=p;
+    if(/^\*\*[\s\S]+\*\*$/.test(p)){props='<w:b/>';t=p.slice(2,-2);}
+    else if(/^\*[\s\S]+\*$/.test(p)){props='<w:i/>';t=p.slice(1,-1);}
+    runs.push(`<w:r>${props?`<w:rPr>${props}</w:rPr>`:''}<w:t xml:space="preserve">${xmlEsc(t)}</w:t></w:r>`);
+  });
+  return `<w:p>${style?`<w:pPr><w:pStyle w:val="${style}"/></w:pPr>`:'<w:pPr><w:jc w:val="both"/></w:pPr>'}${runs.join('')}</w:p>`;
+}
+function buildDocx(md,meta){
+  const body=[];
+  md.split('\n').forEach(line=>{
+    const t=line.trim();
+    if(!t){return;}
+    if(t.startsWith('|'))return;                      // tablas markdown: fuera del docx
+    if(t==='---'){body.push('<w:p/>');return;}
+    if(t.startsWith('### '))body.push(docxParagraph(t.slice(4),'Heading3'));
+    else if(t.startsWith('## '))body.push(docxParagraph(t.slice(3),'Heading2'));
+    else if(t.startsWith('# '))body.push(docxParagraph(t.slice(2),'Title'));
+    else if(t.startsWith('- ')||t.startsWith('* '))body.push(docxParagraph('• '+t.slice(2)));
+    else body.push(docxParagraph(t));
+  });
+  const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body.join('')}
+<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1418" w:right="1701" w:bottom="1418" w:left="1701"/></w:sectPr></w:body></w:document>`;
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="24"/></w:rPr></w:rPrDefault>
+<w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:pPr><w:jc w:val="center"/><w:spacing w:after="240"/></w:pPr><w:rPr><w:b/><w:sz w:val="36"/><w:color w:val="1A3A5C"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:pPr><w:outlineLvl w:val="1"/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:b/><w:sz w:val="28"/><w:color w:val="1A3A5C"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:pPr><w:outlineLvl w:val="2"/><w:spacing w:before="180" w:after="100"/></w:pPr><w:rPr><w:b/><w:sz w:val="26"/></w:rPr></w:style>
+</w:styles>`;
+  const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+</Types>`;
+  const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+</Relationships>`;
+  const drels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+  const core=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<dc:title>${xmlEsc(meta.topic||'Revisión')}</dc:title><dc:creator>Doctoralia</dc:creator><cp:lastModifiedBy>Doctoralia</cp:lastModifiedBy>
+<dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`;
+  return makeZip([
+    {name:'[Content_Types].xml',str:ct},
+    {name:'_rels/.rels',str:rels},
+    {name:'docProps/core.xml',str:core},
+    {name:'word/_rels/document.xml.rels',str:drels},
+    {name:'word/document.xml',str:doc},
+    {name:'word/styles.xml',str:styles},
+  ]);
+}
+
+/* ── 12. Importar corpus propio: BibTeX / RIS / lista de DOI ── */
+function parseBibtex(txt){
+  const out=[];
+  const entries=txt.split(/@\w+\s*\{/).slice(1);
+  entries.forEach(e=>{
+    const g=k=>{const m=e.match(new RegExp(k+'\\s*=\\s*[{"]([\\s\\S]*?)[}"]\\s*,?\\s*\\n','i'));return m?m[1].replace(/\s+/g,' ').replace(/[{}]/g,'').trim():'';};
+    const title=g('title');if(!title)return;
+    out.push({title,authors:g('author').split(/\s+and\s+/).filter(Boolean).slice(0,6),year:(g('year')||'').slice(0,4),
+      journal:g('journal')||g('booktitle'),abstract:g('abstract').slice(0,600),citations:0,
+      doi:normDOI(g('doi')),url:g('url'),source:'Importado',oa_status:''});
+  });
+  return out;
+}
+function parseRis(txt){
+  const out=[];let cur=null;
+  txt.split(/\r?\n/).forEach(line=>{
+    const m=line.match(/^([A-Z][A-Z0-9])\s+-\s*(.*)$/);
+    if(!m){if(cur&&line.trim()&&cur._last==='AB')cur.abstract+=' '+line.trim();return;}
+    const [,tag,val]=m;
+    if(tag==='TY'){cur={title:'',authors:[],year:'',journal:'',abstract:'',citations:0,doi:'',url:'',source:'Importado',oa_status:''};out.push(cur);}
+    if(!cur)return;cur._last=tag;
+    if(tag==='TI'||tag==='T1')cur.title=val;
+    else if(tag==='AU'||tag==='A1')cur.authors.push(val);
+    else if(tag==='PY'||tag==='Y1')cur.year=(val.match(/\d{4}/)||[''])[0];
+    else if(tag==='JO'||tag==='JF'||tag==='T2')cur.journal=val;
+    else if(tag==='AB'||tag==='N2')cur.abstract=val;
+    else if(tag==='DO')cur.doi=normDOI(val);
+    else if(tag==='UR')cur.url=val;
+  });
+  return out.filter(p=>p.title).map(p=>{delete p._last;return p;});
+}
+async function resolveDois(list){
+  const email=document.getElementById('pubmedEmail')?.value||'';
+  const out=[];
+  for(let i=0;i<list.length;i+=50){
+    const batch=list.slice(i,i+50);
+    try{
+      const u=new URLSearchParams({filter:`doi:${batch.map(d=>'https://doi.org/'+d).join('|')}`,per_page:50,
+        select:'doi,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,open_access,is_retracted'});
+      if(email)u.set('mailto',email);
+      const r=await fetch(`https://api.openalex.org/works?${u}`);
+      if(!r.ok)continue;
+      ((await r.json()).results||[]).forEach(w=>{
+        let abstract='';
+        if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([wd,ps])=>ps.forEach(p=>pos.push([p,wd])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,600);}
+        out.push({title:w.title||'',authors:(w.authorships||[]).slice(0,6).map(a=>a.author?.display_name||''),
+          year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,
+          citations:w.cited_by_count||0,url:w.id||'',doi:normDOI(w.doi),source:'Importado',
+          oa_status:w.open_access?.oa_status||'',retracted:!!w.is_retracted});
+      });
+    }catch(e){}
+  }
+  return out;
+}
+let importedCorpus=[];
+async function handleCorpusImport(input){
+  const file=input.files&&input.files[0];if(!file)return;
+  const txt=await file.text();
+  let papers=[];
+  if(/\.ris$/i.test(file.name)||/^TY\s+-/m.test(txt))papers=parseRis(txt);
+  else if(/@\w+\s*\{/.test(txt))papers=parseBibtex(txt);
+  else{
+    const dois=(txt.match(/10\.\d{4,9}\/[^\s"'<>,;]+/g)||[]).map(normDOI);
+    if(dois.length){log(`🔎 Resolviendo ${dois.length} DOI en OpenAlex...`,'info');papers=await resolveDois(Array.from(new Set(dois)));}
+  }
+  importedCorpus=dedup([...importedCorpus,...papers]);
+  const el=document.getElementById('importInfo');
+  if(el)el.innerHTML=importedCorpus.length?`<span style="color:var(--teal)">✅ ${importedCorpus.length} referencias propias cargadas</span> · <a href="#" onclick="importedCorpus=[];document.getElementById('importInfo').innerHTML='';return false" style="color:var(--red)">quitar</a>`:'<span style="color:var(--amber)">No se reconoció ninguna referencia en el fichero.</span>';
+  log(`📥 Corpus propio: ${papers.length} referencias importadas de ${file.name}`,'ok');
+  input.value='';
+}
+
+/* ── 13. Exportaciones nuevas ── */
+function exportDocx(){
+  if(!generatedText)return;
+  try{
+    const blob=buildDocx(generatedText,{topic:document.getElementById('topic').value});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`doctoralia_${slug()}.docx`;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+    log('⬇ Word (.docx real, OOXML) descargado.','ok');
+  }catch(e){log('❌ docx: '+e.message+' — usando exportación .doc alternativa.','warn');exportWord();}
+}
+function exportBibtex(){
+  if(!lastRefs.length){log('No hay referencias que exportar todavía.','warn');return;}
+  const bib=lastRefs.map(r=>{
+    const p=r.paper;const key=((p.authors||[])[0]||'anon').split(/\s+/).pop().toLowerCase().replace(/[^a-z]/g,'')+(p.year||'')+String(r.n);
+    return `@article{${key},\n  title   = {${p.title}},\n  author  = {${(p.authors||[]).join(' and ')}},\n  year    = {${p.year||''}},\n  journal = {${p.journal||''}},${p.doi?`\n  doi     = {${p.doi}},`:''}${p.url?`\n  url     = {${p.url}},`:''}\n}`;
+  }).join('\n\n');
+  dl(`doctoralia_${slug()}.bib`,bib,'text/plain');
+  log('⬇ BibTeX de las referencias citadas descargado.','ok');
+}
+function exportRunJson(){
+  if(!lastRun){log('Aún no hay ninguna ejecución que exportar.','warn');return;}
+  dl(`doctoralia_run_${slug()}.json`,JSON.stringify(lastRun,null,2),'application/json');
+  log('⬇ Traza de ejecución (reproducibilidad) descargada.','ok');
+}
+let lastRefs=[],lastRun=null,lastMetrics=null,lastAudit=null;
+
+const APP_VERSION='2.0';
+
+/* Estructura por defecto en el idioma de salida */
+function DEFAULT_STRUCTURE(lang,wc){
+  const T={
+    'Spanish':['Introducción','Antecedentes','Estado actual del arte','Enfoques metodológicos','Hallazgos principales','Brechas y líneas futuras','Discusión','Conclusiones'],
+    'English':['Introduction','Background','Current State of the Art','Methodological Approaches','Key Findings','Research Gaps and Future Directions','Discussion','Conclusion'],
+    'Portuguese':['Introdução','Antecedentes','Estado atual da arte','Abordagens metodológicas','Principais resultados','Lacunas e direções futuras','Discussão','Conclusões'],
+    'French':['Introduction','Contexte','État de l\'art actuel','Approches méthodologiques','Résultats principaux','Lacunes et perspectives','Discussion','Conclusion'],
+    'German':['Einleitung','Hintergrund','Aktueller Stand der Technik','Methodische Ansätze','Zentrale Ergebnisse','Forschungslücken und Ausblick','Diskussion','Fazit'],
+  };
+  const names=T[lang]||T['Spanish'];
+  const w=[0.10,0.15,0.24,0.18,0.14,0.09,0.06,0.04];
+  const o={};names.forEach((n,i)=>o[n]=Math.round(wc*w[i]/50)*50);
+  return o;
+}
+
+/* ── Streaming: destino de la vista previa en vivo ── */
+let streamSection=null;
+function streamTarget(sec){
+  streamSection=sec;
+  const box=document.getElementById('streamBox');if(!box)return;
+  if(sec){box.style.display='';document.getElementById('streamTitle').textContent='✍️ '+sec;document.getElementById('streamBody').textContent='';}
+  else box.style.display='none';
+}
+function streamAppend(delta){
+  const b=document.getElementById('streamBody');if(!b)return;
+  b.textContent+=delta;b.scrollTop=b.scrollHeight;
+}
+
+/* ── Panel de auditoría: aquí SÍ se usa lo que producen skeptic/verifier/thread ── */
+function renderAuditPanel(f,metrics,sectionAudits){
+  const el=document.getElementById('auditArea');if(!el)return;
+  const block=(title,icon,items,render)=>items.length?`
+    <div class="section-block"><div class="section-header" onclick="toggleSection(this)">
+      <span class="section-title-text">${icon} ${esc(title)} (${items.length})</span><span style="color:var(--t3);font-size:12px">▼</span></div>
+      <div class="section-body" style="font-size:13px;line-height:1.7;color:var(--t2)">${items.map(render).join('')}</div></div>`:'';
+  const secRows=(sectionAudits||[]).map(a=>`<tr><td>${esc(a.section)}</td><td style="text-align:right">${a.words}</td><td style="text-align:right;color:${a.valid.length?'var(--teal)':'var(--red)'}">${a.valid.length}</td><td style="text-align:right">${a.density.toFixed(1)}</td><td style="text-align:right;color:${a.invalid.length?'var(--red)':'var(--t3)'}">${a.invalid.length}</td></tr>`).join('');
+  el.innerHTML=`
+    <div class="fi">
+      <div class="sh">📐 Métricas verificables de la revisión</div>
+      ${metrics?metricsHtml(metrics,qualityScore):''}
+      <div class="divider"></div>
+      <div class="sh">📄 Citación por sección</div>
+      <div class="at-wrap"><table class="at" style="width:100%"><thead><tr><th>Sección</th><th style="width:90px;text-align:right">Palabras</th><th style="width:90px;text-align:right">Citas</th><th style="width:110px;text-align:right">Dens./1.000</th><th style="width:110px;text-align:right">Descartadas</th></tr></thead><tbody>${secRows}</tbody></table></div>
+      <div class="divider"></div>
+      <div class="sh">🔍 Hallazgos de los agentes validadores</div>
+      ${block('Afirmaciones sin respaldo (skeptic)','⚠️',f.claims||[],x=>`<div style="margin-bottom:12px"><strong style="color:var(--amber)">${esc(x.section)}</strong><div style="white-space:pre-wrap">${esc(x.text)}</div></div>`)}
+      ${block('Coherencia citas/referencias (verifier)','🔗',f.cites||[],x=>`<div style="margin-bottom:12px"><strong style="color:var(--amber)">${esc(x.section)}</strong><div style="white-space:pre-wrap">${esc(x.text)}</div></div>`)}
+      ${block('Transiciones entre secciones (thread)','📐',f.thread||[],x=>`<div style="margin-bottom:12px"><strong style="color:var(--amber)">${esc(x.section)}</strong><div style="white-space:pre-wrap">${esc(x.note)}</div></div>`)}
+      ${block('Revisión por pares simulada (referee)','🧑‍⚖️',f.referee||[],x=>`<div style="margin-bottom:12px"><strong>${esc(x.section)}</strong>${x.score?` <span style="color:var(--t3)">· ${x.score}/5</span>`:''}<div style="white-space:pre-wrap">${esc(x.text)}</div></div>`)}
+      ${(!(f.claims||[]).length&&!(f.cites||[]).length&&!(f.thread||[]).length)?'<div class="ibox"><span>✅</span><span>Los agentes validadores no han señalado incidencias.</span></div>':''}
+      <div class="divider"></div>
+      <div class="sh">💰 Consumo real por agente</div>
+      <div class="at-wrap"><table class="at" style="width:100%"><thead><tr><th>Agente</th><th style="text-align:right">Llamadas</th><th style="text-align:right">Tokens entrada</th><th style="text-align:right">Tokens salida</th><th style="text-align:right">Coste</th></tr></thead><tbody>
+      ${usageTable().map(r=>`<tr><td>${esc(r.agent)}</td><td style="text-align:right">${r.calls}</td><td style="text-align:right">${r.in.toLocaleString()}</td><td style="text-align:right">${r.out.toLocaleString()}</td><td style="text-align:right">$${r.cost.toFixed(4)}</td></tr>`).join('')}
+      <tr style="font-weight:600"><td>TOTAL</td><td style="text-align:right">${RUN.calls}</td><td style="text-align:right">${RUN.inTok.toLocaleString()}</td><td style="text-align:right">${RUN.outTok.toLocaleString()}</td><td style="text-align:right">$${runCost().toFixed(4)}</td></tr>
+      </tbody></table></div>
+    </div>`;
+  const b=document.getElementById('auditBadge');if(b)b.style.display='';
+}
+
+/* ── Historial y borrador en IndexedDB ── */
+/* ── Historial y borrador en IndexedDB ── */
+async function saveDraft(sections,papers,gaps,meta){
+  const d={sections,papers:(papers||[]).slice(0,60),gaps,meta,ts:Date.now(),
+    text:Object.entries(sections).map(([k,v])=>`## ${k}\n\n${v}`).join('\n\n')};
+  await idbSet('draft',d);
+}
+async function loadDraft(){
+  const d=await idbGet('draft');if(!d)return;
+  generatedText=d.text||'';sectionTextsStore=d.sections||{};allPapersStore=d.papers||[];gapsStore=d.gaps||'';
+  renderOutputSections(sectionTextsStore,lastRefs,gapsStore,d.meta||{});
+  document.getElementById('partialBadge').style.display='flex';
+  document.getElementById('qualityBar').style.display='flex';
+  document.getElementById('exportRow').style.display='flex';
+  document.getElementById('outputBadge').style.display='';
+  showMain('output');
+  document.getElementById('draftBanner')?.remove();
 }
 function showDraftBanner(d){
   const meta=d.meta||{};
   const banner=document.createElement('div');
-  banner.style.cssText='position:fixed;bottom:20px;right:20px;background:#ffffff;border:1px solid var(--border);box-shadow:var(--shadow);border-radius:var(--rl);padding:14px 18px;z-index:500;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,.4)';
-  banner.innerHTML=`<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">📋 Borrador guardado</div><div style="font-size:12px;color:var(--t2);margin-bottom:10px">${meta.topic||'Revisión anterior'} · ${new Date(d.ts).toLocaleDateString('es')}</div><div style="display:flex;gap:8px"><button class="btn btn-primary" style="font-size:12px;padding:5px 10px" onclick="loadDraft()">Recuperar</button><button class="btn btn-danger" style="font-size:12px;padding:5px 10px" onclick="this.closest('div[style]').remove();localStorage.removeItem('doctoralia_draft')">Descartar</button></div>`;
+  banner.id='draftBanner';
+  banner.style.cssText='position:fixed;bottom:20px;right:20px;background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;z-index:500;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,.18)';
+  banner.innerHTML=`<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">📋 Borrador guardado</div><div style="font-size:12px;color:var(--t2);margin-bottom:10px">${esc(meta.topic||'Revisión anterior')} · ${new Date(d.ts).toLocaleDateString('es')}</div><div style="display:flex;gap:8px"><button class="btn btn-primary" style="font-size:12px;padding:5px 10px" onclick="loadDraft()">Recuperar</button><button class="btn btn-danger" style="font-size:12px;padding:5px 10px" onclick="document.getElementById('draftBanner').remove();idbDel('draft')">Descartar</button></div>`;
   document.body.appendChild(banner);
 }
-function loadDraft(){
+async function saveToHistory(topic,wordCount,sections,time){
+  let hist=(await idbGet('history'))||[];
+  hist.unshift({id:Date.now(),topic,wordCount,sections,time,ts:Date.now(),
+    text:generatedText,refs:lastRefs,metrics:lastMetrics,run:lastRun,sectionsData:sectionTextsStore});
+  hist=hist.slice(0,20);
+  await idbSet('history',hist);
+  await renderHistory();
+}
+async function renderHistory(){
+  const area=document.getElementById('historyList');if(!area)return;
+  const hist=(await idbGet('history'))||[];
+  if(!hist.length){area.innerHTML='<div class="placeholder"><div class="bi">🕓</div><p>Aún no hay revisiones guardadas.</p></div>';return;}
+  area.innerHTML=hist.map((h,i)=>`<div class="hist-card fi">
+      <div class="hist-info">
+        <div class="hist-title">${esc(h.topic||'Sin título')}</div>
+        <div class="hist-meta">${new Date(h.ts).toLocaleDateString('es')} · ${(h.wordCount||0).toLocaleString()} palabras · ${h.sections||0} secciones · ${esc(h.time||'?')}${h.metrics?` · ${h.metrics.refCount} refs · ${(h.metrics.resolved*100).toFixed(0)}% citas resueltas`:''}</div>
+      </div>
+      <div class="hist-actions">
+        <button class="btn-ghost" onclick="loadFromHistory(${i})">📂 Cargar</button>
+        <button class="btn-ghost" onclick="downloadHistory(${i})">⬇ .md</button>
+        <button class="btn-ghost" onclick="downloadHistoryRun(${i})">⬇ .json</button>
+        <button class="btn-ghost" style="color:var(--red)" onclick="deleteHistory(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+async function loadFromHistory(i){
+  const hist=(await idbGet('history'))||[];const h=hist[i];if(!h)return;
+  generatedText=h.text||'';lastRefs=h.refs||[];lastMetrics=h.metrics||null;lastRun=h.run||null;
+  sectionTextsStore=h.sectionsData||{};
+  if(Object.keys(sectionTextsStore).length)renderOutputSections(sectionTextsStore,lastRefs,'',{time:h.time,score:'—',metrics:lastMetrics});
+  else{const oa=document.getElementById('outputArea');oa.innerHTML='';const pre=document.createElement('div');pre.className='out-area fi';pre.textContent=h.text||'';oa.appendChild(pre);}
+  document.getElementById('exportRow').style.display='flex';
+  showMain('output');
+}
+async function downloadHistory(i){const hist=(await idbGet('history'))||[];const h=hist[i];if(!h)return;dl(`doctoralia_${(h.topic||'review').replace(/\s+/g,'_').slice(0,40)}.md`,h.text||'','text/markdown');}
+async function downloadHistoryRun(i){const hist=(await idbGet('history'))||[];const h=hist[i];if(!h||!h.run){log('Esa entrada no tiene traza de ejecución.','warn');return;}dl(`doctoralia_run_${(h.topic||'review').replace(/\s+/g,'_').slice(0,40)}.json`,JSON.stringify(h.run,null,2),'application/json');}
+async function deleteHistory(i){let hist=(await idbGet('history'))||[];hist.splice(i,1);await idbSet('history',hist);await renderHistory();}
+async function clearHistory(){if(!confirm('¿Borrar todo el historial de revisiones?'))return;await idbSet('history',[]);await renderHistory();}
+async function migrateStorage(){
   try{
-    const d=JSON.parse(localStorage.getItem('doctoralia_draft'));
-    if(!d)return;
-    generatedText=d.text||'';
-    sectionTextsStore=d.sections||{};
-    allPapersStore=d.papers||[];
-    gapsStore=d.gaps||'';
-    renderOutputSections(sectionTextsStore,d.papers||[],d.gaps||'',d.meta||{});
-    document.getElementById('partialBadge').style.display='flex';
-    document.getElementById('qualityBar').style.display='flex';
-    document.getElementById('exportRow').style.display='flex';
-    document.getElementById('outputBadge').style.display='';
-    showMain('output');
-    document.querySelector('[style*="position:fixed;bottom"]')?.remove();
+    const old=localStorage.getItem('doctoralia_history');
+    if(old){
+      const cur=(await idbGet('history'))||[];
+      if(!cur.length){await idbSet('history',JSON.parse(old));log('📦 Historial migrado de localStorage a IndexedDB.','ok');}
+      localStorage.removeItem('doctoralia_history');
+    }
+    const od=localStorage.getItem('doctoralia_draft');
+    if(od&&!(await idbGet('draft'))){await idbSet('draft',JSON.parse(od));localStorage.removeItem('doctoralia_draft');}
   }catch(e){}
 }
 
 // ═══════════════════════════════════════════════════
-//  HISTORY
+//  SEARCH ENGINES
 // ═══════════════════════════════════════════════════
-function saveToHistory(topic,wordCount,sections,time){
+async function searchSS(q,max,yr){
+  const p=new URLSearchParams({query:q,limit:Math.min(max,100),offset:0,fields:'paperId,title,abstract,year,authors,venue,citationCount,url,externalIds,publicationVenue'});
+  if(yr)p.set('year',`${yr.from}-${yr.to}`);
+  const userKey=(document.getElementById('ssKey')?.value||'').trim();   // clave propia opcional del usuario
+  const headers=userKey?{'x-api-key':userKey}:{};
   try{
-    let hist=JSON.parse(localStorage.getItem('doctoralia_history')||'[]');
-    hist.unshift({id:Date.now(),topic,wordCount,sections,time,ts:Date.now(),text:generatedText});
-    hist=hist.slice(0,5);
-    localStorage.setItem('doctoralia_history',JSON.stringify(hist));
-  }catch(e){}
-  renderHistory();
+    const r=await fetch(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`,{headers});
+    if(r.status===429){log('⚠ Semantic Scholar: límite de peticiones. Añade tu propia clave en Fuentes para subir la cuota.','warn');return[];}
+    if(!r.ok)throw new Error('SS '+r.status);
+    return((await r.json()).data||[]).map(x=>({title:x.title||'',authors:(x.authors||[]).slice(0,6).map(a=>a.name),year:String(x.year||''),journal:x.venue||x.publicationVenue?.name||'',abstract:(x.abstract||'').slice(0,900),citations:x.citationCount||0,url:x.url||'',doi:normDOI((x.externalIds||{}).DOI||''),source:'Semantic Scholar',oa_status:''}));
+  }catch(e){log('⚠ Semantic Scholar: '+e.message,'warn');return[];}
 }
-function renderHistory(){
-  const area=document.getElementById('historyList');if(!area)return;
+
+async function searchPM(q,max,yr){
+  const email=(document.getElementById('pubmedEmail')?.value||'').trim();
   try{
-    const hist=JSON.parse(localStorage.getItem('doctoralia_history')||'[]');
-    if(!hist.length){area.innerHTML='<div class="placeholder"><div class="bi">🕓</div><p>Aún no hay revisiones guardadas.</p></div>';return;}
-    area.innerHTML=hist.map((h,i)=>`<div class="hist-card fi">
-      <div class="hist-info">
-        <div class="hist-title">${h.topic||'Sin título'}</div>
-        <div class="hist-meta">${new Date(h.ts).toLocaleDateString('es')} · ${(h.wordCount||0).toLocaleString()} palabras · ${h.sections||0} secciones · ${h.time||'?'}</div>
-      </div>
-      <div class="hist-actions">
-        <button class="btn-ghost" onclick="loadFromHistory(${i})">📂 Cargar</button>
-        <button class="btn-ghost" onclick="downloadHistory(${i})">⬇</button>
-        <button class="btn-ghost" style="color:var(--red)" onclick="deleteHistory(${i})">🗑</button>
-      </div>
-    </div>`).join('');
-  }catch(e){area.innerHTML='<div class="placeholder"><div class="bi">🕓</div><p>Error cargando historial.</p></div>';}
+    let term=`(${q})`;
+    if(document.getElementById('pmEnglish')?.checked)term+=' AND (English[Language])';
+    if(yr)term+=` AND (${yr.from}[PDAT]:${yr.to}[PDAT])`;
+    const sp=new URLSearchParams({db:'pubmed',term,retmax:max,retmode:'json',tool:'doctoralia'});
+    if(email)sp.set('email',email);
+    const pmids=((await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);
+    if(!pmids.length)return[];
+    // efetch en XML: es la única vía que devuelve el abstract completo (esummary NO lo trae)
+    const fp=new URLSearchParams({db:'pubmed',id:pmids.join(','),retmode:'xml',rettype:'abstract',tool:'doctoralia'});
+    if(email)fp.set('email',email);
+    const xmlTxt=await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?${fp}`)).text();
+    const xml=new DOMParser().parseFromString(xmlTxt,'application/xml');
+    return Array.from(xml.querySelectorAll('PubmedArticle')).map(a=>{
+      const pmid=a.querySelector('PMID')?.textContent||'';
+      const title=(a.querySelector('ArticleTitle')?.textContent||'').replace(/\s+/g,' ').trim();
+      const abstract=Array.from(a.querySelectorAll('Abstract > AbstractText')).map(n=>{
+        const lab=n.getAttribute('Label');return (lab?lab+': ':'')+n.textContent;
+      }).join(' ').replace(/\s+/g,' ').slice(0,1200);
+      const authors=Array.from(a.querySelectorAll('AuthorList > Author')).slice(0,6).map(au=>{
+        const ln=au.querySelector('LastName')?.textContent||'';const fn=au.querySelector('ForeName')?.textContent||'';
+        return (fn?fn+' ':'')+ln;}).filter(Boolean);
+      const year=a.querySelector('PubDate > Year')?.textContent
+        ||(a.querySelector('PubDate > MedlineDate')?.textContent||'').slice(0,4)
+        ||(a.querySelector('ArticleDate > Year')?.textContent||'');
+      const journal=a.querySelector('Journal > Title')?.textContent||a.querySelector('MedlineTA')?.textContent||'';
+      const doi=Array.from(a.querySelectorAll('ArticleId')).find(n=>n.getAttribute('IdType')==='doi')?.textContent||'';
+      const retracted=Array.from(a.querySelectorAll('PublicationType')).some(n=>/Retracted Publication/i.test(n.textContent));
+      return {title,authors,year:String(year||''),journal,abstract,citations:0,pmid,
+        url:`https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,doi:normDOI(doi),source:'PubMed',oa_status:'',retracted};
+    }).filter(p=>p.title);
+  }catch(e){log('⚠ PubMed: '+e.message,'warn');return[];}
 }
-function loadFromHistory(i){
-  try{const hist=JSON.parse(localStorage.getItem('doctoralia_history')||'[]');const h=hist[i];if(!h)return;generatedText=h.text||'';showMain('output');document.getElementById('outputArea').innerHTML='';const pre=document.createElement('div');pre.className='out-area fi';pre.textContent=h.text||'';document.getElementById('outputArea').appendChild(pre);document.getElementById('exportRow').style.display='flex';}catch(e){}
+
+async function searchAX(q,max,yr){
+  let qs=`all:${encodeURIComponent(q.replace(/\s+/g,'+'))}`;
+  if(yr)qs+=`+AND+submittedDate:[${yr.from}01010000+TO+${yr.to}12312359]`;
+  const arxivUrl=`https://export.arxiv.org/api/query?search_query=${qs}&start=0&max_results=${max}`;
+  // 1) directo  2) corsproxy  3) allorigins — el fallo de un proxy no debe tumbar la fuente
+  const candidates=[arxivUrl,
+    `https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(arxivUrl)}`];
+  for(const u of candidates){
+    try{
+      const r=await fetch(u);if(!r.ok)continue;
+      const xml=new DOMParser().parseFromString(await r.text(),'application/xml');
+      const entries=Array.from(xml.querySelectorAll('entry'));
+      if(!entries.length)continue;
+      return entries.map(e=>({
+        title:(e.querySelector('title')?.textContent||'').replace(/\s+/g,' ').trim(),
+        authors:Array.from(e.querySelectorAll('author name')).slice(0,6).map(a=>a.textContent),
+        year:(e.querySelector('published')?.textContent||'').slice(0,4),
+        journal:'arXiv (preprint)',
+        abstract:(e.querySelector('summary')?.textContent||'').replace(/\s+/g,' ').slice(0,900),
+        citations:0,url:e.querySelector('id')?.textContent||'',
+        doi:normDOI(e.querySelector("link[title='doi']")?.getAttribute('href')||''),
+        source:'arXiv',oa_status:'gold'})).filter(p=>p.title);
+    }catch(e){/* siguiente candidato */}
+  }
+  log('⚠ arXiv: no accesible por CORS en este momento.','warn');
+  return[];
 }
-function downloadHistory(i){
-  try{const hist=JSON.parse(localStorage.getItem('doctoralia_history')||'[]');const h=hist[i];if(!h)return;generatedText=h.text||'';exportMarkdown();}catch(e){}
-}
-function deleteHistory(i){
-  try{let hist=JSON.parse(localStorage.getItem('doctoralia_history')||'[]');hist.splice(i,1);localStorage.setItem('doctoralia_history',JSON.stringify(hist));renderHistory();}catch(e){}
-}
-function clearHistory(){localStorage.removeItem('doctoralia_history');renderHistory();}
+
+async function searchOA(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access',mailto:email});if(yr){p.set('filter',`publication_year:${yr.from}-${yr.to}`);}const r=await fetch(`https://api.openalex.org/works?${p}`);if(!r.ok)throw new Error('OA '+r.status);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,900);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:normDOI(w.doi),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){log('⚠ OpenAlex: '+e.message,'warn');return[];}}
+
+async function searchEPMC(q,max,yr){try{let query=q;if(yr)query+=` AND (PUB_YEAR:[${yr.from} TO ${yr.to}])`;const p=new URLSearchParams({query,format:'json',pageSize:Math.min(max,100),resultType:'core',sort:'CITED desc'});const r=await fetch(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?${p}`);if(!r.ok)throw new Error('EPMC '+r.status);return(((await r.json()).resultList||{}).result||[]).map(a=>({title:a.title||'',authors:(a.authorString||'').split(',').slice(0,4).map(s=>s.trim()),year:String(a.pubYear||''),journal:a.journalTitle||'',abstract:(a.abstractText||'').slice(0,900),citations:a.citedByCount||0,url:a.pmid?`https://europepmc.org/article/MED/${a.pmid}`:(a.doi?`https://doi.org/${a.doi}`:''),doi:normDOI(a.doi),source:'Europe PMC',oa_status:a.inEPMC==='Y'?'open':''})).filter(p=>p.title);}catch(e){log('⚠ EuropePMC: '+e.message,'warn');return[];}}
+
+async function searchCR(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({query:q,rows:Math.min(max,100),select:'DOI,title,author,published,container-title,abstract,is-referenced-by-count,URL',mailto:email});if(yr){p.set('filter',`from-pub-date:${yr.from},until-pub-date:${yr.to}`);}const r=await fetch(`https://api.crossref.org/works?${p}`);if(!r.ok)throw new Error('CR '+r.status);return(((await r.json()).message||{}).items||[]).map(w=>{const year=w.published?.['date-parts']?.[0]?.[0]||'';const doi=w.DOI||'';return{title:(Array.isArray(w.title)?w.title[0]:w.title)||'',authors:(w.author||[]).slice(0,4).map(a=>`${a.family||''} ${(a.given||'')[0]||''}`.trim()),year:String(year),journal:(Array.isArray(w['container-title'])?w['container-title'][0]:w['container-title'])||'',abstract:(w.abstract||'').replace(/<[^>]+>/g,'').slice(0,900),citations:w['is-referenced-by-count']||0,url:doi?`https://doi.org/${doi}`:'',doi,source:'CrossRef',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ CrossRef: '+e.message,'warn');return[];}}
+
+function filterByYear(papers,yr){if(!yr)return papers;return papers.filter(p=>{const y=parseInt(p.year);return!isNaN(y)&&y>=yr.from&&y<=yr.to;});}
+
+// dedup() y el ranking viven ahora en el módulo v2 (por DOI, con fusión de registros)
+
+function fmt(papers,top=25){return citationList(papers.slice(0,top));}
+
+// Persistencia antigua en localStorage retirada: ahora todo va a IndexedDB (ver módulo v2).
 
 // ═══════════════════════════════════════════════════
 //  RENDER OUTPUT WITH EDITABLE SECTIONS
@@ -1492,68 +2282,101 @@ function renderMd(md){
   return '<div class="md-rendered">'+h+'</div>';
 }
 
-function renderOutputSections(sections,papers,gaps,meta,filteredOut){
-  filteredOut=filteredOut||[];
+function renderOutputSections(sections,refs,gaps,meta,filteredOut){
+  refs=refs||[];filteredOut=filteredOut||[];
   const oa=document.getElementById('outputArea');oa.innerHTML='';
   const container=document.createElement('div');container.className='fi';
+  const m=meta.metrics;
 
-  // Stats
-  const words=Object.values(sections).join(' ').split(/\s+/).length;
-  ['sPapers','sWords','sSecs','sTime','sScore'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[papers.length,words.toLocaleString(),Object.keys(sections).length,meta.time||'—',meta.score||'N/A'][i];});
+  const words=Object.values(sections).join(' ').split(/\s+/).filter(Boolean).length;
+  const resolved=m?(m.resolved*100).toFixed(0)+'%':'—';
+  [['sPapers',refs.length],['sWords',words.toLocaleString()],['sSecs',Object.keys(sections).length],['sTime',meta.time||'—'],['sScore',resolved]]
+    .forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+  const lblScore=document.getElementById('sScoreLabel');if(lblScore)lblScore.textContent='Citas resueltas';
   document.getElementById('statsRow').style.display='grid';
-  ['qbPapers','qbSecs','qbTime','qbScore'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[papers.length,Object.keys(sections).length,meta.time||'—',meta.score||'N/A'][i];});
+  [['qbScore',resolved],['qbPapers',refs.length],['qbSecs',Object.keys(sections).length],['qbTime',meta.time||'—']]
+    .forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
   document.getElementById('qualityBar').style.display='flex';
 
-  // Build editable sections
+  // Aviso de integridad de citas
+  if(m){
+    const bad=m.resolved<0.999||m.sectionsNoCite>0||m.retracted>0;
+    const warn=document.createElement('div');
+    warn.className='ibox';
+    warn.style.cssText=bad?'border-color:rgba(220,38,38,.4);background:rgba(220,38,38,.06);margin-bottom:14px':'border-color:rgba(13,148,136,.4);background:rgba(13,148,136,.06);margin-bottom:14px';
+    warn.innerHTML=bad
+      ?`<span>⚠️</span><span><strong>Revisa las citas antes de usar este texto.</strong> ${m.invalid} marcadores fuera de rango eliminados · ${m.sectionsNoCite} secciones sin citas · ${m.retracted} referencias retractadas. Detalle en la pestaña <strong>Auditoría</strong>.</span>`
+      :`<span>✅</span><span><strong>Los ${m.citations} marcadores de cita del texto resuelven contra el corpus real</strong> (${m.refCount} referencias, ${(m.doiRatio*100).toFixed(0)}% con DOI). Verificación determinista, no delegada al modelo. Detalle en <strong>Auditoría</strong>.</span>`;
+    container.appendChild(warn);
+  }
+
   Object.entries(sections).forEach(([title,content])=>{
     const block=document.createElement('div');block.className='section-block';
     const safeId=title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    const nCites=extractCites(content).length;
     block.innerHTML=`
       <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-title-text">📄 ${title}</span>
+        <span class="section-title-text">📄 ${esc(title)}</span>
         <div class="section-actions" onclick="event.stopPropagation()">
           <div class="section-view-toggle">
             <button class="svt-btn active" id="vbtn-${safeId}" onclick="setSectionView('${safeId}','view',this)">Vista</button>
             <button class="svt-btn" id="ebtn-${safeId}" onclick="setSectionView('${safeId}','edit',this)">Editar</button>
           </div>
           <button class="btn-ghost" onclick="openRegenPanel(this)" title="Reescribir sección">🔄 Reescribir</button>
-          <span style="font-size:12px;color:var(--t3)">${content.split(/\s+/).length} palabras</span>
+          <span style="font-size:12px;color:var(--t3)">${content.split(/\s+/).filter(Boolean).length} palabras · ${nCites} citas</span>
           <span style="color:var(--t3);font-size:12px">▼</span>
         </div>
       </div>
       <div class="section-body">
         <div id="view-${safeId}" class="section-view">${renderMd(content)}</div>
-        <textarea id="edit-${safeId}" style="display:none;width:100%;background:transparent;border:none;color:var(--text);font-family:var(--ff);font-size:13px;line-height:1.7;resize:vertical;min-height:120px;outline:none;padding:0" oninput="updateSectionText('${title}',this.value)">${content}</textarea>
+        <textarea id="edit-${safeId}" style="display:none;width:100%;background:transparent;border:none;color:var(--text);font-family:var(--ff);font-size:13px;line-height:1.7;resize:vertical;min-height:120px;outline:none;padding:0" oninput="updateSectionText('${safeId}',this.value)">${esc(content)}</textarea>
         <div class="regen-panel" id="rp-${safeId}">
-          <div style="font-size:12px;color:var(--amber);margin-bottom:6px">🔄 Reescribir "${title}"</div>
+          <div style="font-size:12px;color:var(--amber);margin-bottom:6px">🔄 Reescribir "${esc(title)}"</div>
           <textarea placeholder="Feedback opcional: hazla más corta, añade ejemplos clínicos, enfoca en metodología..."></textarea>
           <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn btn-amber" style="font-size:12px;padding:5px 12px" onclick="regenSection('${title}',this)">Regenerar</button>
+            <button class="btn btn-amber" style="font-size:12px;padding:5px 12px" onclick="regenSection('${safeId}',this)">Regenerar</button>
             <button class="btn-ghost" onclick="this.closest('.regen-panel').classList.remove('open')">Cancelar</button>
           </div>
         </div>
       </div>`;
+    block.dataset.title=title;
     container.appendChild(block);
   });
 
-  // References
-  if(papers.length){
+  // Diagrama PRISMA con recuentos reales
+  if(meta.flow&&meta.doPrisma){
+    const pb=document.createElement('div');pb.className='section-block';
+    pb.innerHTML=`<div class="section-header" onclick="toggleSection(this)"><span class="section-title-text">🔬 Diagrama de flujo PRISMA</span><span style="color:var(--t3);font-size:12px">▼</span></div>
+      <div class="section-body" style="overflow-x:auto">${prismaSvg(meta.flow)}<div style="margin-top:8px"><button class="btn-ghost" onclick="downloadPrisma()">⬇ Descargar SVG</button></div></div>`;
+    container.appendChild(pb);
+    window.__prismaFlow=meta.flow;
+  }
+
+  // Referencias: SOLO las efectivamente citadas, en orden de aparición
+  if(refs.length){
     const refBlock=document.createElement('div');refBlock.className='section-block';
-    refBlock.innerHTML=`<div class="section-header"><span class="section-title-text">📚 Referencias (${papers.length})</span><span style="font-size:12px;color:var(--t3)">▼</span></div><div class="section-body" style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.8">${papers.slice(0,40).map((p,i)=>{const a=p.authors.slice(0,3).join(', ')+(p.authors.length>3?' et al.':'');return`[${i+1}] ${a||'Unknown'}. "${p.title}". ${p.journal||''}${p.year?', '+p.year:''}. ${p.doi?'<a href="https://doi.org/'+p.doi+'" target="_blank" style="color:var(--accent)">DOI</a>':''} ${p.oa_status?'<span style="color:var(--teal);font-size:10px">✅ '+p.oa_status+'</span>':''}<br>`;}).join('')}${filteredOut.length>0?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);color:var(--t3)"><strong style="color:var(--amber)">⏱ ${filteredOut.length} papers excluidos por rango temporal:</strong><br>${filteredOut.slice(0,10).map(p=>`${p.title.slice(0,60)} (${p.year||'?'}) — ${p.source}`).join('<br>')}${filteredOut.length>10?`<br>… y ${filteredOut.length-10} más.`:''}</div>`:''}</div>`;
+    refBlock.innerHTML=`<div class="section-header" onclick="toggleSection(this)"><span class="section-title-text">📚 Referencias citadas (${refs.length})</span><span style="font-size:12px;color:var(--t3)">▼</span></div>
+      <div class="section-body" style="padding:12px 16px;font-size:12px;color:var(--t2);line-height:1.9">
+      ${refs.map(r=>`<div style="margin-bottom:6px">${esc(r.line)} ${r.paper.doi?`<a href="https://doi.org/${encodeURIComponent(r.paper.doi)}" target="_blank" rel="noopener" style="color:var(--accent)">↗ DOI</a>`:''}${r.paper.retracted?' <span style="color:var(--red);font-weight:600">⚠ RETRACTADO</span>':''}</div>`).join('')}
+      ${filteredOut.length?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);color:var(--t3)"><strong style="color:var(--amber)">⏱ ${filteredOut.length} papers excluidos por rango temporal</strong></div>`:''}
+      </div>`;
     container.appendChild(refBlock);
   }
 
-  // Gaps inline
   if(gaps){
     const gapBlock=document.createElement('div');gapBlock.className='section-block';
-    gapBlock.innerHTML=`<div class="section-header"><span class="section-title-text">🔍 Research Gaps</span><span style="font-size:12px;color:var(--t3)">▼</span></div><div class="section-body"><div style="white-space:pre-wrap;font-size:13px;color:var(--t2);line-height:1.7">${gaps}</div></div>`;
+    gapBlock.innerHTML=`<div class="section-header" onclick="toggleSection(this)"><span class="section-title-text">🔍 Research Gaps</span><span style="font-size:12px;color:var(--t3)">▼</span></div><div class="section-body"><div style="white-space:pre-wrap;font-size:13px;color:var(--t2);line-height:1.7">${esc(gaps)}</div></div>`;
     container.appendChild(gapBlock);
   }
 
   oa.appendChild(container);
   document.getElementById('outputBadge').style.display='';
 }
-
+function downloadPrisma(){
+  if(!window.__prismaFlow)return;
+  dl(`doctoralia_prisma_${slug()}.svg`,prismaSvg(window.__prismaFlow),'image/svg+xml');
+  log('⬇ Diagrama PRISMA descargado.','ok');
+}
 function setSectionView(id,mode,btn){
   const viewEl=document.getElementById('view-'+id);
   const editEl=document.getElementById('edit-'+id);
@@ -1569,18 +2392,22 @@ function setSectionView(id,mode,btn){
   }
 }
 function toggleSection(header){const body=header.nextElementSibling;body.style.display=body.style.display==='none'?'':'none';}
-function updateSectionText(title,val){
+function titleFromSafeId(safeId){
+  const el=document.getElementById('view-'+safeId)?.closest('.section-block');
+  return el?.dataset.title||safeId;
+}
+function updateSectionText(safeId,val){
+  const title=titleFromSafeId(safeId);
   sectionTextsStore[title]=val;
   rebuildFullText();
-  // Update rendered view if visible
-  const safeId=title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
   const viewEl=document.getElementById('view-'+safeId);
   if(viewEl&&viewEl.style.display!=='none')viewEl.innerHTML=renderMd(val);
 }
 function rebuildFullText(){generatedText=Object.entries(sectionTextsStore).map(([k,v])=>`## ${k}\n\n${v}`).join('\n\n');}
 function openRegenPanel(btn){const rp=btn.closest('.section-body')?.querySelector('.regen-panel');if(rp)rp.classList.toggle('open');}
 
-async function regenSection(title,btn){
+async function regenSection(safeId,btn){
+  const title=titleFromSafeId(safeId);
   const apiKey=document.getElementById('apiKey').value.trim();
   if(!apiKey){alert('Introduce tu API key primero.');return;}
   const rpanel=btn.closest('.regen-panel');
@@ -1589,20 +2416,23 @@ async function regenSection(title,btn){
   btn.textContent='⏳...';btn.disabled=true;
   try{
     const lang=document.getElementById('lang').value;
-    const newContent=await callAI(apiKey,[
-      {role:'system',content:`You are an Academic Section Writer. Write in ${lang}.`},
-      {role:'user',content:`Rewrite the "${title}" section of a state-of-the-art review.\n${feedback?'User feedback: '+feedback+'\n':''}\nBase on this context:\n${fmt(allPapersStore,15)}\n\nWrite ~${Math.max(400,Math.floor(parseInt(document.getElementById('wc').value)/Object.keys(sectionTextsStore).length))} words. Academic tone. Cite as [Author et al., Year].`}
-    ],getTokens('crafter'),0.7);
+    const topP=parseInt(document.getElementById('topPapers').value)||25;
+    const corpus=allPapersStore.slice(0,topP);
+    const target=Math.max(400,Math.floor(parseInt(document.getElementById('wc').value)/Math.max(1,Object.keys(sectionTextsStore).length)));
+    let newContent=await callAI(apiKey,[
+      {role:'system',content:`Eres un redactor de secciones académicas. Escribe en ${lang}. Cita exclusivamente con índices [n] del corpus, 1 ≤ n ≤ ${corpus.length}.`},
+      {role:'user',content:`Reescribe la sección "${title}" de una revisión del estado del arte.\n${feedback?'Indicaciones del usuario: '+feedback+'\n':''}\nCORPUS NUMERADO:\n${citationList(corpus)}\n\nExtensión ~${target} palabras. Tono académico. Cada párrafo con al menos una cita [n].`}
+    ],getTokens('crafter'),0.6,null,'crafter');
+    newContent=stripInvalidCites(newContent,corpus.length);
     sectionTextsStore[title]=newContent;
-    // Update textarea and rendered view
-    const safeId=title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
     const ta=document.getElementById('edit-'+safeId);
     const vw=document.getElementById('view-'+safeId);
     if(ta)ta.value=newContent;
     if(vw)vw.innerHTML=renderMd(newContent);
     rebuildFullText();
     rpanel.classList.remove('open');
-    log(`✅ Sección "${title}" regenerada.`,'ok');
+    const a=auditSection(newContent,corpus.length);
+    log(`✅ Sección "${title}" regenerada · ${a.valid.length} citas válidas.`,'ok');
   }catch(e){log('❌ Regenerar: '+e.message,'err');}
   finally{btn.textContent=orig;btn.disabled=false;}
 }
@@ -1634,7 +2464,8 @@ function checkpointPapers(papers,topic,yr){
           <div class="cp-stat"><strong>${papers.length}</strong>papers totales</div>
           <div class="cp-stat"><strong>${withAbstract}</strong>con abstract</div>
           <div class="cp-stat"><strong>${minY}–${maxY}</strong>rango real de años</div>
-          <div class="cp-stat" style="flex:1;min-width:200px"><strong style="font-size:12px;font-weight:400">${srcBreakdown}</strong>por fuente</div>
+          <div class="cp-stat"><strong>${papers.filter(p=>p.doi).length}</strong>con DOI</div>
+          <div class="cp-stat" style="flex:1;min-width:200px"><strong style="font-size:12px;font-weight:400">${esc(srcBreakdown)}</strong>por fuente</div>
         </div>
         <div class="cp-body">
           ${papers.length===0?`<div class="placeholder"><div class="bi">⚠️</div><p>No se encontraron papers. Considera ampliar el rango de años o cambiar las palabras clave.</p></div>`:`
@@ -1642,20 +2473,22 @@ function checkpointPapers(papers,topic,yr){
             <thead><tr><th style="width:40%">Título</th><th>Autores</th><th>Año</th><th>Citas</th><th>Fuente</th></tr></thead>
             <tbody>${papers.slice(0,30).map(p=>{
               const a=(p.authors||[]).slice(0,2).join(', ')+(p.authors&&p.authors.length>2?' et al.':'');
+              const srcs=(p.sources||[p.source]).map(s=>String(s).replace('Semantic Scholar','SS').replace('Europe PMC','EPMC').replace('OpenAlex','OA')).join('+');
               return `<tr>
-                <td style="color:var(--text)">${p.title.slice(0,70)}${p.title.length>70?'…':''}</td>
-                <td>${a||'—'}</td>
-                <td><span class="cp-year">${p.year||'?'}</span></td>
+                <td style="color:var(--text)">${esc(String(p.title).slice(0,70))}${p.title.length>70?'…':''}${p.retracted?' <span style="color:var(--red);font-weight:600">⚠ RETRACTADO</span>':''}${p.abstract&&p.abstract.length>80?'':' <span title="sin abstract: aporta poco al redactor" style="color:var(--amber)">◌</span>'}</td>
+                <td>${esc(a||'—')}</td>
+                <td><span class="cp-year">${esc(p.year||'?')}</span></td>
                 <td style="text-align:right">${p.citations||0}</td>
-                <td><span class="cp-src">${p.source.replace('Semantic Scholar','SS').replace('Europe PMC','EPMC').replace('OpenAlex','OA')}</span></td>
+                <td><span class="cp-src">${esc(srcs)}</span></td>
               </tr>`;}).join('')}
             </tbody>
           </table>
-          ${papers.length>30?`<div style="font-size:11px;color:var(--t3);padding:8px 0">… y ${papers.length-30} más. Se muestran los 30 más citados.</div>`:''}`}
+          ${papers.length>30?`<div style="font-size:11px;color:var(--t3);padding:8px 0">… y ${papers.length-30} más. Se muestran los 30 mejor posicionados; solo los <strong>${Math.min(papers.length,parseInt(document.getElementById('topPapers').value)||25)}</strong> primeros formarán el corpus citable.</div>`:''}`}
         </div>
         <div class="cp-foot">
           <div>
             ${papers.length<10?`<span class="cp-warn">⚠ Pocos papers recuperados. El artículo puede ser superficial.</span>`:''}
+            ${withAbstract/(papers.length||1)<0.5?`<span class="cp-warn">⚠ Menos de la mitad tienen abstract: el redactor tendrá poco material real que citar.</span>`:''}
             ${papers.length>200?`<span class="cp-warn">⚠ Muchos papers. Considera reducir los límites por fuente.</span>`:''}
           </div>
           <div style="display:flex;gap:8px">
@@ -1682,15 +2515,12 @@ async function startGeneration(){
   if(!validateYears()){alert('El año de inicio debe ser menor que el de fin. Corrígelo antes de continuar.');showMain('wizard');goWizard(3);return;}
   if(document.getElementById('saveKey').checked)localStorage.setItem('doctoralia_apikey',apiKey);
 
-  isRunning=true;tStart=Date.now();logCount=0;
-  shouldStop=false;
-  
-  
+  isRunning=true;tStart=Date.now();logCount=0;shouldStop=false;
+  resetUsage();
   document.getElementById('btnStop').disabled=false;
   document.getElementById('btnGenWizard').disabled=true;
   document.getElementById('btnStopWizard').disabled=false;
-  document.getElementById('logPanel').innerHTML='';
-  logCount=0;
+  document.getElementById('logPanel').innerHTML='';logCount=0;
   openLogPanel();
   goWizard(4);showMain('wizard');
   showHP();buildHPSteps();setHPStep(0);
@@ -1708,27 +2538,29 @@ async function startGeneration(){
   const doEnh=document.getElementById('tog-enhancer').classList.contains('on');
   const doPrisma=document.getElementById('tog-prisma').classList.contains('on');
   const doSynth=document.getElementById('tog-synth').classList.contains('on');
+  const doNarrator=document.getElementById('tog-narrator').classList.contains('on');
+  const doRetract=document.getElementById('tog-retract').classList.contains('on');
+  const doAudit=document.getElementById('tog-audit').classList.contains('on');
   const temp=parseFloat(document.getElementById('temperature').value)||0.7;
   const maxQ=parseInt(document.getElementById('maxQueries').value)||4;
   const topP=parseInt(document.getElementById('topPapers').value)||25;
-  const useSS=document.getElementById('chk-ss').checked;
-  const usePM=document.getElementById('chk-pm').checked;
-  const useAX=document.getElementById('chk-ax').checked;
-  const useOA=document.getElementById('chk-oa').checked;
-  const useEP=document.getElementById('chk-ep').checked;
-  const useCR=document.getElementById('chk-cr').checked;
-  const limSS=parseInt(document.getElementById('lim-ss').value)||30;
-  const limPM=parseInt(document.getElementById('lim-pm').value)||20;
-  const limAX=parseInt(document.getElementById('lim-ax').value)||20;
-  const limOA=parseInt(document.getElementById('lim-oa').value)||20;
-  const limEP=parseInt(document.getElementById('lim-ep').value)||20;
-  const limCR=parseInt(document.getElementById('lim-cr').value)||20;
+  const conc=parseInt(document.getElementById('concurrency')?.value)||4;
+  const srcCfg=[
+    {id:'ss',name:'Semantic Scholar',fn:searchSS},
+    {id:'pm',name:'PubMed',fn:searchPM},
+    {id:'ax',name:'arXiv',fn:searchAX},
+    {id:'oa',name:'OpenAlex',fn:searchOA},
+    {id:'ep',name:'Europe PMC',fn:searchEPMC},
+    {id:'cr',name:'CrossRef',fn:searchCR},
+  ].filter(s=>document.getElementById('chk-'+s.id).checked)
+   .map(s=>({...s,lim:parseInt(document.getElementById('lim-'+s.id).value)||20}));
+
+  const flow={perSource:[],queries:[],identified:0,duplicates:0,unique:0,excludedYear:0,excludedRetracted:0,eligible:0,inContext:0,cited:0,markers:0};
 
   try{
-    // ── FASE 1: RESEARCH ──────────────────────────
+    // ══ FASE 1: RESEARCH ══════════════════════════
     setPhase(1,'active');setHPStep(0);
     log('📚 ── FASE 1: RESEARCH ──────────────────────','info');
-
     const yr=getYearRange();
     log(`📅 Rango temporal: ${yr.from}–${yr.to}`,'info');
 
@@ -1741,81 +2573,101 @@ async function startGeneration(){
     }catch(e){log('⚠ Scout JSON fallido, usando query directa.','warn');}
 
     const queries=(plan.search_terms||[topic]).slice(0,maxQ).map(q=>kw?`${q} ${kw}`:q);
+    flow.queries=queries;
 
-    setHPStep(0);
-    let allPapers=[];
-    for(let qi=0;qi<queries.length;qi++){
-      if(shouldStop)throw new Error('__STOPPED__');
-      const q=queries[qi];
-      log(`🔍 Query ${qi+1}/${queries.length}: "${q.slice(0,50)}"`,'info');
-      if(useSS){const p=await searchSS(q,limSS,yr);log(`  SS: ${p.length}`,'ok');allPapers.push(...p);}
-      if(shouldStop)throw new Error('__STOPPED__');
-      if(usePM){const p=await searchPM(q,limPM,yr);log(`  PubMed: ${p.length}`,'ok');allPapers.push(...p);}
-      if(shouldStop)throw new Error('__STOPPED__');
-      if(useAX){const p=await searchAX(q,limAX,yr);log(`  arXiv: ${p.length}`,'ok');allPapers.push(...p);}
-      if(shouldStop)throw new Error('__STOPPED__');
-      if(useOA){const p=await searchOA(q,limOA,yr);log(`  OpenAlex: ${p.length}`,'ok');allPapers.push(...p);}
-      if(shouldStop)throw new Error('__STOPPED__');
-      if(useEP){const p=await searchEPMC(q,limEP,yr);log(`  EuropePMC: ${p.length}`,'ok');allPapers.push(...p);}
-      if(shouldStop)throw new Error('__STOPPED__');
-      if(useCR){const p=await searchCR(q,limCR,yr);log(`  CrossRef: ${p.length}`,'ok');allPapers.push(...p);}
-    }
-    allPapers=sortPapers(dedup(allPapers));
+    // ── Búsquedas en paralelo con concurrencia limitada ──
+    const jobs=[];
+    queries.forEach((q,qi)=>srcCfg.forEach(s=>jobs.push({q,qi,s})));
+    log(`🔍 ${jobs.length} búsquedas (${queries.length} consultas × ${srcCfg.length} fuentes) · concurrencia ${conc}`,'info');
+    const results=await pMap(jobs,async job=>{
+      if(shouldStop)return [];
+      const p=await job.s.fn(job.q,job.s.lim,yr);
+      log(`  ${job.s.name} · q${job.qi+1}: ${p.length}`,p.length?'ok':'warn');
+      return p;
+    },conc);
+    if(shouldStop)throw new Error('__STOPPED__');
+    let raw=results.flat().filter(Boolean);
+    if(importedCorpus.length){raw=raw.concat(importedCorpus);log(`📥 + ${importedCorpus.length} referencias propias importadas`,'ok');}
+
+    const perSrc={};raw.forEach(p=>{perSrc[p.source]=(perSrc[p.source]||0)+1;});
+    flow.identified=raw.length;
+    flow.perSource=Object.entries(perSrc).map(([s,n])=>`${s}: ${n}`);
+
+    let allPapers=dedup(raw);
+    flow.duplicates=raw.length-allPapers.length;flow.unique=allPapers.length;
+    log(`🔗 Deduplicación por DOI + título: ${raw.length} → ${allPapers.length} (${flow.duplicates} duplicados fusionados)`,'ok');
+
     const beforeFilter=allPapers.length;
     const allPapersBeforeFilter=[...allPapers];
     allPapers=filterByYear(allPapers,yr);
     const filteredOutPapers=allPapersBeforeFilter.filter(p=>!allPapers.includes(p));
-    if(beforeFilter!==allPapers.length)log(`🗓 Filtro temporal: ${beforeFilter} → ${allPapers.length} papers (${yr.from}–${yr.to})`,'ok');
-    allPapersStore=allPapers;
-    log(`📊 Total deduplicado: ${allPapers.length} papers`,'ok');
+    flow.excludedYear=filteredOutPapers.length;
+    if(beforeFilter!==allPapers.length)log(`🗓 Filtro temporal: ${beforeFilter} → ${allPapers.length} papers`,'ok');
 
-    // ── CHECKPOINT #3: mostrar papers antes de continuar ──
+    if(doRetract&&allPapers.length){
+      log('🚩 Comprobando retractaciones en OpenAlex...','info');
+      const n=await checkRetractions(allPapers);
+      const before=allPapers.length;
+      allPapers=allPapers.filter(p=>!p.retracted);
+      flow.excludedRetracted=before-allPapers.length;
+      log(n?`⚠ ${n} papers retractados detectados y excluidos.`:'✅ Ninguna retractación detectada.',n?'warn':'ok');
+    }
+
+    allPapers=rankPapers(allPapers);
+    flow.eligible=allPapers.length;
+    allPapersStore=allPapers;
+    log(`📊 Corpus final: ${allPapers.length} papers`,'ok');
+
     const continuar=await checkpointPapers(allPapers,topic,yr);
     if(!continuar)throw new Error('__STOPPED__');
 
-    const papersFormatted=fmt(allPapers,topP);
+    // ── CORPUS NUMERADO: única fuente de citas del artículo ──
+    const corpus=allPapers.slice(0,topP);
+    flow.inContext=corpus.length;
+    const papersFormatted=citationList(corpus);
+    log(`🔖 Corpus de citación fijado: ${corpus.length} papers numerados [1]–[${corpus.length}]`,'ok');
 
     setHPStep(1);
     log('🤖 Signal: análisis de relevancia...','info');
     const signalAnalysis=await callAgent('signal',apiKey,[
-      {role:'system',content:'You are a Citation Finder and academic signal analyst.'},
-      {role:'user',content:getAgentPrompt('signal').replace('{{count}}',allPapers.length).replace('{{papers}}',papersFormatted)}
+      {role:'system',content:'Eres un analista bibliométrico. Cita SIEMPRE por el índice numérico del corpus.'},
+      {role:'user',content:getAgentPrompt('signal').replace('{{count}}',corpus.length).replace('{{papers}}',papersFormatted)}
     ],getTokens('signal'),temp);
     log('✅ Signal completado.','ok');
 
     log('🤖 Scribe: revisión base comprehensiva...','info');
     const mainReview=await callAgent('scribe',apiKey,[
-      {role:'system',content:`You are a State of the Art Reviewer. Write in ${lang}.`},
-      {role:'user',content:getAgentPrompt('scribe').replace('{{topic}}',topic).replace('{{papers}}',papersFormatted).replace('{{instructions}}',instruct?'\n\nInstructions: '+instruct:'')}
+      {role:'system',content:`Eres un revisor del estado del arte. Escribe en ${lang}. Cita EXCLUSIVAMENTE con los índices [n] del corpus proporcionado.`},
+      {role:'user',content:getAgentPrompt('scribe').replace('{{topic}}',topic).replace('{{papers}}',papersFormatted).replace('{{instructions}}',instruct?'\n\nInstrucciones: '+instruct:'').replace('{{n}}',corpus.length)}
     ],getTokens('scribe'),temp);
-    log(`✅ Scribe: ${mainReview.split(' ').length} palabras.`,'ok');
+    log(`✅ Scribe: ${mainReview.split(/\s+/).length} palabras.`,'ok');
 
     let trendAnalysis='';
     if(doBiblio){
       log('🤖 DataAnalyst: tendencias bibliométricas...','info');
-      const pd=allPapers.slice(0,50).map(p=>`- ${p.title} (${p.year||'?'}) | ${p.journal||'?'} | Cites: ${p.citations} | ${p.source}`).join('\n');
-      trendAnalysis=await callAgent('data_analyst',apiKey,[{role:'system',content:`You are an Academic Trend Analyzer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('data_analyst').replace('{{papers}}',pd)}],getTokens('data_analyst'),temp);
+      const pd=allPapers.slice(0,60).map(p=>`- ${p.title} (${p.year||'?'}) | ${p.journal||'?'} | Citas: ${p.citations} | ${p.cpy?.toFixed(1)||0}/año | ${(p.sources||[p.source]).join('/')}`).join('\n');
+      trendAnalysis=await callAgent('data_analyst',apiKey,[{role:'system',content:`Eres un analista de tendencias académicas. Escribe en ${lang}.`},{role:'user',content:getAgentPrompt('data_analyst').replace('{{papers}}',pd)}],getTokens('data_analyst'),temp);
       log('✅ DataAnalyst completado.','ok');
     }
 
     let gapsText='';
     if(doGaps){
       log('🤖 GapDetector: identificando brechas...','info');
-      const abstracts=allPapers.slice(0,30).map((p,i)=>`[${i+1}] ${p.title} (${p.year||'?'}): ${p.abstract||'(no abstract)'}`).join('\n\n');
-      const rqs=(plan.research_questions||[]).map(q=>`- ${q}`).join('\n')||`- What is the current state of ${topic}?`;
-      gapsText=await callAgent('gap_detector',apiKey,[{role:'system',content:`You are a Research Gap Identifier. Write in ${lang}.`},{role:'user',content:getAgentPrompt('gap_detector').replace('{{topic}}',topic).replace('{{questions}}',rqs).replace('{{abstracts}}',abstracts)}],getTokens('gap_detector'),temp);
+      const abstracts=corpus.slice(0,30).map((p,i)=>`[${i+1}] ${p.title} (${p.year||'?'}): ${p.abstract||'(sin abstract)'}`).join('\n\n');
+      const rqs=(plan.research_questions||[]).map(q=>`- ${q}`).join('\n')||`- ¿Cuál es el estado actual de ${topic}?`;
+      gapsText=await callAgent('gap_detector',apiKey,[{role:'system',content:`Eres un identificador de brechas de investigación. Escribe en ${lang}.`},{role:'user',content:getAgentPrompt('gap_detector').replace('{{topic}}',topic).replace('{{questions}}',rqs).replace('{{abstracts}}',abstracts)}],getTokens('gap_detector'),temp);
       gapsStore=gapsText;
       log('✅ GapDetector completado.','ok');
     }
 
     setPhase(1,'done');setPhase(2,'active');
 
-    // ── FASE 2: STRUCTURE ─────────────────────────
+    // ══ FASE 2: STRUCTURE ═════════════════════════
     setHPStep(2);
     log('🏗️ ── FASE 2: STRUCTURE ──────────────────────','info');
-    let structure={"Introduction":800,"Background":1200,"Current State of the Art":2000,"Methodological Approaches":1500,"Key Findings":1200,"Research Gaps and Future Directions":700,"Discussion":600,"Conclusion":500};
+    let structure=DEFAULT_STRUCTURE(lang,wc);
     try{
-      const sr=await callAgent('architect',apiKey,[{role:'user',content:getAgentPrompt('architect').replace(/{{topic}}/g,topic).replace(/{{wc}}/g,wc).replace(/{{lang}}/g,lang).replace(/{{instructions}}/g,instruct?'\nInstructions: '+instruct+'\n':'')}],getTokens('architect'),0.5);
+      const sr=await callAgent('architect',apiKey,[{role:'user',content:getAgentPrompt('architect').replace(/{{topic}}/g,topic).replace(/{{wc}}/g,wc).replace(/{{lang}}/g,lang).replace(/{{instructions}}/g,instruct?'\nInstrucciones: '+instruct+'\n':'')}],getTokens('architect'),0.5);
       const parsed=JSON.parse(sr.replace(/```json|```/g,'').trim());
       if(typeof parsed==='object'&&Object.keys(parsed).length>3)structure=parsed;
       log(`✅ Architect: ${Object.keys(structure).join(' → ')}`,'ok');
@@ -1823,65 +2675,112 @@ async function startGeneration(){
 
     setPhase(2,'done');setPhase(3,'active');
 
-    // ── FASE 3: WRITING ───────────────────────────
+    // ══ FASE 3: WRITING (con citas ancladas) ══════
     setHPStep(3);
     log('✍️ ── FASE 3: WRITING ─────────────────────────','info');
     const sections=Object.keys(structure);
     const sectionTexts={};let prevContent='';
+    const audits=[];const threadNotes=[];
 
     for(let i=0;i<sections.length;i++){
+      if(shouldStop)throw new Error('__STOPPED__');
       const sec=sections[i];const tgt=structure[sec];
       log(`✍️ Crafter: "${sec}" (~${tgt} palabras)...`,'info');
-      const text=await callAgent('crafter',apiKey,[
-        {role:'system',content:`You are an Academic Section Writer. Write in ${lang}. Style: ${cite}.`},
-        {role:'user',content:getAgentPrompt('crafter').replace('{{section}}',sec).replace('{{topic}}',topic).replace('{{target}}',tgt).replace('{{instructions}}',instruct?'\nInstructions: '+instruct:'').replace('{{gaps}}',gapsText?gapsText.slice(0,600):'N/A').replace('{{review}}',mainReview).replace('{{signal}}',signalAnalysis)}
-      ],getTokens('crafter'),temp);
+      streamTarget(sec);
+      let text=await callAgent('crafter',apiKey,[
+        {role:'system',content:`Eres un redactor de secciones académicas. Escribe en ${lang}. Estilo de citación: ${cite}. REGLA INVIOLABLE: cita únicamente con los índices numéricos [n] del corpus, donde 1 ≤ n ≤ ${corpus.length}. Nunca escribas nombres de autores entre corchetes ni inventes referencias.`},
+        {role:'user',content:getAgentPrompt('crafter').replace('{{section}}',sec).replace('{{topic}}',topic).replace('{{target}}',tgt).replace('{{n}}',corpus.length).replace('{{instructions}}',instruct?'\nInstrucciones: '+instruct:'').replace('{{gaps}}',gapsText?gapsText.slice(0,600):'N/D').replace('{{review}}',mainReview).replace('{{signal}}',signalAnalysis).replace('{{papers}}',papersFormatted)}
+      ],getTokens('crafter'),temp,true);
+      streamTarget(null);
 
-      if(doThread&&prevContent&&i>0){await callAgent('thread',apiKey,[{role:'user',content:`Check coherence:\nPREV (last 400):\n${prevContent.slice(-400)}\nCURR (first 400):\n${text.slice(0,400)}\nNote issues briefly.`}],getTokens('thread'),0.3);}
+      // ── Validación determinista de citas (en JS, no delegada al modelo) ──
+      let audit=auditSection(text,corpus.length);
+      if(audit.invalid.length||audit.authorYear.length){
+        log(`⚠ "${sec}": ${audit.invalid.length} citas fuera de rango, ${audit.authorYear.length} citas no ancladas. Reparando...`,'warn');
+        text=stripInvalidCites(text,corpus.length)
+          .replace(/\[[A-ZÁÉÍÓÚÑ][^\]\d]{2,40},?\s*(19|20)\d{2}[a-z]?\]/g,'')
+          .replace(/\(\s*\)/g,'').replace(/ +([.,;:])/g,'$1').replace(/ {2,}/g,' ');
+        audit=auditSection(text,corpus.length);
+      }
+      if(audit.valid.length===0&&audit.words>80){
+        log(`⚠ "${sec}" sin ninguna cita: reescribiendo con exigencia de citación...`,'warn');
+        try{
+          text=await callAgent('crafter',apiKey,[
+            {role:'system',content:`Escribe en ${lang}. Cada afirmación sustantiva debe ir seguida de una cita [n] con 1 ≤ n ≤ ${corpus.length}.`},
+            {role:'user',content:`Reescribe este texto añadiendo las citas [n] que faltan, sin cambiar su contenido. Corpus numerado:\n\n${papersFormatted}\n\nTEXTO:\n${text}`}
+          ],getTokens('crafter'),0.3);
+          text=stripInvalidCites(text,corpus.length);
+          audit=auditSection(text,corpus.length);
+        }catch(e){}
+      }
+      audits.push({...audit,section:sec});
 
-      let finalText=text;
-      try{finalText=await callAgent('narrator',apiKey,[{role:'system',content:`You are a Voice Refiner. Write in ${lang}.`},{role:'user',content:getAgentPrompt('narrator').replace('{{text}}',text)}],getTokens('narrator'),temp);}catch(e){}
+      if(doThread&&prevContent&&i>0){
+        const note=await callAgent('thread',apiKey,[{role:'user',content:`Revisa la transición entre dos secciones consecutivas.\nANTERIOR (final):\n${prevContent.slice(-500)}\nACTUAL (inicio):\n${text.slice(0,500)}\nSi hay repetición o salto lógico, indícalo en 1-2 frases. Si la transición es correcta, responde exactamente: OK.`}],getTokens('thread'),0.3);
+        if(!/^ok\.?$/i.test(note.trim()))threadNotes.push({section:sec,note});
+      }
 
-      sectionTexts[sec]=finalText;prevContent=finalText;
-      log(`✅ "${sec}": ${finalText.split(' ').length} palabras`,'ok');
+      if(doNarrator){
+        try{
+          const refined=await callAgent('narrator',apiKey,[{role:'system',content:`Eres un editor de estilo. Escribe en ${lang}. No alteres, elimines ni reordenes los marcadores de cita [n].`},{role:'user',content:getAgentPrompt('narrator').replace('{{text}}',text)}],getTokens('narrator'),temp);
+          const a2=auditSection(refined,corpus.length);
+          // solo se acepta si no destruye citas
+          if(a2.valid.length>=audit.valid.length*0.9){text=refined;audits[audits.length-1]={...a2,section:sec};}
+          else log(`⚠ Narrator descartado en "${sec}": habría eliminado ${audit.valid.length-a2.valid.length} citas.`,'warn');
+        }catch(e){}
+      }
+
+      sectionTexts[sec]=text;prevContent=text;
+      const a=audits[audits.length-1];
+      log(`✅ "${sec}": ${a.words} palabras · ${a.valid.length} citas · ${a.density.toFixed(1)}/1.000`,a.valid.length?'ok':'warn');
       saveDraft(sectionTexts,allPapers,gapsText,{topic,time:Math.round((Date.now()-tStart)/1000)+'s'});
     }
     sectionTextsStore={...sectionTexts};
     setPhase(3,'done');
 
-    // ── FASE 4: VALIDATION ────────────────────────
-    let qs='N/A';
+    // ══ FASE 4: VALIDATION (los resultados SÍ se usan) ══
+    let qs='N/A';const auditFindings={claims:[],cites:[],thread:threadNotes,referee:[]};
     if(!fastMode){
       setPhase(4,'active');setHPStep(4);
       log('🔍 ── FASE 4: VALIDATION ─────────────────────','info');
-      const refs=allPapers.slice(0,30).map((p,i)=>{const a=p.authors.slice(0,3).join(', ')+(p.authors.length>3?' et al.':'');return`[${i+1}] ${a}. "${p.title}". ${p.journal||''}, ${p.year||''}.`;}).join('\n');
-      const fullText=Object.values(sectionTexts).join('\n\n');
-      const chunks=[];for(let i=0;i<fullText.length;i+=5000)chunks.push(fullText.slice(i,i+5000));
-      for(let i=0;i<Math.min(chunks.length,3);i++){
-        await callAgent('skeptic',apiKey,[{role:'user',content:getAgentPrompt('skeptic').replace('{{text}}',chunks[i])}],getTokens('skeptic'),0.3);
-        await callAgent('verifier',apiKey,[{role:'user',content:getAgentPrompt('verifier').replace('{{text}}',chunks[i]).replace('{{refs}}',refs)}],getTokens('verifier'),0.3);
+      const refs30=corpus.map((p,i)=>`[${i+1}] ${(p.authors||[]).slice(0,3).join(', ')}. ${p.title}. ${p.journal||''}, ${p.year||''}.`).join('\n');
+      const entries=Object.entries(sectionTexts);
+      for(const [sec,txt] of entries){
+        if(shouldStop)throw new Error('__STOPPED__');
+        if(doAudit){
+          const sk=await callAgent('skeptic',apiKey,[{role:'system',content:`Responde en ${lang}.`},{role:'user',content:getAgentPrompt('skeptic').replace('{{text}}',txt)}],getTokens('skeptic'),0.3);
+          if(sk&&!/^(ninguna|none|ok)\.?$/i.test(sk.trim()))auditFindings.claims.push({section:sec,text:sk});
+          const vf=await callAgent('verifier',apiKey,[{role:'system',content:`Responde en ${lang}.`},{role:'user',content:getAgentPrompt('verifier').replace('{{text}}',txt).replace('{{refs}}',refs30)}],getTokens('verifier'),0.3);
+          if(vf&&!/^(ok|correcto)\.?$/i.test(vf.trim()))auditFindings.cites.push({section:sec,text:vf});
+        }
+        const rev=await callAgent('referee',apiKey,[{role:'system',content:`Responde en ${lang}.`},{role:'user',content:getAgentPrompt('referee').replace('{{text}}',txt.slice(0,2500))}],getTokens('referee'),0.3);
+        auditFindings.referee.push({section:sec,text:rev});
+        const m=rev.match(/OVERALL[:\s]+(\d+(?:\.\d+)?)\s*\/\s*5/i);if(m)auditFindings.referee[auditFindings.referee.length-1].score=parseFloat(m[1]);
       }
-      const scores=[];
-      for(const[sec,txt]of Object.entries(sectionTexts)){
-        const rev=await callAgent('referee',apiKey,[{role:'user',content:getAgentPrompt('referee').replace('{{text}}',txt.slice(0,2000))}],getTokens('referee'),0.3);
-        const m=rev.match(/OVERALL[:\s]+(\d+(?:\.\d+)?)\s*\/\s*5/i);if(m)scores.push(parseFloat(m[1]));
-      }
-      if(scores.length){const avg=scores.reduce((a,b)=>a+b,0)/scores.length;qs=`${Math.round(avg/5*100)}/100 (avg ${avg.toFixed(1)}/5)`;log(`📊 Quality Score: ${qs}`,'ok');}
+      const scores=auditFindings.referee.map(r=>r.score).filter(x=>typeof x==='number');
+      if(scores.length){const avg=scores.reduce((a,b)=>a+b,0)/scores.length;qs=`${avg.toFixed(1)}/5`;log(`📊 Juicio del referee (no calibrado): ${qs}`,'ok');}
       setPhase(4,'done');
     }
     qualityScore=qs;
 
-    // ── FASE 5: POLISH ────────────────────────────
+    // ══ FASE 5: POLISH ════════════════════════════
     let abstract='',keywords='',highlights='';
     if(!fastMode){
       setPhase(5,'active');setHPStep(5);
       log('✨ ── FASE 5: POLISH ──────────────────────────','info');
       for(const sec of Object.keys(sectionTexts)){
-        try{sectionTexts[sec]=await callAgent('polish',apiKey,[{role:'system',content:`You are a Final Editor. Write in ${lang}.`},{role:'user',content:getAgentPrompt('polish').replace('{{text}}',sectionTexts[sec])}],getTokens('polish'),temp);}catch(e){}
+        if(shouldStop)throw new Error('__STOPPED__');
+        try{
+          const before=auditSection(sectionTexts[sec],corpus.length);
+          const pol=await callAgent('polish',apiKey,[{role:'system',content:`Eres un editor final. Escribe en ${lang}. Los marcadores [n] son inviolables: no los elimines, no los muevas de frase, no los renumeres.`},{role:'user',content:getAgentPrompt('polish').replace('{{text}}',sectionTexts[sec])}],getTokens('polish'),Math.min(temp,0.4));
+          const after=auditSection(pol,corpus.length);
+          if(after.valid.length>=before.valid.length*0.95)sectionTexts[sec]=stripInvalidCites(pol,corpus.length);
+          else log(`⚠ Polish descartado en "${sec}": perdía ${before.valid.length-after.valid.length} citas.`,'warn');
+        }catch(e){}
       }
       if(doEnh){
         log('🤖 Enhancer: abstract + keywords + highlights...','info');
-        const enhRaw=await callAgent('enhancer',apiKey,[{role:'system',content:`You are a Publication Enhancer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('enhancer').replace('{{text}}',Object.values(sectionTexts).join('\n\n').slice(0,6000))}],getTokens('enhancer'),temp);
+        const enhRaw=await callAgent('enhancer',apiKey,[{role:'system',content:`Eres un editor de publicación. Escribe en ${lang}.`},{role:'user',content:getAgentPrompt('enhancer').replace('{{text}}',Object.values(sectionTexts).join('\n\n').slice(0,7000))}],getTokens('enhancer'),temp);
         const absM=enhRaw.match(/ABSTRACT:([\s\S]*?)(?=KEYWORDS:|$)/i);
         const kwM=enhRaw.match(/KEYWORDS:([\s\S]*?)(?=HIGHLIGHTS:|$)/i);
         const hlM=enhRaw.match(/HIGHLIGHTS:([\s\S]*?)$/i);
@@ -1890,63 +2789,105 @@ async function startGeneration(){
       setPhase(5,'done');
     }
 
-    // Auxiliares
-    let prismaText='';
+    // ══ CIERRE DE CITAS: renumeración y referencias reales ══
+    const finalAudits=Object.entries(sectionTexts).map(([sec,t])=>({...auditSection(t,corpus.length),section:sec}));
+    const fin=finalizeCitations(sectionTexts,corpus,cite);
+    const finalSections=fin.sections;
+    lastRefs=fin.refs;
+    flow.cited=fin.refs.length;
+    flow.markers=finalAudits.reduce((a,x)=>a+x.valid.length,0);
+    log(`🔖 Citas cerradas: ${flow.markers} marcadores → ${fin.refs.length} referencias renumeradas por orden de aparición (${cite}).`,'ok');
+
+    const metrics=computeMetrics(finalSections,corpus,fin.refs,finalAudits);
+    lastMetrics=metrics;lastAudit=auditFindings;
+
+    // ── Auxiliares ──
+    const srcList=srcCfg.map(s=>s.name).join(', ');
+    flow.nSources=srcCfg.length;flow.sources=srcList;
+    flow.period=`${yr.from}–${yr.to}`;flow.lang=lang;
+    flow.model=document.getElementById('model').value;
+    flow.date=new Date().toLocaleDateString('es');
+
+    let prismaText_='';
     if(doPrisma){
-      const srcList=[useSS?'Semantic Scholar':'',usePM?'PubMed':'',useAX?'arXiv':'',useOA?'OpenAlex':'',useEP?'Europe PMC':'',useCR?'CrossRef':''].filter(Boolean).join(', ');
-      prismaText=await callAgent('methodology',apiKey,[{role:'system',content:`You are a Methodology Designer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('methodology').replace('{{sources}}',srcList).replace('{{queries}}',queries.join('; ')).replace('{{period}}',`${yr.from}–${yr.to}`).replace('{{count}}',allPapers.length)}],getTokens('methodology'),temp);
+      log('🤖 Methodology: sección PRISMA con recuentos reales...','info');
+      prismaText_=prismaText(flow);
+      try{
+        const extra=await callAgent('methodology',apiKey,[{role:'system',content:`Eres un metodólogo. Escribe en ${lang}.`},{role:'user',content:getAgentPrompt('methodology').replace('{{sources}}',srcList).replace('{{queries}}',queries.join('; ')).replace('{{period}}',flow.period).replace('{{count}}',allPapers.length).replace('{{flow}}',JSON.stringify(flow))}],getTokens('methodology'),0.3);
+        prismaText_=prismaText_+'\n\n'+extra;
+      }catch(e){}
     }
     let synthText='';
-    if(doSynth){synthText=await callAgent('results_synthesizer',apiKey,[{role:'system',content:`You are a Findings Synthesizer. Write in ${lang}.`},{role:'user',content:getAgentPrompt('results_synthesizer').replace('{{text}}',Object.values(sectionTexts).join('\n\n').slice(0,5000))}],getTokens('results_synthesizer'),temp);}
+    if(doSynth){synthText=await callAgent('results_synthesizer',apiKey,[{role:'system',content:`Eres un sintetizador de hallazgos. Escribe en ${lang}.`},{role:'user',content:getAgentPrompt('results_synthesizer').replace('{{text}}',Object.values(finalSections).join('\n\n').slice(0,6000))}],getTokens('results_synthesizer'),temp);}
 
     setLiveAgent(null);
 
-    // Build display sections (add aux sections)
-    const displaySections={...sectionTexts};
-    if(abstract)displaySections['Abstract']=abstract+(keywords?'\n\n**Keywords:** '+keywords:'')+(highlights?'\n\n**Highlights:**\n'+highlights:'');
-    if(synthText)displaySections['Executive Summary']=synthText;
-    if(prismaText)displaySections['Methodology (PRISMA)']=prismaText;
-    if(trendAnalysis)displaySections['Bibliometric Analysis']=trendAnalysis;
+    const displaySections={...finalSections};
+    if(abstract)displaySections['Abstract']=abstract+(keywords?'\n\n**Palabras clave:** '+keywords:'')+(highlights?'\n\n**Highlights:**\n'+highlights:'');
+    if(synthText)displaySections['Síntesis ejecutiva']=synthText;
+    if(prismaText_)displaySections['Metodología (PRISMA)']=prismaText_;
+    if(trendAnalysis)displaySections['Análisis bibliométrico']=trendAnalysis;
 
-    // Assemble full text for download
+    // ── Ensamblado del documento ──
     const elapsed=Math.round((Date.now()-tStart)/1000);
-    const srcList2=[useSS?'Semantic Scholar':'',usePM?'PubMed':'',useAX?'arXiv':'',useOA?'OpenAlex':'',useEP?'Europe PMC':'',useCR?'CrossRef':''].filter(Boolean).join(', ');
-    let full=`# ${topic}\n## State-of-the-Art Review\n\n`;
-    full+=`*Doctoralia · ${new Date().toLocaleDateString('es')} · ${document.getElementById('model').value} · ${cite}*\n`;
-    full+=`*Fuentes: ${srcList2} · Papers: ${allPapers.length} · Tiempo: ${elapsed}s · Score: ${qs}*\n\n---\n\n`;
+    let full=`# ${topic}\n## Revisión del estado del arte\n\n`;
+    full+=`*Doctoralia v2 · ${flow.date} · ${flow.model} · ${cite}*\n`;
+    full+=`*Fuentes: ${srcList} · Corpus: ${allPapers.length} · Citados: ${fin.refs.length} · Citas resueltas: ${(metrics.resolved*100).toFixed(0)}% · Tiempo: ${elapsed}s · Coste: $${runCost().toFixed(4)}*\n\n---\n\n`;
     Object.entries(displaySections).forEach(([sec,txt])=>{full+=`## ${sec}\n\n${txt}\n\n`;});
-    full+=`---\n\n## References\n\n`;
-    allPapers.slice(0,40).forEach((p,i)=>{const a=p.authors.slice(0,3).join(', ')+(p.authors.length>3?' et al.':'');full+=`[${i+1}] ${a||'Unknown'}. "${p.title}". ${p.journal||''}${p.year?', '+p.year:''}. ${p.doi?'DOI: https://doi.org/'+p.doi:p.url||''} ${p.oa_status?'[OA: '+p.oa_status+']':''}\n`;});
-    full+=`\n---\n\n## Appendix: Paper Database (${allPapers.length} papers)\n\n`;
-    full+=`| # | Title | Authors | Year | Source | Cites | OA | URL |\n|---|-------|---------|------|--------|-------|----|-----|\n`;
-    allPapers.forEach((p,i)=>{const a=p.authors.slice(0,2).join(', ')+(p.authors.length>2?'...':'');const u=p.url?`[link](${p.url})`:'—';full+=`| ${i+1} | ${p.title.slice(0,50).replace(/\|/g,'/')} | ${a||'—'} | ${p.year||'—'} | ${p.source} | ${p.citations} | ${p.oa_status||'—'} | ${u} |\n`;});
-    if(filteredOutPapers.length>0){
-      full+=`\n### Papers excluidos por rango temporal (${filteredOutPapers.length})\n\n`;
-      full+=`| # | Title | Year | Source |\n|---|-------|------|--------|\n`;
-      filteredOutPapers.forEach((p,i)=>{full+=`| ${i+1} | ${p.title.slice(0,60).replace(/\|/g,'/')} | ${p.year||'?'} | ${p.source} |\n`;});
+    full+=`---\n\n## Referencias\n\n`;
+    if(fin.refs.length)fin.refs.forEach(r=>{full+=`${r.line}\n\n`;});
+    else full+=`*(El texto no contiene ninguna cita resoluble contra el corpus.)*\n\n`;
+    full+=`---\n\n## Anexo A · Métricas de la revisión\n\n`;
+    full+=`| Métrica | Valor |\n|---|---|\n`;
+    full+=`| Palabras | ${metrics.words.toLocaleString()} |\n| Marcadores de cita | ${metrics.citations} |\n| Citas resueltas contra el corpus | ${(metrics.resolved*100).toFixed(1)}% |\n| Densidad de citas | ${metrics.density.toFixed(1)} por 1.000 palabras |\n| Referencias distintas | ${metrics.refCount} |\n| Cobertura del corpus | ${(metrics.coverage*100).toFixed(0)}% |\n| Secciones sin citas | ${metrics.sectionsNoCite} |\n| Referencias con DOI | ${(metrics.doiRatio*100).toFixed(0)}% |\n| Acceso abierto | ${(metrics.oaRatio*100).toFixed(0)}% |\n| Concentración de venues (HHI) | ${metrics.venueHHI.toFixed(3)} |\n| Rango temporal de las referencias | ${metrics.yearMin||'—'}–${metrics.yearMax||'—'} |\n| Publicadas en los últimos 5 años | ${(metrics.recency*100).toFixed(0)}% |\n| Referencias retractadas | ${metrics.retracted} |\n| Juicio del referee (no calibrado) | ${qs} |\n\n`;
+    full+=`---\n\n## Anexo B · Corpus consultado (${allPapers.length} papers)\n\n`;
+    full+=`| # | Título | Autores | Año | Fuente | Citas | OA | DOI |\n|---|---|---|---|---|---|---|---|\n`;
+    allPapers.forEach((p,i)=>{const a=(p.authors||[]).slice(0,2).join(', ')+((p.authors||[]).length>2?'...':'');full+=`| ${i+1} | ${String(p.title).slice(0,60).replace(/\|/g,'/')} | ${a||'—'} | ${p.year||'—'} | ${(p.sources||[p.source]).join('/')} | ${p.citations||0} | ${p.oa_status||'—'} | ${p.doi||'—'} |\n`;});
+    if(filteredOutPapers.length){
+      full+=`\n### Excluidos por rango temporal (${filteredOutPapers.length})\n\n| # | Título | Año | Fuente |\n|---|---|---|---|\n`;
+      filteredOutPapers.forEach((p,i)=>{full+=`| ${i+1} | ${String(p.title).slice(0,60).replace(/\|/g,'/')} | ${p.year||'?'} | ${p.source} |\n`;});
     }
     generatedText=full;
     sectionTextsStore={...displaySections};
 
-    // ── UPDATE UI ─────────────────────────────────
-    setHPStep(6);
-    const words=Object.values(displaySections).join(' ').split(/\s+/).length;
-    log(`🎉 ¡Completado en ${elapsed}s! ${allPapers.length} papers · ${sections.length} secciones · Score: ${qs}`,'ok');
+    // ── Traza de reproducibilidad ──
+    lastRun={
+      app:'Doctoralia',version:APP_VERSION,generated_at:new Date().toISOString(),
+      topic,language:lang,citation_style:cite,keywords:kw,instructions:instruct,
+      model:flow.model,temperature:temp,target_words:wc,top_papers:topP,
+      sources:srcCfg.map(s=>({id:s.id,name:s.name,limit:s.lim})),
+      year_range:{from:yr.from,to:yr.to},
+      queries,research_questions:plan.research_questions||[],
+      prompts:Object.fromEntries(Object.keys(DEFAULT_AGENT_PROMPTS).map(k=>[k,getAgentPrompt(k)])),
+      agent_tokens:Object.fromEntries(AGENTS.map(a=>[a.id,getTokens(a.id)])),
+      prisma_flow:flow,metrics,
+      usage:{prompt_tokens:RUN.inTok,completion_tokens:RUN.outTok,calls:RUN.calls,cost_usd:Number(runCost().toFixed(5)),by_agent:usageTable()},
+      corpus:corpus.map((p,i)=>({n:i+1,title:p.title,authors:p.authors,year:p.year,journal:p.journal,doi:p.doi,url:p.url,citations:p.citations,sources:p.sources||[p.source],oa_status:p.oa_status,retracted:!!p.retracted})),
+      references:fin.refs.map(r=>({n:r.n,doi:r.paper.doi,title:r.paper.title,formatted:r.line})),
+      audit:auditFindings,
+      sections:Object.fromEntries(Object.entries(displaySections).map(([k,v])=>[k,v]))
+    };
 
-    renderOutputSections(displaySections,allPapers,gapsText,{time:elapsed+'s',score:qs},filteredOutPapers);
+    setHPStep(6);
+    log(`🎉 Completado en ${elapsed}s · ${allPapers.length} papers · ${fin.refs.length} referencias · ${(metrics.resolved*100).toFixed(0)}% de citas resueltas · $${runCost().toFixed(4)}`,'ok');
+
+    renderOutputSections(displaySections,fin.refs,gapsText,{time:elapsed+'s',score:qs,metrics,flow,doPrisma},filteredOutPapers);
+    renderAuditPanel(auditFindings,metrics,finalAudits);
     document.getElementById('exportRow').style.display='flex';
 
-    // Gaps tab
     if(gapsText){
       const ga=document.getElementById('gapsArea');ga.innerHTML='';
       const gl=document.createElement('div');gl.className='gaps-list fi';
-      gapsText.split(/\nGAP \[?\d+\]?:/i).filter(Boolean).forEach((g,i)=>{const lines=g.trim().split('\n');const card=document.createElement('div');card.className='gap-card';card.innerHTML=`<h4>GAP ${i+1}: ${lines[0].replace(/^[:.\s]+/,'').trim()}</h4><p>${lines.slice(1).join('<br>').trim()}</p>`;gl.appendChild(card);});
+      gapsText.split(/\nGAP \[?\d+\]?:/i).filter(Boolean).forEach((g,i)=>{
+        const lines=g.trim().split('\n');const card=document.createElement('div');card.className='gap-card';
+        card.innerHTML=`<h4>GAP ${i+1}: ${esc(lines[0].replace(/^[:.\s]+/,'').trim())}</h4><p>${esc(lines.slice(1).join('\n')).replace(/\n/g,'<br>')}</p>`;
+        gl.appendChild(card);
+      });
       ga.appendChild(gl);
     }
 
-    // Save to history
-    saveToHistory(topic,words,sections.length,elapsed+'s');
-    localStorage.removeItem('doctoralia_draft');
+    await saveToHistory(topic,metrics.words,Object.keys(displaySections).length,elapsed+'s');
+    await idbDel('draft');localStorage.removeItem('doctoralia_draft');
 
     showMain('output');
     document.getElementById('outputBadge').style.display='';
@@ -1960,22 +2901,19 @@ async function startGeneration(){
       else if(e.message.includes('429'))log('💡 Rate limit. Espera unos segundos.','warn');
       else if(e.message.includes('insufficient_quota'))log('💡 Cuota agotada. Añade créditos en platform.openai.com/billing','warn');
     }
-    // Show partial draft if something was generated
     if(Object.keys(sectionTextsStore).length>0){
       log('💾 Guardando borrador parcial...','warn');
-      renderOutputSections(sectionTextsStore,allPapersStore,gapsStore,{time:Math.round((Date.now()-tStart)/1000)+'s',score:'N/A'});
+      renderOutputSections(sectionTextsStore,lastRefs,gapsStore,{time:Math.round((Date.now()-tStart)/1000)+'s',score:'N/A'});
       document.getElementById('partialBadge').style.display='flex';
       document.getElementById('exportRow').style.display='flex';
       document.getElementById('outputBadge').style.display='';
     }
   }finally{
-    isRunning=false;
-    shouldStop=false;
-    setLiveAgent(null);
-    
+    isRunning=false;shouldStop=false;setLiveAgent(null);streamTarget(null);
     document.getElementById('btnStop').disabled=true;
     document.getElementById('btnGenWizard').disabled=false;document.getElementById('btnGenWizard').innerHTML='▶ Generar revisión';
     document.getElementById('btnStopWizard').disabled=true;
+    updateLiveCost();
   }
 }
 
@@ -2011,7 +2949,7 @@ function exportLatex(){
     else if(line.match(/^\*/)){/* skip meta */}
     else if(line.trim()){body+=esc(line)+'\n\n';}
   }
-  const latex=`% Doctoralia · ${date}\n\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[T1]{fontenc}\n\\usepackage{hyperref}\n\\usepackage{geometry}\n\\usepackage{times}\n\\geometry{margin=2.5cm}\n\\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}\n\\author{Doctoralia Review Generator}\n\\date{${date}}\n\\begin{document}\n\n${body}\n\n\\end{document}\n`;
+  const latex=`% Doctoralia · ${date}\n\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[T1]{fontenc}\n\\usepackage{hyperref}\n\\usepackage{geometry}\n\\usepackage{times}\n\\geometry{margin=2.5cm}\n\\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}\n\\author{Doctoralia v2 — Review Generator}\n\\date{${date}}\n\\begin{document}\n\n${body}\n\n\\end{document}\n`;
   dl(`doctoralia_${slug()}.tex`,latex,'text/plain');
   log('⬇ LaTeX descargado. Compila con pdflatex o en overleaf.com.','ok');
 }
