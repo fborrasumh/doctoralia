@@ -1,6 +1,7 @@
 cff-version: 1.2.0
 message: "Si usas este software, cítalo con estos metadatos."
 title: "Doctoralia"
+abstract: "Generador de revisiones del estado del arte con citas ancladas a un corpus bibliográfico real y verificadas de forma determinista en el navegador."
 type: software
 authors:
   - family-names: "Borrás Rocher"
@@ -8,8 +9,15 @@ authors:
     affiliation: "Universidad Miguel Hernández de Elche"
     orcid: "https://orcid.org/0000-0002-5519-4573"
 doi: "10.5281/zenodo.21423293"
-version: "1.0.0"
-date-released: "2026-07-18"
+version: "2.0.0"
+date-released: "2026-08-31"
 url: "https://fborrasumh.github.io/doctoralia/"
 repository-code: "https://github.com/fborrasumh/doctoralia"
 license: MIT
+keywords:
+  - artificial intelligence
+  - literature review
+  - citation verification
+  - PRISMA
+  - reproducibility
+  - higher education
