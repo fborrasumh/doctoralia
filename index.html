@@ -1215,6 +1215,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
   const saved=localStorage.getItem('doctoralia_apikey');
   if(saved){document.getElementById('apiKey').value=saved;document.getElementById('saveKey').checked=true;document.getElementById('btnForget').style.display='';updateAv(saved);}
+  // ── Clave recibida por enlace/QR: https://.../doctoralia/#key=sk-... ──
+  // Va en el fragmento (#), que el navegador nunca envía al servidor.
+  (()=>{
+    const h=new URLSearchParams(location.hash.slice(1));
+    const k=(h.get('key')||'').trim();
+    if(!k)return;
+    if(k.startsWith('sk-')){
+      document.getElementById('apiKey').value=k;
+      document.getElementById('btnForget').style.display='';
+      updateAv(k);
+      setTimeout(()=>log('🔑 API key cargada desde el enlace del QR.','ok'),0);
+    }
+    // Borra la clave de la barra de direcciones y del historial
+    history.replaceState(null,'',location.pathname+location.search);
+    document.getElementById('onboardOverlay').style.display='none';
+  })();
   if(localStorage.getItem('doctoralia_onboard_done')||location.search.includes('topic')||location.hash){document.getElementById('onboardOverlay').style.display='none';}
   const ss=localStorage.getItem('doctoralia_sskey');
   if(ss&&document.getElementById('ssKey'))document.getElementById('ssKey').value=ss;
