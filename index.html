@@ -1,6 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script id="gpt6-luna-shim">
+/* gpt-6-luna: modelo por defecto con temperatura=1 (actualización sep-2026).
+   Adapta las peticiones a la API de OpenAI para la familia gpt-6:
+   temperature=1, max_tokens -> max_completion_tokens (con margen para razonamiento)
+   y reintento automático si la API rechaza algún parámetro. */
+(function(){
+  var NEW='gpt-6-luna', OLD='gpt-4o-mini';
+  try{
+    if(!localStorage.getItem('__gpt6_luna_mig_v1')){
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i), v=localStorage.getItem(k);
+        if(v===OLD||v==='"'+OLD+'"'){ localStorage.setItem(k, v.replace(OLD,NEW)); continue; }
+        if(v && v.length<20000 && v.charAt(0)==='{' && v.indexOf(OLD)>=0){
+          try{ var o=JSON.parse(v), ch=false;
+            for(var p in o){ if(o[p]===OLD){ o[p]=NEW; ch=true; } }
+            if(ch) localStorage.setItem(k, JSON.stringify(o));
+          }catch(e){}
+        }
+      }
+      localStorage.setItem('__gpt6_luna_mig_v1','1');
+    }
+  }catch(e){}
+  var of=window.fetch; if(!of) return;
+  function adapt(url,b){
+    if(!b || typeof b.model!=='string' || !/^gpt-6/.test(b.model)) return false;
+    b.temperature=1;
+    ['top_p','frequency_penalty','presence_penalty','logit_bias','logprobs','top_logprobs'].forEach(function(p){ delete b[p]; });
+    if(/chat\/completions/.test(url) && b.max_tokens!=null){
+      if(b.max_completion_tokens==null) b.max_completion_tokens=Math.min(128000, (+b.max_tokens||0)+6000);
+      delete b.max_tokens;
+    }
+    return true;
+  }
+  window.fetch=function(input,init){
+    var url=typeof input==='string'?input:(input&&input.url)||'';
+    if(!/api\.openai\.com\/v1\/(chat\/completions|responses)/.test(url) || !init || typeof init.body!=='string') return of.apply(this,arguments);
+    var b; try{ b=JSON.parse(init.body); }catch(e){ return of.apply(this,arguments); }
+    if(!adapt(url,b)) return of.apply(this,arguments);
+    var self=this, tries=0;
+    function go(){
+      var ini=Object.assign({},init,{body:JSON.stringify(b)});
+      return of.call(self,input,ini).then(function(r){
+        if(r.status!==400 || tries>=3) return r;
+        return r.clone().json().then(function(j){
+          var err=(j&&j.error)||{}, p=err.param, msg=String(err.message||'');
+          if(!p){ var m=msg.match(/'([a-z_]+)'/); if(m) p=m[1]; }
+          if(p && b.hasOwnProperty(p) && /unsupported|not supported|does not support|only the default/i.test(msg)){
+            delete b[p]; tries++; return go();
+          }
+          return r;
+        },function(){ return r; });
+      });
+    }
+    return go();
+  };
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data: blob:; font-src * data:;">
@@ -392,7 +450,7 @@ textarea{resize:vertical;min-height:68px}
       <h2>Listo para empezar</h2>
       <p>Necesitarás una API key de OpenAI. Si no tienes una, puedes obtenerla gratis en <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent)">platform.openai.com/api-keys</a>.</p>
       <div style="background:#f7f8fa;border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:left;margin-bottom:20px;font-size:13px;color:var(--t2);line-height:1.7">
-        💡 <strong style="color:var(--text)">Coste estimado:</strong> Una revisión estándar (8.000 palabras) con gpt-4o-mini cuesta aproximadamente <strong style="color:var(--amber)">$0,05 – $0,15</strong>. Durante la ejecución verás el coste <strong>real</strong> calculado con los tokens que devuelve la API, desglosado por agente en la pestaña Auditoría.
+        💡 <strong style="color:var(--text)">Coste estimado:</strong> Una revisión estándar (8.000 palabras) con gpt-6-luna cuesta aproximadamente <strong style="color:var(--amber)">$0,05 – $0,15</strong>. Durante la ejecución verás el coste <strong>real</strong> calculado con los tokens que devuelve la API, desglosado por agente en la pestaña Auditoría.
       </div>
       <div style="display:flex;gap:10px">
         <button class="btn" style="flex:1" onclick="nextOnboard(2)">← Atrás</button>
@@ -606,10 +664,10 @@ textarea{resize:vertical;min-height:68px}
         </div>
         <div class="field">
           <label>Modelo OpenAI
-            <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">gpt-4o-mini: rápido y económico (~$0.05/revisión). gpt-4o: mayor calidad (~$0.50/revisión). gpt-3.5-turbo: muy económico pero menor calidad.</div></div>
+            <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">gpt-6-luna (por defecto): más capaz y más barato. gpt-4o-mini: rápido y económico (~$0.05/revisión). gpt-4o: mayor calidad (~$0.50/revisión). gpt-3.5-turbo: muy económico pero menor calidad.</div></div>
           </label>
           <select id="model" onchange="updateEstimate()">
-            <option value="gpt-4o-mini">gpt-4o-mini — rápido y económico ✅</option>
+            <option value="gpt-6-luna" selected>gpt-6-luna · más capaz y más barato (recomendado)</option><option value="gpt-4o-mini">gpt-4o-mini — rápido y económico</option>
             <option value="gpt-4.1-mini">gpt-4.1-mini — mejor seguimiento de instrucciones</option>
             <option value="gpt-4.1">gpt-4.1 — contexto largo, alta calidad</option>
             <option value="gpt-4o">gpt-4o — alta calidad</option>
@@ -659,7 +717,7 @@ textarea{resize:vertical;min-height:68px}
         <div class="cost-item"><div class="cost-val" id="estSources">6</div><div class="cost-lbl">Fuentes activas</div></div>
         <div class="cost-sep"></div>
         <div class="cost-item"><div class="cost-val" id="estYears" style="font-size:14px">2015–2025</div><div class="cost-lbl">Cobertura años</div></div>
-        <div class="cost-warn">⚠️ Estimación a priori. El coste <strong>real</strong>, contabilizado con los tokens que devuelve la API, aparece durante la ejecución y desglosado por agente en la pestaña Auditoría. El coste depende de los papers encontrados y su longitud. El modelo <span id="estModel">gpt-4o-mini</span> es el más económico.</div>
+        <div class="cost-warn">⚠️ Estimación a priori. El coste <strong>real</strong>, contabilizado con los tokens que devuelve la API, aparece durante la ejecución y desglosado por agente en la pestaña Auditoría. El coste depende de los papers encontrados y su longitud. El modelo <span id="estModel">gpt-6-luna</span> es el más económico.</div>
       </div>
 
       <!-- PIPELINE STATUS -->
@@ -1326,7 +1384,7 @@ function applyPreset(key){
 //  COST ESTIMATOR
 // ═══════════════════════════════════════════════════
 const MODEL_COSTS={
-  'gpt-4o-mini':{in:0.15,out:0.6},
+  'gpt-6-luna':{in:0.1,out:0.5}, 'gpt-4o-mini':{in:0.15,out:0.6},
   'gpt-4o':{in:2.5,out:10},
   'gpt-4.1-mini':{in:0.4,out:1.6},
   'gpt-4.1':{in:2,out:8},
@@ -1335,7 +1393,7 @@ const MODEL_COSTS={
 };
 function updateEstimate(){
   const wc=parseInt(document.getElementById('wc')?.value||8000);
-  const model=document.getElementById('model')?.value||'gpt-4o-mini';
+  const model=document.getElementById('model')?.value||'gpt-6-luna';
   const fastMode=document.getElementById('tog-fast')?.classList.contains('on');
   const sources=['ss','pm','ax','oa','ep','cr'].filter(s=>document.getElementById('chk-'+s)?.checked);
   const extras=['gaps','biblio','thread','enhancer','prisma','synth','audit','narrator'].filter(t=>document.getElementById('tog-'+t)?.classList.contains('on'));
@@ -1532,7 +1590,7 @@ function addUsage(agentId,u){
   updateLiveCost();
 }
 function runCost(){
-  const model=document.getElementById('model')?.value||'gpt-4o-mini';
+  const model=document.getElementById('model')?.value||'gpt-6-luna';
   const c=MODEL_COSTS[model]||MODEL_COSTS['gpt-4o-mini'];
   return RUN.inTok*c.in/1e6+RUN.outTok*c.out/1e6;
 }
@@ -1542,7 +1600,7 @@ function updateLiveCost(){
   const w=document.getElementById('liveCostWrap');if(w)w.style.display=RUN.calls?'':'none';
 }
 function usageTable(){
-  const model=document.getElementById('model')?.value||'gpt-4o-mini';
+  const model=document.getElementById('model')?.value||'gpt-6-luna';
   const c=MODEL_COSTS[model]||MODEL_COSTS['gpt-4o-mini'];
   const rows=Object.entries(RUN.usage).sort((a,b)=>(b[1].in+b[1].out)-(a[1].in+a[1].out));
   return rows.map(([id,u])=>({agent:id,calls:u.calls,in:u.in,out:u.out,cost:u.in*c.in/1e6+u.out*c.out/1e6}));
