@@ -5,6 +5,29 @@ y [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [2.1.0] — 2026-09-24
+
+Versión centrada en la **fiabilidad del acceso a las fuentes**.
+
+### Cambiado
+- **Capa de red común** para todas las fuentes: ritmo mínimo por servidor, reintentos con
+  espera exponencial (respetando `Retry-After`) ante 429, 5xx y errores de red, y tiempo
+  máximo de 20 s por petición.
+- **Semantic Scholar**: las peticiones sin clave se serializan (≈1/1,5 s) y se reintentan hasta
+  4 veces. El "Failed to fetch" era un 429 sin cabeceras CORS de la cuota pública compartida.
+- **arXiv**: se consulta el registro DataCite de arXiv (DOI 10.48550, con CORS, abstract y año)
+  en lugar de `export.arxiv.org`, que no admite CORS. Los proxies públicos quedan solo como
+  respaldo, con 10 s de tiempo máximo (antes podían bloquear la fase 40 s).
+- **OpenAlex**: admite clave propia (`api_key`). Desde 2026 el uso sin clave se limita a unas
+  100 búsquedas diarias por conexión; al agotarse se avisa una vez y se omite la fuente.
+- **PubMed**: ritmo de 3 peticiones/s y clave NCBI opcional.
+- **Cortacircuitos por fuente**: tras fallos repetidos se omiten sus consultas restantes con
+  un único aviso y un resumen de fuentes caídas.
+- La comprobación de retractaciones ya no informa de "ninguna retractación" cuando OpenAlex
+  no ha respondido: indica cuántos DOI quedaron sin comprobar.
+
+---
+
 ## [2.0.0] — 2026-08-31
 
 Versión centrada en la **integridad de las citas**. En la v1 el redactor escribía a partir

@@ -9,8 +9,8 @@ authors:
     affiliation: "Universidad Miguel Hernández de Elche"
     orcid: "https://orcid.org/0000-0002-5519-4573"
 doi: "10.5281/zenodo.21423293"
-version: "2.0.0"
-date-released: "2026-08-31"
+version: 2.1.0
+date-released: 2026-09-24
 url: "https://fborrasumh.github.io/doctoralia/"
 repository-code: "https://github.com/fborrasumh/doctoralia"
 license: MIT

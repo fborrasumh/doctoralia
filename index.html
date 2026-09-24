@@ -475,7 +475,7 @@ textarea{resize:vertical;min-height:68px}
   <div class="logo">
     <div class="logo-row">
       <div class="logo-icon">🔬</div>
-      <div><h1>Doctoralia</h1><span>Revisiones con citas verificadas · v2.0</span></div>
+      <div><h1>Doctoralia</h1><span>Revisiones con citas verificadas · v2.1</span></div>
     </div>
   </div>
   <div class="snav">Pipeline</div>
@@ -872,7 +872,7 @@ textarea{resize:vertical;min-height:68px}
     <div class="source-grid" style="margin-bottom:16px">
       <div class="sc on" id="sc2-ss"><div class="sc-head" onclick="syncSrc('ss')"><input type="checkbox" id="chk2-ss" checked><span class="sc-ico">🔭</span><div><div class="sc-name">Semantic Scholar</div><div class="sc-sub">220M · citas reales · abstracts</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ss" value="30" min="5" max="200" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ss',this.value)"></div><div class="hint" style="margin-top:5px">API pública · sin clave compartida · clave propia opcional abajo</div></div>
       <div class="sc on" id="sc2-pm"><div class="sc-head" onclick="syncSrc('pm')"><input type="checkbox" id="chk2-pm" checked><span class="sc-ico">🧬</span><div><div class="sc-name">PubMed / MEDLINE</div><div class="sc-sub">37M biomédicos · filtro English</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-pm" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('pm',this.value)"></div><div class="hint" style="margin-top:5px">NCBI eUtils efetch · abstracts estructurados completos</div></div>
-      <div class="sc on" id="sc2-ax"><div class="sc-head" onclick="syncSrc('ax')"><input type="checkbox" id="chk2-ax" checked><span class="sc-ico">📐</span><div><div class="sc-name">arXiv</div><div class="sc-sub">Preprints cs, physics, math, bio</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ax" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ax',this.value)"></div><div class="hint" style="margin-top:5px">Atom API pública · preprints más recientes</div></div>
+      <div class="sc on" id="sc2-ax"><div class="sc-head" onclick="syncSrc('ax')"><input type="checkbox" id="chk2-ax" checked><span class="sc-ico">📐</span><div><div class="sc-name">arXiv</div><div class="sc-sub">Preprints cs, physics, math, bio</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ax" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ax',this.value)"></div><div class="hint" style="margin-top:5px">Vía registro DataCite (CORS) · proxy como respaldo</div></div>
       <div class="sc on" id="sc2-oa"><div class="sc-head" onclick="syncSrc('oa')"><input type="checkbox" id="chk2-oa" checked><span class="sc-ico">🌐</span><div><div class="sc-name">OpenAlex</div><div class="sc-sub">250M papers · sin key · 100K/día</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-oa" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('oa',this.value)"></div><div class="hint" style="margin-top:5px">Sucesor Microsoft Academic Graph · OA status · DOAJ</div></div>
       <div class="sc on" id="sc2-ep"><div class="sc-head" onclick="syncSrc('ep')"><input type="checkbox" id="chk2-ep" checked><span class="sc-ico">🇪🇺</span><div><div class="sc-name">Europe PMC</div><div class="sc-sub">40M+ biomédicos · full-text OA</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-ep" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('ep',this.value)"></div><div class="hint" style="margin-top:5px">EBI · ensayos clínicos · patentes · literatura gris</div></div>
       <div class="sc" id="sc2-cr"><div class="sc-head" onclick="syncSrc('cr')"><input type="checkbox" id="chk2-cr"><span class="sc-ico">🔗</span><div><div class="sc-name">CrossRef</div><div class="sc-sub">165M registros · metadatos DOI</div></div></div><div class="sc-field"><label>Máx. por query</label><input type="number" id="lim2-cr" value="20" min="5" max="100" style="width:100%;margin-top:3px;padding:5px 9px;font-size:12px" oninput="syncLim('cr',this.value)"></div><div class="hint" style="margin-top:5px">Metadatos publisher · DOI canonical · funding</div></div>
@@ -884,11 +884,17 @@ textarea{resize:vertical;min-height:68px}
         <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">"Relevancia" combina el percentil de citas por año (normalizado dentro del corpus, no el recuento bruto), la recencia, la disponibilidad de abstract y la confirmación en varias fuentes. Ordenar solo por citas sesga sistemáticamente hacia lo antiguo.</div></div>
       </label><select id="sortPapers"><option value="relevance">Relevancia normalizada (recomendado)</option><option value="citations">Citas brutas (descendente)</option><option value="year">Año (descendente)</option><option value="source">Fuente</option></select></div>
       <div class="field"><label>Búsquedas simultáneas
-        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Consultas lanzadas en paralelo. 4 es seguro para todas las APIs. Súbelo si tu conexión es lenta; bájalo a 2 si ves errores 429.</div></div>
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Consultas lanzadas en paralelo. Cada fuente respeta además su propio ritmo máximo y reintenta sola ante errores 429, así que 4 es un buen valor.</div></div>
       </label><input type="number" id="concurrency" value="4" min="1" max="8"></div>
       <div class="field"><label>Clave propia de Semantic Scholar (opcional)
-        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Sin clave, S2 funciona con la cuota pública compartida. Con clave propia (gratuita, se solicita en semanticscholar.org/product/api) subes el límite de peticiones. Se guarda solo en tu navegador.</div></div>
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Sin clave, S2 usa una cuota pública compartida por todos sus usuarios del mundo y falla con frecuencia ("Failed to fetch"). Con clave propia (gratuita, se solicita en semanticscholar.org/product/api) subes el límite de peticiones. Se guarda solo en tu navegador.</div></div>
       </label><input type="password" id="ssKey" placeholder="opcional — sube tu cuota en S2" oninput="localStorage.setItem('doctoralia_sskey',this.value)"></div>
+      <div class="field"><label>Clave propia de OpenAlex (recomendada)
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Desde 2026 OpenAlex limita el uso sin clave a unas 100 búsquedas al día por conexión, compartidas con todos los que usen la misma red: por eso aparece "OA 429". La clave es gratuita (openalex.org → Settings → API key) y da 10 veces más cuota. Se guarda solo en tu navegador.</div></div>
+      </label><input type="password" id="oaKey" placeholder="opcional — evita el error 429" oninput="localStorage.setItem('doctoralia_oakey',this.value)"></div>
+      <div class="field"><label>Clave propia de NCBI / PubMed (opcional)
+        <div class="tooltip-wrap"><span class="tip-icon">?</span><div class="tip-box">Sin clave, PubMed admite 3 peticiones por segundo; con clave (gratuita en tu cuenta de NCBI → API Key Management), 10. Se guarda solo en tu navegador.</div></div>
+      </label><input type="password" id="ncbiKey" placeholder="opcional — PubMed más rápido" oninput="localStorage.setItem('doctoralia_ncbikey',this.value)"></div>
       <div class="field" style="display:flex;align-items:center;gap:8px;padding-top:22px"><input type="checkbox" id="pmEnglish" checked style="width:auto"><label style="margin:0">Restringir PubMed a inglés</label></div>
     </div>
     <div class="divider"></div>
@@ -1292,6 +1298,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(localStorage.getItem('doctoralia_onboard_done')||location.search.includes('topic')||location.hash){document.getElementById('onboardOverlay').style.display='none';}
   const ss=localStorage.getItem('doctoralia_sskey');
   if(ss&&document.getElementById('ssKey'))document.getElementById('ssKey').value=ss;
+  try{const ok=localStorage.getItem('doctoralia_oakey');if(ok&&document.getElementById('oaKey'))document.getElementById('oaKey').value=ok;
+      const nk=localStorage.getItem('doctoralia_ncbikey');if(nk&&document.getElementById('ncbiKey'))document.getElementById('ncbiKey').value=nk;}catch(e){}
   buildAgentTable();
   loadSavedPrompts();
   buildPromptEditor();
@@ -1579,6 +1587,53 @@ async function pMap(items,fn,limit=4){
   return out;
 }
 
+
+/* ── 2b. Acceso robusto a las fuentes (v2.1) ──────────
+   · Ritmo mínimo entre peticiones por servidor (cada API tiene su cuota).
+   · Reintentos con espera exponencial ante 429/5xx/"Failed to fetch"
+     (S2 y OpenAlex devuelven el 429 sin cabeceras CORS: el navegador
+     solo ve "Failed to fetch").
+   · Tiempo máximo por petición, para que un servidor colgado no bloquee.
+   · Cortacircuitos por fuente: tras fallos repetidos se omiten sus
+     consultas restantes con un único aviso claro.                 */
+const SRC_GAP={'api.semanticscholar.org':1100,'eutils.ncbi.nlm.nih.gov':380,'api.openalex.org':150,
+  'api.crossref.org':150,'www.ebi.ac.uk':120,'api.datacite.org':200};
+const _hostNext={};const SRC_STATE={};
+const _sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function _throttle(host,gap){const now=Date.now();const t=Math.max(now,_hostNext[host]||0);_hostNext[host]=t+gap;if(t>now)await _sleep(t-now);}
+function _backoff(host,ms){_hostNext[host]=Math.max(_hostNext[host]||0,Date.now()+ms);}
+async function fetchSrc(url,{headers,tries=3,timeout=20000,gap}={}){
+  const host=new URL(url).host;const g=gap??(SRC_GAP[host]||0);let lastErr;
+  for(let a=0;a<tries;a++){
+    if(shouldStop)throw new Error('detenido');
+    await _throttle(host,g);
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),timeout);
+    try{
+      const r=await fetch(url,{headers,signal:ctl.signal});clearTimeout(to);
+      if(r.ok)return r;
+      const e=new Error('HTTP '+r.status);e.status=r.status;
+      if(r.status!==429&&r.status<500)throw e;               // 4xx: no se reintenta
+      const ra=parseFloat(r.headers.get('Retry-After'));
+      lastErr=e;if(a<tries-1)_backoff(host,(isFinite(ra)?ra*1000:2000*2**a)+Math.random()*500);
+    }catch(e){
+      clearTimeout(to);
+      if(e.status&&e.status!==429&&e.status<500)throw e;
+      if(!e.status)lastErr=e.name==='AbortError'?new Error('tiempo de espera agotado'):new Error(e.message==='Failed to fetch'?'sin respuesta (red, CORS o límite de peticiones)':e.message);
+      else lastErr=e;
+      if(a<tries-1)_backoff(host,2000*2**a+Math.random()*500);
+    }
+  }
+  throw lastErr;
+}
+function srcReset(){for(const k in SRC_STATE)delete SRC_STATE[k];}
+function srcDown(name){return !!SRC_STATE[name]?.down;}
+function srcOk(name){(SRC_STATE[name]||(SRC_STATE[name]={fails:0})).fails=0;}
+function srcFail(name,msg,hard=false){
+  const st=SRC_STATE[name]||(SRC_STATE[name]={fails:0});st.fails++;st.last=msg;
+  if(hard||st.fails>=2){if(!st.down){st.down=true;log(`⚠ ${name}: ${msg} — se omiten sus consultas restantes.`,'warn');}}
+  else log(`⚠ ${name}: ${msg}`,'warn');
+}
+
 /* ── 3. Contabilidad real de tokens y coste ── */
 const RUN={usage:{},inTok:0,outTok:0,calls:0,t0:0};
 function resetUsage(){RUN.usage={};RUN.inTok=0;RUN.outTok=0;RUN.calls=0;RUN.t0=Date.now();updateLiveCost();}
@@ -1688,26 +1743,22 @@ function rankPapers(papers){
   return papers.sort((a,b)=>b.score-a.score);   // relevance (por defecto)
 }
 
+function oaParams(u){const k=(document.getElementById('oaKey')?.value||'').trim();const m=(document.getElementById('pubmedEmail')?.value||'').trim();if(k)u.set('api_key',k);if(m)u.set('mailto',m);return u;}
 /* ── 6. Retractaciones (OpenAlex, 1 petición por lote de 50 DOI) ── */
 async function checkRetractions(papers){
   const withDoi=papers.filter(p=>p.doi);
-  if(!withDoi.length)return 0;
-  const email=document.getElementById('pubmedEmail')?.value||'';
-  let flagged=0;
+  const res={flagged:0,checked:0,failed:0};
   for(let i=0;i<withDoi.length;i+=50){
     const batch=withDoi.slice(i,i+50);
     try{
-      const f=`doi:${batch.map(p=>'https://doi.org/'+p.doi).join('|')}`;
-      const u=new URLSearchParams({filter:f,select:'doi,is_retracted',per_page:50});
-      if(email)u.set('mailto',email);
-      const r=await fetch(`https://api.openalex.org/works?${u}`);
-      if(!r.ok)continue;
-      const res=(await r.json()).results||[];
-      const map=new Map(res.map(w=>[normDOI(w.doi),!!w.is_retracted]));
-      batch.forEach(p=>{if(map.get(p.doi)){p.retracted=true;flagged++;}});
-    }catch(e){/* no bloquea el pipeline */}
+      const u=oaParams(new URLSearchParams({filter:`doi:${batch.map(p=>'https://doi.org/'+p.doi).join('|')}`,select:'doi,is_retracted',per_page:50}));
+      const r=await fetchSrc(`https://api.openalex.org/works?${u}`,{tries:2});
+      const map=new Map(((await r.json()).results||[]).map(w=>[normDOI(w.doi),!!w.is_retracted]));
+      batch.forEach(p=>{if(map.get(p.doi)){p.retracted=true;res.flagged++;}});
+      res.checked+=batch.length;
+    }catch(e){res.failed+=batch.length;/* no bloquea el pipeline */}
   }
-  return flagged;
+  return res;
 }
 
 /* ── 7. CITAS ANCLADAS AL CORPUS ─────────────────────
@@ -2039,11 +2090,9 @@ async function resolveDois(list){
   for(let i=0;i<list.length;i+=50){
     const batch=list.slice(i,i+50);
     try{
-      const u=new URLSearchParams({filter:`doi:${batch.map(d=>'https://doi.org/'+d).join('|')}`,per_page:50,
-        select:'doi,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,open_access,is_retracted'});
-      if(email)u.set('mailto',email);
-      const r=await fetch(`https://api.openalex.org/works?${u}`);
-      if(!r.ok)continue;
+      const u=oaParams(new URLSearchParams({filter:`doi:${batch.map(d=>'https://doi.org/'+d).join('|')}`,per_page:50,
+        select:'doi,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,open_access,is_retracted'}));
+      const r=await fetchSrc(`https://api.openalex.org/works?${u}`);
       ((await r.json()).results||[]).forEach(w=>{
         let abstract='';
         if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([wd,ps])=>ps.forEach(p=>pos.push([p,wd])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,600);}
@@ -2100,7 +2149,7 @@ function exportRunJson(){
 }
 let lastRefs=[],lastRun=null,lastMetrics=null,lastAudit=null;
 
-const APP_VERSION='2.0';
+const APP_VERSION='2.1';
 
 /* Estructura por defecto en el idioma de salida */
 function DEFAULT_STRUCTURE(lang,wc){
@@ -2246,13 +2295,16 @@ async function searchSS(q,max,yr){
   const p=new URLSearchParams({query:q,limit:Math.min(max,100),offset:0,fields:'paperId,title,abstract,year,authors,venue,citationCount,url,externalIds,publicationVenue'});
   if(yr)p.set('year',`${yr.from}-${yr.to}`);
   const userKey=(document.getElementById('ssKey')?.value||'').trim();   // clave propia opcional del usuario
-  const headers=userKey?{'x-api-key':userKey}:{};
+  const headers=userKey?{'x-api-key':userKey}:undefined;
   try{
-    const r=await fetch(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`,{headers});
-    if(r.status===429){log('⚠ Semantic Scholar: límite de peticiones. Añade tu propia clave en Fuentes para subir la cuota.','warn');return[];}
-    if(!r.ok)throw new Error('SS '+r.status);
+    // Sin clave: cuota pública compartida y 1 petición/s. Se serializa y se reintenta con espera.
+    const r=await fetchSrc(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`,{headers,tries:userKey?3:4,gap:userKey?1000:1500});
     return((await r.json()).data||[]).map(x=>({title:x.title||'',authors:(x.authors||[]).slice(0,6).map(a=>a.name),year:String(x.year||''),journal:x.venue||x.publicationVenue?.name||'',abstract:(x.abstract||'').slice(0,900),citations:x.citationCount||0,url:x.url||'',doi:normDOI((x.externalIds||{}).DOI||''),source:'Semantic Scholar',oa_status:''}));
-  }catch(e){log('⚠ Semantic Scholar: '+e.message,'warn');return[];}
+  }catch(e){
+    if(e.status===403&&userKey)srcFail('Semantic Scholar','clave rechazada (403). Revísala en Fuentes → Opciones avanzadas',true);
+    else srcFail('Semantic Scholar',userKey?e.message:'cuota pública compartida saturada. Con una clave gratuita (semanticscholar.org/product/api) deja de fallar');
+    return[];
+  }
 }
 
 async function searchPM(q,max,yr){
@@ -2263,12 +2315,13 @@ async function searchPM(q,max,yr){
     if(yr)term+=` AND (${yr.from}[PDAT]:${yr.to}[PDAT])`;
     const sp=new URLSearchParams({db:'pubmed',term,retmax:max,retmode:'json',tool:'doctoralia'});
     if(email)sp.set('email',email);
-    const pmids=((await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);
+    const ncbiKey=(document.getElementById('ncbiKey')?.value||'').trim();if(ncbiKey)sp.set('api_key',ncbiKey);
+    const pmids=((await(await fetchSrc(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?${sp}`)).json()).esearchresult?.idlist||[]).slice(0,max);
     if(!pmids.length)return[];
     // efetch en XML: es la única vía que devuelve el abstract completo (esummary NO lo trae)
     const fp=new URLSearchParams({db:'pubmed',id:pmids.join(','),retmode:'xml',rettype:'abstract',tool:'doctoralia'});
-    if(email)fp.set('email',email);
-    const xmlTxt=await(await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?${fp}`)).text();
+    if(email)fp.set('email',email);if(ncbiKey)fp.set('api_key',ncbiKey);
+    const xmlTxt=await(await fetchSrc(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?${fp}`)).text();
     const xml=new DOMParser().parseFromString(xmlTxt,'application/xml');
     return Array.from(xml.querySelectorAll('PubmedArticle')).map(a=>{
       const pmid=a.querySelector('PMID')?.textContent||'';
@@ -2288,20 +2341,37 @@ async function searchPM(q,max,yr){
       return {title,authors,year:String(year||''),journal,abstract,citations:0,pmid,
         url:`https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,doi:normDOI(doi),source:'PubMed',oa_status:'',retracted};
     }).filter(p=>p.title);
-  }catch(e){log('⚠ PubMed: '+e.message,'warn');return[];}
+  }catch(e){srcFail('PubMed',e.message);return[];}
 }
 
+/* arXiv: su API (export.arxiv.org) no envía cabeceras CORS y los proxies
+   públicos son inestables. Se consulta primero el registro DataCite de arXiv
+   (DOI 10.48550, con CORS, abstracts y año) y solo si falla se prueban proxies. */
+function _axTerms(q){return String(q).replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(w=>w.length>2&&!/^(and|or|not|the|of|in|for|with|from|on|by|to|an)$/i.test(w));}
 async function searchAX(q,max,yr){
-  let qs=`all:${encodeURIComponent(q.replace(/\s+/g,'+'))}`;
+  const terms=_axTerms(q);if(!terms.length)return[];
+  const yrQ=yr?` AND publicationYear:[${yr.from} TO ${yr.to}]`:'';
+  const mapDC=d=>{const a=d.attributes||{};
+    return{title:((a.titles||[])[0]?.title||'').replace(/\s+/g,' ').trim(),
+      authors:(a.creators||[]).slice(0,6).map(c=>c.givenName&&c.familyName?`${c.givenName} ${c.familyName}`:(c.name||'')),
+      year:String(a.publicationYear||''),journal:'arXiv (preprint)',
+      abstract:((a.descriptions||[]).find(x=>x.descriptionType==='Abstract')?.description||'').replace(/\s+/g,' ').slice(0,900),
+      citations:a.citationCount||0,url:a.url||(a.doi?`https://doi.org/${a.doi}`:''),doi:normDOI(a.doi||d.id||''),source:'arXiv',oa_status:'gold'};};
+  try{
+    // 1º todas las palabras clave (AND); si no hay nada, cualquiera de ellas ordenada por relevancia
+    for(const op of [' AND ',' OR ']){
+      const p=new URLSearchParams({query:`(${terms.join(op)})${yrQ}`,'client-id':'arxiv.content','page[size]':Math.min(max,100)});
+      const r=await fetchSrc(`https://api.datacite.org/dois?${p}`,{tries:2});
+      const out=((await r.json()).data||[]).map(mapDC).filter(p=>p.title);
+      if(out.length||op===' OR ')return out;
+    }
+  }catch(e){/* se prueban los proxies */}
+  let qs=`all:${encodeURIComponent(terms.join(' AND '))}`;
   if(yr)qs+=`+AND+submittedDate:[${yr.from}01010000+TO+${yr.to}12312359]`;
   const arxivUrl=`https://export.arxiv.org/api/query?search_query=${qs}&start=0&max_results=${max}`;
-  // 1) directo  2) corsproxy  3) allorigins — el fallo de un proxy no debe tumbar la fuente
-  const candidates=[arxivUrl,
-    `https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(arxivUrl)}`];
-  for(const u of candidates){
+  for(const u of [`https://corsproxy.io/?url=${encodeURIComponent(arxivUrl)}`,`https://api.allorigins.win/raw?url=${encodeURIComponent(arxivUrl)}`]){
     try{
-      const r=await fetch(u);if(!r.ok)continue;
+      const r=await fetchSrc(u,{tries:1,timeout:10000});
       const xml=new DOMParser().parseFromString(await r.text(),'application/xml');
       const entries=Array.from(xml.querySelectorAll('entry'));
       if(!entries.length)continue;
@@ -2316,15 +2386,15 @@ async function searchAX(q,max,yr){
         source:'arXiv',oa_status:'gold'})).filter(p=>p.title);
     }catch(e){/* siguiente candidato */}
   }
-  log('⚠ arXiv: no accesible por CORS en este momento.','warn');
+  srcFail('arXiv','ni el registro DataCite ni los proxies responden ahora mismo');
   return[];
 }
 
-async function searchOA(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access',mailto:email});if(yr){p.set('filter',`publication_year:${yr.from}-${yr.to}`);}const r=await fetch(`https://api.openalex.org/works?${p}`);if(!r.ok)throw new Error('OA '+r.status);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,900);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:normDOI(w.doi),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){log('⚠ OpenAlex: '+e.message,'warn');return[];}}
+async function searchOA(q,max,yr){try{const p=new URLSearchParams({search:q,per_page:Math.min(max,200),page:1,select:'id,title,abstract_inverted_index,publication_year,authorships,primary_location,cited_by_count,doi,open_access'});oaParams(p);if(yr){p.set('filter',`publication_year:${yr.from}-${yr.to}`);}const r=await fetchSrc(`https://api.openalex.org/works?${p}`);return((await r.json()).results||[]).map(w=>{let abstract='';try{if(w.abstract_inverted_index){const pos=[];Object.entries(w.abstract_inverted_index).forEach(([word,positions])=>positions.forEach(p=>pos.push([p,word])));abstract=pos.sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').slice(0,900);}}catch(e){}return{title:w.title||'',authors:(w.authorships||[]).slice(0,4).map(a=>a.author?.display_name||''),year:String(w.publication_year||''),journal:w.primary_location?.source?.display_name||'',abstract,citations:w.cited_by_count||0,url:w.id||'',doi:normDOI(w.doi),source:'OpenAlex',oa_status:w.open_access?.oa_status||''};}).filter(p=>p.title);}catch(e){const noKey=!(document.getElementById('oaKey')?.value||'').trim();if(e.status===429)srcFail('OpenAlex',noKey?'cuota diaria agotada (sin clave, OpenAlex solo permite unas 100 búsquedas al día por conexión). Añade tu clave gratuita en Fuentes → Opciones avanzadas':'cuota de tu clave agotada por hoy',true);else srcFail('OpenAlex',e.message);return[];}}
 
-async function searchEPMC(q,max,yr){try{let query=q;if(yr)query+=` AND (PUB_YEAR:[${yr.from} TO ${yr.to}])`;const p=new URLSearchParams({query,format:'json',pageSize:Math.min(max,100),resultType:'core',sort:'CITED desc'});const r=await fetch(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?${p}`);if(!r.ok)throw new Error('EPMC '+r.status);return(((await r.json()).resultList||{}).result||[]).map(a=>({title:a.title||'',authors:(a.authorString||'').split(',').slice(0,4).map(s=>s.trim()),year:String(a.pubYear||''),journal:a.journalTitle||'',abstract:(a.abstractText||'').slice(0,900),citations:a.citedByCount||0,url:a.pmid?`https://europepmc.org/article/MED/${a.pmid}`:(a.doi?`https://doi.org/${a.doi}`:''),doi:normDOI(a.doi),source:'Europe PMC',oa_status:a.inEPMC==='Y'?'open':''})).filter(p=>p.title);}catch(e){log('⚠ EuropePMC: '+e.message,'warn');return[];}}
+async function searchEPMC(q,max,yr){try{let query=q;if(yr)query+=` AND (PUB_YEAR:[${yr.from} TO ${yr.to}])`;const p=new URLSearchParams({query,format:'json',pageSize:Math.min(max,100),resultType:'core',sort:'CITED desc'});const r=await fetchSrc(`https://www.ebi.ac.uk/europepmc/webservices/rest/search?${p}`);return(((await r.json()).resultList||{}).result||[]).map(a=>({title:a.title||'',authors:(a.authorString||'').split(',').slice(0,4).map(s=>s.trim()),year:String(a.pubYear||''),journal:a.journalTitle||'',abstract:(a.abstractText||'').slice(0,900),citations:a.citedByCount||0,url:a.pmid?`https://europepmc.org/article/MED/${a.pmid}`:(a.doi?`https://doi.org/${a.doi}`:''),doi:normDOI(a.doi),source:'Europe PMC',oa_status:a.inEPMC==='Y'?'open':''})).filter(p=>p.title);}catch(e){srcFail('Europe PMC',e.message);return[];}}
 
-async function searchCR(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({query:q,rows:Math.min(max,100),select:'DOI,title,author,published,container-title,abstract,is-referenced-by-count,URL',mailto:email});if(yr){p.set('filter',`from-pub-date:${yr.from},until-pub-date:${yr.to}`);}const r=await fetch(`https://api.crossref.org/works?${p}`);if(!r.ok)throw new Error('CR '+r.status);return(((await r.json()).message||{}).items||[]).map(w=>{const year=w.published?.['date-parts']?.[0]?.[0]||'';const doi=w.DOI||'';return{title:(Array.isArray(w.title)?w.title[0]:w.title)||'',authors:(w.author||[]).slice(0,4).map(a=>`${a.family||''} ${(a.given||'')[0]||''}`.trim()),year:String(year),journal:(Array.isArray(w['container-title'])?w['container-title'][0]:w['container-title'])||'',abstract:(w.abstract||'').replace(/<[^>]+>/g,'').slice(0,900),citations:w['is-referenced-by-count']||0,url:doi?`https://doi.org/${doi}`:'',doi,source:'CrossRef',oa_status:''};}).filter(p=>p.title);}catch(e){log('⚠ CrossRef: '+e.message,'warn');return[];}}
+async function searchCR(q,max,yr){const email=document.getElementById('pubmedEmail')?.value||'doctoralia@app.io';try{const p=new URLSearchParams({query:q,rows:Math.min(max,100),select:'DOI,title,author,published,container-title,abstract,is-referenced-by-count,URL',mailto:email});if(yr){p.set('filter',`from-pub-date:${yr.from},until-pub-date:${yr.to}`);}const r=await fetchSrc(`https://api.crossref.org/works?${p}`);return(((await r.json()).message||{}).items||[]).map(w=>{const year=w.published?.['date-parts']?.[0]?.[0]||'';const doi=w.DOI||'';return{title:(Array.isArray(w.title)?w.title[0]:w.title)||'',authors:(w.author||[]).slice(0,4).map(a=>`${a.family||''} ${(a.given||'')[0]||''}`.trim()),year:String(year),journal:(Array.isArray(w['container-title'])?w['container-title'][0]:w['container-title'])||'',abstract:(w.abstract||'').replace(/<[^>]+>/g,'').slice(0,900),citations:w['is-referenced-by-count']||0,url:doi?`https://doi.org/${doi}`:'',doi,source:'CrossRef',oa_status:''};}).filter(p=>p.title);}catch(e){srcFail('CrossRef',e.message);return[];}}
 
 function filterByYear(papers,yr){if(!yr)return papers;return papers.filter(p=>{const y=parseInt(p.year);return!isNaN(y)&&y>=yr.from&&y<=yr.to;});}
 
@@ -2653,12 +2723,15 @@ async function startGeneration(){
     const jobs=[];
     queries.forEach((q,qi)=>srcCfg.forEach(s=>jobs.push({q,qi,s})));
     log(`🔍 ${jobs.length} búsquedas (${queries.length} consultas × ${srcCfg.length} fuentes) · concurrencia ${conc}`,'info');
+    srcReset();
     const results=await pMap(jobs,async job=>{
-      if(shouldStop)return [];
+      if(shouldStop||srcDown(job.s.name))return [];
       const p=await job.s.fn(job.q,job.s.lim,yr);
-      log(`  ${job.s.name} · q${job.qi+1}: ${p.length}`,p.length?'ok':'warn');
+      if(!srcDown(job.s.name)){if(p.length)srcOk(job.s.name);log(`  ${job.s.name} · q${job.qi+1}: ${p.length}`,p.length?'ok':'warn');}
       return p;
     },conc);
+    const downSrc=srcCfg.map(x=>x.name).filter(srcDown);
+    if(downSrc.length)log(`ℹ Fuentes sin respuesta en esta ejecución: ${downSrc.join(', ')}. El resto del corpus se ha recuperado con normalidad.`,'warn');
     if(shouldStop)throw new Error('__STOPPED__');
     let raw=results.flat().filter(Boolean);
     if(importedCorpus.length){raw=raw.concat(importedCorpus);log(`📥 + ${importedCorpus.length} referencias propias importadas`,'ok');}
@@ -2680,11 +2753,13 @@ async function startGeneration(){
 
     if(doRetract&&allPapers.length){
       log('🚩 Comprobando retractaciones en OpenAlex...','info');
-      const n=await checkRetractions(allPapers);
+      const rc=await checkRetractions(allPapers);const n=rc.flagged;
       const before=allPapers.length;
       allPapers=allPapers.filter(p=>!p.retracted);
       flow.excludedRetracted=before-allPapers.length;
-      log(n?`⚠ ${n} papers retractados detectados y excluidos.`:'✅ Ninguna retractación detectada.',n?'warn':'ok');
+      if(n)log(`⚠ ${n} papers retractados detectados y excluidos.`,'warn');
+      if(rc.failed)log(`⚠ No se pudo comprobar la retractación de ${rc.failed} DOI (OpenAlex no respondió${(document.getElementById('oaKey')?.value||'').trim()?'':'; con clave propia no ocurre'}). Solo se han excluido los marcados por PubMed.`,'warn');
+      else if(!n)log('✅ Ninguna retractación detectada.','ok');
     }
 
     allPapers=rankPapers(allPapers);
