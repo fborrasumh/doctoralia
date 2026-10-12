@@ -5,6 +5,31 @@ y [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [3.0.0] — 2026-10-12
+
+Rediseño sobre los módulos de la plataforma Forja (interfaz y motor).
+
+### Añadido
+- Interfaz en español, inglés y portugués, con selector y `?lang=`; el idioma de la revisión sigue siendo independiente.
+- Proveedores de IA: OpenAI, Google Gemini y Anthropic Claude, con la clave de cada persona.
+- Ejemplo sin clave ni red, en los tres idiomas (referencias ficticias marcadas `[DEMO]`).
+- Aviso previo al envío con muestra y enmascarado de correo, DNI/NIE y teléfono en el tema y las instrucciones.
+- Secciones de consulta (Artículo, Auditoría, Huecos, Historial, Agentes y prompts) fuera del recorrido lineal.
+- Migración automática desde la v2.1: clave de OpenAI, prompts propios e historial (como archivo de solo descarga).
+
+### Cambiado
+- «Citas resueltas» cuenta ahora los marcadores que el modelo emitió y el código eliminó; antes salía siempre 100 % porque las inválidas se borraban antes de medir.
+- El coste se calcula con precios que escribe la persona; ya no hay tabla de precios en el código.
+- El abstract se muestra al principio del documento.
+- Los marcadores de huecos se muestran como «Autor, año» para no confundirlos con la numeración final.
+
+### Retirado
+- Los agentes `entropy`, `voice`, `formatter` y `conclusion_writer`, que figuraban en la lista pero nunca se ejecutaban.
+- Los proxies públicos de arXiv (sacaban las consultas a terceros); arXiv se consulta solo por DataCite.
+- La vista previa en streaming, el sandbox de prompts y el control de reintentos (el módulo de IA reintenta con espera exponencial).
+
+---
+
 ## [2.1.0] — 2026-09-24
 
 Versión centrada en la **fiabilidad del acceso a las fuentes**.
