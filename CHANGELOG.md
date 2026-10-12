@@ -5,6 +5,13 @@ y [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [3.0.1] — 2026-10-12
+
+### Corregido
+- La descarga en Word fallaba con «No se pudo cargar una librería»: dependía de una librería externa (docx, desde cdnjs). El .docx se genera ahora dentro de la propia página, sin dependencias, y la política de seguridad ya no admite ningún script externo.
+
+---
+
 ## [3.0.0] — 2026-10-12
 
 Rediseño sobre los módulos de la plataforma Forja (interfaz y motor).
