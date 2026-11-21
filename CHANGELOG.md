@@ -5,6 +5,19 @@ y [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [3.1.0] — 2026-11-21
+
+### Cambiado
+- La bibliografía quedaba casi siempre por debajo de 20 referencias. El corpus que ve el redactor pasa de 25 papers fijos a 30 (borrador rápido), 50 (estándar) o 60 (exhaustiva). Las configuraciones guardadas con el antiguo valor por defecto (25) se actualizan solas.
+- El corpus da preferencia a los papers con resumen, que son los que el redactor puede citar con respaldo, sin alterar el orden del ranking.
+- El localizador ya no se limita a «los 15 papers más relevantes», que el redactor acababa citando en todas las secciones.
+- Cada sección recibe los índices que aún no ha citado ninguna sección anterior y un mínimo de papers distintos.
+
+### Añadido
+- Pasada de cobertura al final de la redacción: si el texto cita menos papers distintos que el objetivo (70 % del corpus, entre 30 y 40), cada sección integra los no citados que encajen. Solo se acepta si añade papers nuevos sin perder citas ni más del 10 % del texto.
+
+---
+
 ## [3.0.1] — 2026-10-12
 
 ### Corregido

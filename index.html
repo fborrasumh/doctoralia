@@ -1261,6 +1261,9 @@ const I18N = {
    "✅ Ninguna retractación detectada.": "✅ No retractions detected.",
    "📊 Corpus final: {0} papers": "📊 Final corpus: {0} papers",
    "🔖 Corpus de citación fijado: {0} papers numerados [1]–[{0}]": "🔖 Citation corpus fixed: {0} numbered papers [1]–[{0}]",
+   "📚 Cobertura final: {0} de {1} papers citados": "📚 Final coverage: {0} of {1} papers cited",
+   "➕ «{0}»: +{1} papers integrados": "➕ “{0}”: +{1} papers integrated",
+   "📚 Cobertura: {0} de {1} papers citados (objetivo {2}). Integrando papers no citados…": "📚 Coverage: {0} of {1} papers cited (target {2}). Integrating uncited papers…",
    "🤖 Localizador: análisis de relevancia…": "🤖 Locator: relevance analysis…",
    "✅ Localizador completado.": "✅ Locator completed.",
    "🤖 Revisor base: revisión comprehensiva…": "🤖 Base reviewer: comprehensive review…",
@@ -1722,6 +1725,9 @@ const I18N = {
    "✅ Ninguna retractación detectada.": "✅ Nenhuma retratação detetada.",
    "📊 Corpus final: {0} papers": "📊 Corpus final: {0} artigos",
    "🔖 Corpus de citación fijado: {0} papers numerados [1]–[{0}]": "🔖 Corpus de citação fixado: {0} artigos numerados [1]–[{0}]",
+   "📚 Cobertura final: {0} de {1} papers citados": "📚 Cobertura final: {0} de {1} artigos citados",
+   "➕ «{0}»: +{1} papers integrados": "➕ «{0}»: +{1} artigos integrados",
+   "📚 Cobertura: {0} de {1} papers citados (objetivo {2}). Integrando papers no citados…": "📚 Cobertura: {0} de {1} artigos citados (objetivo {2}). A integrar artigos não citados…",
    "🤖 Localizador: análisis de relevancia…": "🤖 Localizador: análise de relevância…",
    "✅ Localizador completado.": "✅ Localizador concluído.",
    "🤖 Revisor base: revisión comprehensiva…": "🤖 Revisor base: revisão abrangente…",
@@ -1985,7 +1991,7 @@ const I18N = {
 /* ══ Datos de Doctoralia: agentes, prompts, presets, cabeceras por idioma de salida y ejemplo sin clave ══
    Los prompts se escriben una vez, en español (no se traducen). El idioma de la REVISIÓN (cfg.lang: Spanish, English…)
    es independiente del idioma de la interfaz y se pasa a cada agente como parámetro. */
-const APP_VERSION = '3.0.1';
+const APP_VERSION = '3.1.0';
 const KEY_PREFIX = 'doctoralia_';
 const IDIOMAS_SALIDA = [['Spanish', 'Español'], ['English', 'English'], ['Portuguese', 'Português'], ['French', 'Français'], ['German', 'Deutsch']];
 const SALIDA_DE_UI = {es: 'Spanish', en: 'English', pt: 'Portuguese'};
@@ -2027,7 +2033,7 @@ CORPUS:
 {{papers}}
 
 Devuelve:
-1. Los 15 papers más relevantes, citándolos SIEMPRE por su índice [n]
+1. Para cada clúster, todos los papers que aportan algo, citándolos SIEMPRE por su índice [n] (no te limites a unos pocos)
 2. Venues principales
 3. Clústeres temáticos (3-5), indicando qué índices [n] pertenecen a cada uno
 4. Tendencias temporales
@@ -2172,9 +2178,9 @@ en ~250 palabras, coherentes con los recuentos anteriores. No repitas el diagram
 
 /* Valores por defecto de cada modo (los mismos de la v2.1) */
 const PRESETS = {
-  fast: {wc: 4000, fast: true, gaps: false, biblio: false, thread: false, enhancer: false, prisma: false, synth: false, audit: false, retract: true, narrator: false, srcs: {ss: true, pm: true, ax: true, oa: true, ep: false, cr: false}},
-  std: {wc: 8000, fast: false, gaps: true, biblio: true, thread: true, enhancer: true, prisma: true, synth: true, audit: true, retract: true, narrator: false, srcs: {ss: true, pm: true, ax: true, oa: true, ep: true, cr: false}},
-  deep: {wc: 12000, fast: false, gaps: true, biblio: true, thread: true, enhancer: true, prisma: true, synth: true, audit: true, retract: true, narrator: true, srcs: {ss: true, pm: true, ax: true, oa: true, ep: true, cr: true}}
+  fast: {wc: 4000, topP: 30, fast: true, gaps: false, biblio: false, thread: false, enhancer: false, prisma: false, synth: false, audit: false, retract: true, narrator: false, srcs: {ss: true, pm: true, ax: true, oa: true, ep: false, cr: false}},
+  std: {wc: 8000, topP: 50, fast: false, gaps: true, biblio: true, thread: true, enhancer: true, prisma: true, synth: true, audit: true, retract: true, narrator: false, srcs: {ss: true, pm: true, ax: true, oa: true, ep: true, cr: false}},
+  deep: {wc: 12000, topP: 60, fast: false, gaps: true, biblio: true, thread: true, enhancer: true, prisma: true, synth: true, audit: true, retract: true, narrator: true, srcs: {ss: true, pm: true, ax: true, oa: true, ep: true, cr: true}}
 };
 const FUENTES = [
   {id: 'ss', name: 'Semantic Scholar', ico: 'sparkles', desc: '220 M de papers · citas · resúmenes', lim: 20},
@@ -2520,7 +2526,7 @@ const estadoInicial = () => {
     cfg: {topic: '', kw: '', lang: 'Spanish', langAuto: true, cite: 'IEEE', mode: 'std', wc: P.wc, yfrom: y - 10, yto: y, instr: '',
       srcs: {...P.srcs}, lim: Object.fromEntries(FUENTES.map(f => [f.id, f.lim])),
       opt: {gaps: P.gaps, biblio: P.biblio, thread: P.thread, enhancer: P.enhancer, prisma: P.prisma, synth: P.synth, audit: P.audit, retract: P.retract, narrator: P.narrator, fast: P.fast},
-      sort: 'relevance', conc: 4, pmEnglish: true, temp: 0.7, maxQ: 4, topP: 25, tokens: {}, price: {in: '', out: ''}},
+      sort: 'relevance', conc: 4, pmEnglish: true, temp: 0.7, maxQ: 4, topP: P.topP, cfgV: 2, tokens: {}, price: {in: '', out: ''}},
     imported: [], run: null, hist: []
   };
 };
@@ -2584,6 +2590,11 @@ function partesCita(inner) {
   return ids;
 }
 function extractCites(text) { const ids = []; let m; CITE_RE.lastIndex = 0; while ((m = CITE_RE.exec(text)) !== null) ids.push(...partesCita(m[1])); return ids; }
+/* indicación de cobertura que se añade al prompt del redactor (fuera de la plantilla, para que valga también con prompts propios) */
+function coberturaSec(N, citados, k) {
+  const pend = Array.from({length: N}, (_, i) => i + 1).filter(n => !citados.has(n));
+  return `\n\nCOBERTURA DEL CORPUS: en esta sección usa al menos ${k} índices distintos.` + (pend.length ? ` Da prioridad a estos índices, que todavía no ha citado ninguna sección: [${pend.join(', ')}]. Cítalos donde su resumen respalde lo que afirmas; no cites un paper solo para cumplir.` : '');
+}
 function citationList(papers) {
   return papers.map((p, i) => {
     const a = (p.authors || []).slice(0, 3).join(', ') + ((p.authors || []).length > 3 ? ' et al.' : '');
@@ -2826,7 +2837,11 @@ async function generaRevision(ent) {
     }
     allPapers = rankPapers(allPapers, c.sort); flow.eligible = allPapers.length; log(t('📊 Corpus final: {0} papers', allPapers.length), 'ok');
     if (!(await UIG.checkpoint(allPapers, yr, topP))) throw PARADO();
-    corpus = allPapers.slice(0, topP); flow.inContext = corpus.length; const papersF = citationList(corpus), N = corpus.length;
+    /* corpus: primero los papers con resumen (el redactor apenas cita los que no lo tienen), conservando el orden del ranking */
+    const conAbs = p => p.abstract && p.abstract.length > 80;
+    corpus = [...allPapers.filter(conAbs), ...allPapers.filter(p => !conAbs(p))].slice(0, topP).sort((x, y) => allPapers.indexOf(x) - allPapers.indexOf(y));
+    flow.inContext = corpus.length; const papersF = citationList(corpus), N = corpus.length;
+    const meta = Math.min(40, Math.max(Math.min(30, N), Math.round(N * 0.7))), citados = new Set();   // objetivo de papers distintos citados
     log(t('🔖 Corpus de citación fijado: {0} papers numerados [1]–[{0}]', N), 'ok');
 
     UIG.paso(1); log(t('🤖 Localizador: análisis de relevancia…'), 'info');
@@ -2858,7 +2873,7 @@ async function generaRevision(ent) {
     for (let i = 0; i < titles.length; i++) {
       if (PARAR) throw PARADO(); const sec = titles[i], tgt = structure[sec]; UIG.sec(sec, i + 1, titles.length); log(t('✍️ Redactor: «{0}» (~{1} palabras)…', sec, tgt), 'info');
       let text = await ag('crafter', [sys(`Eres un redactor de secciones académicas. Escribe en ${lang}. Estilo de citación: ${cite}. REGLA INVIOLABLE: cita únicamente con los índices numéricos [n] del corpus, donde 1 ≤ n ≤ ${N}. Nunca escribas nombres de autores entre corchetes ni inventes referencias.`),
-        usr(rell(promptDe('crafter'), {section: sec, topic, target: tgt, n: N, instructions: ins, gaps: gapsText ? gapsText.slice(0, 600) : 'N/D', review: main, signal, papers: papersF}))], {temp});
+        usr(rell(promptDe('crafter'), {section: sec, topic, target: tgt, n: N, instructions: ins, gaps: gapsText ? gapsText.slice(0, 600) : 'N/D', review: main, signal, papers: papersF}) + coberturaSec(N, citados, Math.min(N, Math.ceil(meta / titles.length) + 2)))], {temp});
       let a = auditSection(text, N); rep0.emitidos += a.ids.length; rep0.fuera += a.invalid.length; rep0.noAnc += a.authorYear.length;
       if (a.invalid.length || a.authorYear.length) { log(t('⚠ «{0}»: {1} citas fuera de rango, {2} citas no ancladas. Reparando…', sec, a.invalid.length, a.authorYear.length), 'warn'); text = quitaAutorAnio(stripInvalidCites(text, N)); a = auditSection(text, N); }
       if (a.valid.length === 0 && a.words > 80) {
@@ -2873,7 +2888,23 @@ async function generaRevision(ent) {
         try { const refined = await ag('narrator', [sys(`Eres un editor de estilo. Escribe en ${lang}. No alteres, elimines ni reordenes los marcadores de cita [n].`), usr(rell(promptDe('narrator'), {text}))], {temp}), a2 = auditSection(refined, N);
           if (a2.valid.length >= a.valid.length * 0.9) { text = refined; a = a2; } else log(t('⚠ El pulido de estilo se descarta en «{0}»: habría eliminado {1} citas.', sec, a.valid.length - a2.valid.length), 'warn'); } catch (e) { if (e.message === '__STOP__') throw e; }
       }
-      sectionTexts[sec] = text; prev = text; log(t('✅ «{0}»: {1} palabras · {2} citas · {3}/1.000', sec, a.words, a.valid.length, dec(a.density)), a.valid.length ? 'ok' : 'warn');
+      sectionTexts[sec] = text; prev = text; a.valid.forEach(n => citados.add(n)); log(t('✅ «{0}»: {1} palabras · {2} citas · {3}/1.000', sec, a.words, a.valid.length, dec(a.density)), a.valid.length ? 'ok' : 'warn');
+    }
+    /* cobertura: si el texto cita menos papers distintos que el objetivo, cada sección integra los no citados que encajen */
+    if (citados.size < meta) {
+      log(t('📚 Cobertura: {0} de {1} papers citados (objetivo {2}). Integrando papers no citados…', citados.size, N, meta), 'info');
+      for (let i = 0; i < titles.length && citados.size < meta; i++) {
+        if (PARAR) throw PARADO(); const sec = titles[i], pend = Array.from({length: N}, (_, j) => j + 1).filter(n => !citados.has(n)); if (!pend.length) break;
+        const max = Math.ceil((meta - citados.size) / (titles.length - i)) + 1, a0 = auditSection(sectionTexts[sec], N), d0 = new Set(a0.valid);
+        try {
+          const rw = await ag('crafter', [sys(`Eres un redactor de secciones académicas. Escribe en ${lang}. Cita únicamente con índices [n], 1 ≤ n ≤ ${N}. No elimines ni cambies las citas existentes.`),
+            usr(`Amplía la sección "${sec}" integrando hasta ${max} de los papers listados abajo, solo los que su resumen respalde una afirmación pertinente para esta sección. Añade frases o matices con su cita [n] (usa exactamente esos índices). No elimines texto ni citas existentes. Si un paper no encaja, no lo uses.\n\nPAPERS A INTEGRAR:\n${pend.map(n => citationList([corpus[n - 1]]).replace(/^\[1\]/, `[${n}]`)).join('\n\n')}\n\nTEXTO:\n${sectionTexts[sec]}`)], {temp: 0.3});
+          const ar = auditSection(rw, N); rep0.emitidos += Math.max(0, ar.ids.length - a0.ids.length); rep0.fuera += ar.invalid.length; rep0.noAnc += ar.authorYear.length;
+          const limpio = quitaAutorAnio(stripInvalidCites(rw, N)), a1 = auditSection(limpio, N), nuevos = [...new Set(a1.valid)].filter(n => !d0.has(n) && !citados.has(n));
+          if (nuevos.length && [...d0].every(n => a1.valid.includes(n)) && a1.words >= a0.words * 0.9) { sectionTexts[sec] = limpio; a1.valid.forEach(n => citados.add(n)); log(t('➕ «{0}»: +{1} papers integrados', sec, nuevos.length), 'ok'); }
+        } catch (e) { if (e.message === '__STOP__') throw e; }
+      }
+      log(t('📚 Cobertura final: {0} de {1} papers citados', citados.size, N), citados.size >= meta ? 'ok' : 'warn');
     }
     UIG.fase(3, 'done');
 
@@ -3046,7 +3077,7 @@ const MODOS = [['fast', 'Borrador rápido', 'Solo las tres primeras fases. Ideal
 function pintaModos() {
   $('modeGrid').innerHTML = MODOS.map(([k, n, d]) => { const P = PRESETS[k], e = estima({wc: P.wc, opt: P, srcs: P.srcs}); return `<button type="button" class="fa-modo" data-modo="${k}" aria-pressed="${S.cfg.mode === k}"><b>${esc(t(n))}</b><span>${esc(t(d))}</span><small>${esc(t('~{0} min', e.min))} · ${esc(t('{0} palabras', nfa(P.wc)))} · ${esc(t('{0} fuentes', e.nSrc))}</small></button>`; }).join('');
 }
-function aplicaPreset(k) { const P = PRESETS[k], c = S.cfg; c.mode = k; c.wc = P.wc; Object.keys(c.opt).forEach(o => { c.opt[o] = !!P[o]; }); c.srcs = {...P.srcs}; guarda(); pintaModos(); }
+function aplicaPreset(k) { const P = PRESETS[k], c = S.cfg; c.mode = k; c.wc = P.wc; c.topP = P.topP; Object.keys(c.opt).forEach(o => { c.opt[o] = !!P[o]; }); c.srcs = {...P.srcs}; guarda(); pintaModos(); }
 function rellenaSelects() {
   const so = $('outLang'); if (so) so.innerHTML = IDIOMAS_SALIDA.map(([v, n]) => `<option value="${v}">${esc(n)}</option>`).join('');
   const sc = $('citeStyle'); if (sc) sc.innerHTML = ESTILOS.map(x => `<option>${esc(x)}</option>`).join('');
@@ -3336,6 +3367,7 @@ window.addEventListener('langchange', () => {   // antes de iniciaUI(): el idiom
 (async () => {
   const p = await cargaEstado(), base = estadoInicial();
   if (p) S = {...base, ...p, cfg: {...base.cfg, ...p.cfg, opt: {...base.cfg.opt, ...(p.cfg || {}).opt}, srcs: {...base.cfg.srcs, ...(p.cfg || {}).srcs}, lim: {...base.cfg.lim, ...(p.cfg || {}).lim}, price: {...base.cfg.price, ...(p.cfg || {}).price}, tokens: {...((p.cfg || {}).tokens || {})}}, imported: p.imported || [], hist: p.hist || []};
+  if (p && (p.cfg || {}).cfgV !== 2 && S.cfg.topP === 25) S.cfg.topP = (PRESETS[S.cfg.mode] || PRESETS.std).topP;   // 3.1.0: el antiguo valor por defecto (25) limitaba la bibliografía
   iniciaUI(); if (S.cfg.langAuto) S.cfg.lang = SALIDA_DE_UI[LANG] || 'Spanish'; if (S.run && S.run.ejemplo) S.run = ejemploRun();
   enlazaForm(); await migraAntiguo(); go(0);
 })();
