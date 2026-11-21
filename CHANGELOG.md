@@ -5,6 +5,17 @@ y [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [3.1.1] — 2026-11-21
+
+### Cambiado
+- La pasada de cobertura se quedaba muy por debajo del objetivo (p. ej., 25 de 35). Cada sección recibe ahora un mínimo de papers que integrar (lo que falta repartido entre las secciones restantes) y el tope sube a todo lo que falta. El prompt ya no invita a descartar papers dudosos, solo los que no tienen relación con la sección.
+- Si tras recorrer todas las secciones sigue sin alcanzarse el objetivo, se hace una segunda vuelta.
+
+### Añadido
+- El registro técnico explica cada cambio descartado: no añade papers nuevos, pierde citas existentes (con sus índices), recorta el texto más de un 10 % o falla la llamada.
+
+---
+
 ## [3.1.0] — 2026-11-21
 
 ### Cambiado
